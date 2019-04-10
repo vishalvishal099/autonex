@@ -1,8 +1,6 @@
-# Cucumber-Java Skeleton
+# Cucumber-Java-Poc
 
-[![Build Status](https://travis-ci.org/cucumber/cucumber-java-skeleton.svg?branch=master)](https://travis-ci.org/cucumber/cucumber-java-skeleton)
-
-This is the simplest possible build script setup for Cucumber using Java.
+This is the simplest possible build script setup for Cucumber using Java and some selenide .
 There is nothing fancy like a webapp or browser testing. All this does is to show you how
 to install and run Cucumber!
 
@@ -12,15 +10,9 @@ There is a single feature file with one scenario. The scenario has three steps, 
 
 Git:
 
-    git clone https://github.com/cucumber/cucumber-java-skeleton.git
-    cd cucumber-java-skeleton
+    git clone git@git.aconex.cloud:vsingh/cucumber-java-poc.git
+    cd cucumber-java-poc
 
-Subversion:
-
-    svn checkout https://github.com/cucumber/cucumber-java-skeleton/trunk cucumber-java-skeleton
-    cd cucumber-java-skeleton
-
-Or simply [download a zip](https://github.com/cucumber/cucumber-java-skeleton/archive/master.zip) file.
 
 ## Use Maven
 
@@ -36,11 +28,21 @@ class tells JUnit to kick off Cucumber.
 Open a command window and run:
 
     gradlew test --info
+    
+    ./gradlew  test 
+
+we can run the specific task 
+
+     ./gradlew cucumber  //cucumber is task name
+         
 
 This runs Cucumber com.oracle.babylon.features using Cucumber's JUnit runner. The `@RunWith(Cucumber.class)` annotation on the `RunCukesTest`
 class tells JUnit to kick off Cucumber.
 
-## Overriding options
+
+
+
+## other options
 
 The Cucumber runtime parses command line options to know what com.oracle.babylon.features to run, where the glue code lives, what plugins to use etc.
 When you use the JUnit runner, these options are generated from the `@CucumberOptions` annotation on your test.
@@ -74,12 +76,12 @@ file.
 
 Specify a particular scenario by *line* (and use the pretty plugin, which prints the scenario back)
 
-    -Dcucumber.options="classpath:skeleton/belly.feature:4 --plugin pretty"
+    -Dcucumber.options="classpath:src/test/resources/com/oracle/babylon/login.feature:4 --plugin pretty"
 
 This works because Maven puts `./src/test/resources` on your `classpath`.
 You can also specify files to run by filesystem path:
 
-    -Dcucumber.options="src/test/resources/skeleton/belly.feature:4 --plugin pretty"
+    -Dcucumber.options="src/test/resources/skeleton/login.feature:4 --plugin pretty"
 
 You can also specify what to run by *tag*:
 
@@ -96,3 +98,4 @@ This works as long as you have the `rerun` formatter enabled.
 For example a JUnit formatter:
 
     -Dcucumber.options="--plugin junit:target/cucumber-junit-report.xml"
+
