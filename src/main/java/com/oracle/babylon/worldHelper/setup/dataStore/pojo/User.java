@@ -1,4 +1,4 @@
-package com.oracle.babylon.worldHelper.Setup.DataStore;
+package com.oracle.babylon.worldHelper.setup.dataStore.pojo;
 
 public class User {
 

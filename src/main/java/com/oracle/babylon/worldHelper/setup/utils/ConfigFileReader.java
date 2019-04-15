@@ -1,4 +1,4 @@
-package com.oracle.babylon.worldHelper.Setup.utils;
+package com.oracle.babylon.worldHelper.setup.utils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -59,6 +59,11 @@ public class ConfigFileReader {
         else throw new RuntimeException("Browser is not specified in the configFile.properties file.");
     }
 
+    public String getMode(){
+        String mode = properties.getProperty("MODE");
+        if(mode != null) return mode;
+        else throw new RuntimeException("Mode is not specified in the configuration.propertied file");
+    }
 }
 
 

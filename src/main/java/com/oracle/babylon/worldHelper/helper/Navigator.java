@@ -1,9 +1,9 @@
 package com.oracle.babylon.worldHelper.helper;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.worldHelper.Setup.DataStore.DataStore;
-import com.oracle.babylon.worldHelper.Setup.DataStore.User;
-import com.oracle.babylon.worldHelper.Setup.utils.ConfigFileReader;
+import com.oracle.babylon.worldHelper.setup.dataStore.DataStore;
+import com.oracle.babylon.worldHelper.setup.dataStore.pojo.User;
+import com.oracle.babylon.worldHelper.setup.utils.ConfigFileReader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,14 +12,13 @@ import java.util.function.Consumer;
 
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 public class Navigator {
-    User user = null;
-    DataStore dataStore = new DataStore();
-    ConfigFileReader configFileReader = new ConfigFileReader();
-    public WebDriver driver;
+    private User user = null;
+    private DataStore dataStore = new DataStore();
+    private ConfigFileReader configFileReader = new ConfigFileReader();
+    private WebDriver driver;
 
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
@@ -32,7 +31,14 @@ public class Navigator {
     }
 
     public <P> void visit(P page, String username) {
-        open(configFileReader.getApplicationUrl());
+        switchTo().defaultContent();
+        if ($(By.xpath("//span[@class='nav-userAvatar']")).isDisplayed()) {
+            logout();
+            waitForElement();
+            navigator.open(configFileReader.getApplicationUrl());
+        } else {
+            open(configFileReader.getApplicationUrl());
+        }
         login(user);
         selectProject();
     }
@@ -85,14 +91,29 @@ public class Navigator {
     }
 
     public void verifyUserPresent() {
-        $(By.xpath("//span[@class='nav-userDetails']")).shouldHave(text(user.getFullName().toString()));
+        $(By.xpath("//span[@class='nav-userDetails']")).shouldHave(text(user.getFullName()));
     }
 
     public void verifyUserNotPresent() {
-        $(By.xpath("//span[@class='nav-userDetails']")).shouldNot(text(user.getFullName().toString()));
+        $(By.xpath("//span[@class='nav-userDetails']")).shouldNot(text(user.getFullName()));
     }
 
     public void verifyLoginFailed() {
         $(By.xpath("//li[@class='message warning']//div[text()='Your login name or password is incorrect. Check that caps lock is not on.']")).shouldHave(text("Your login name or password is incorrect. Check that caps lock is not on."));
+    }
+
+    public void waitForElement() {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void logout() {
+        $(By.xpath("//span[@class='nav-user-chevron']")).click();
+        waitForElement();
+        $(By.xpath("//a[@id='logoff'] ")).click();
+        $(".loading_progress").should(disappear);
     }
 }

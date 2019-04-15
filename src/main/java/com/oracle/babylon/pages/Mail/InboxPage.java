@@ -23,7 +23,10 @@ public class InboxPage {
 
     public void searchMailNumber(String mail_number) {
         $(By.id("rawQueryText")).sendKeys(mail_number);
+        $(By.xpath("//button[@title='Search']")).click();
+        waitForSearchButtonForBeActive();
         $(".loading_progress").should(disappear);
+
     }
 
     private void waitForSearchButtonForBeActive() {
@@ -41,5 +44,9 @@ public class InboxPage {
 
     public int searchResultCount() {
         return driver.findElements(By.cssSelector(".dataRow")).stream().filter(e -> e.isDisplayed()).collect(Collectors.toList()).size();
+    }
+
+    public String getMailNumber(){
+        return driver.findElement(By.xpath("//td[@class='column_documentNo']")).getText();
     }
 }

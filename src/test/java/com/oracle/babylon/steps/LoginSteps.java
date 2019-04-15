@@ -1,6 +1,6 @@
 package com.oracle.babylon.steps;
 
-import com.oracle.babylon.worldHelper.Setup.DataStore.DataTableConverter;
+import com.oracle.babylon.worldHelper.setup.dataStore.UserTableConverter;
 import com.oracle.babylon.worldHelper.helper.Navigator;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -11,9 +11,7 @@ public class LoginSteps {
 
     @Given("^User Data \"([^\"]*)\"$")
     public void userData(String name, DataTable dataTable) throws Throwable {
-        new DataTableConverter().addUser(name, dataTable);
-
-
+        new UserTableConverter().addUser(name, dataTable);
     }
 
     @Given("^\"([^\"]*)\" login with correct username and password$")

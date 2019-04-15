@@ -2,7 +2,7 @@ package com.oracle.babylon;
 
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.worldHelper.Setup.utils.ConfigFileReader;
+import com.oracle.babylon.worldHelper.setup.utils.ConfigFileReader;
 import com.oracle.babylon.worldHelper.helper.DriverFactory;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -11,14 +11,16 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
+import java.net.MalformedURLException;
+
 
 public class Helper {
     ConfigFileReader configFileReader = new ConfigFileReader();
     DriverFactory driverFactory = new DriverFactory();
 
     @Before
-    public void driverSetup() {
-        WebDriver driver = driverFactory.browser();
+    public void driverSetup() throws MalformedURLException{
+        WebDriver driver = driverFactory.getDriver();
         WebDriverRunner.setWebDriver(driver);
     }
 

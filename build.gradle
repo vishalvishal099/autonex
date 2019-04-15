@@ -21,7 +21,7 @@ configurations {
         extendsFrom testRuntime
     }
 }
-task cucumber() {
+task regression() {
     dependsOn assemble, compileJava
     doLast {
         javaexec {
@@ -31,3 +31,51 @@ task cucumber() {
         }
     }
 }
+
+task mail() {
+    dependsOn assemble, compileJava
+    doLast {
+        javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'com.oracle.babylon', 'src/test/resources/com/oracle/babylon/features/mail']
+        }
+    }
+}
+    task login() {
+        dependsOn assemble, compileJava
+        doLast {
+            javaexec {
+                main = "cucumber.api.cli.Main"
+                classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+                args = ['--plugin', 'pretty', '--glue', 'com.oracle.babylon', 'src/test/resources/com/oracle/babylon/features/login.feature']
+            }
+        }
+    }
+//
+//task dockerCreateHub(type: Exec) {
+//    executable = "docker"
+//    args = [ "run -d -p 4444:4444",  "--name selenium-hub", "selenium/hub:3.6.0", "selenium-node2"]
+//}
+//task dockerCreateNode(type: Exec) {
+//    executable = "docker"
+//    args = [ "run -d -P -p 5902:5902",  "--name selenium-node", "--link selenium-hub:hub", "selenium/node-chrome-debug:3.6.0"]
+//}
+//
+//task dockerStart(dependsOn:['dockerCreateHub','dockerCreateNode'],type: Exec) {
+//    executable = "docker"
+//    args = ["start", "selenium-hub", "selenium-node2"]
+//}
+
+task dockerStart(type: Exec) {
+    executable = "docker"
+    args = ["start", "selenium-hub", "selenium-node2"]
+}
+task dockerStop(type: Exec) {
+    executable = "docker"
+    args = ["stop", "selenium-hub", "selenium-node2"]
+}
+
+task testWithDocker(dependsOn: ['dockerStart', 'mail'])
+
+testWithDocker.finalizedBy dockerStop

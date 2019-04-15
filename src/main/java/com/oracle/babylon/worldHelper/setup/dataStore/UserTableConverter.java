@@ -1,12 +1,13 @@
-package com.oracle.babylon.worldHelper.Setup.DataStore;
+package com.oracle.babylon.worldHelper.setup.dataStore;
 
 
-import com.oracle.babylon.worldHelper.Setup.utils.ConfigFileReader;
+import com.oracle.babylon.worldHelper.setup.dataStore.pojo.User;
+import com.oracle.babylon.worldHelper.setup.utils.ConfigFileReader;
 import io.cucumber.datatable.DataTable;
 
 import java.util.Map;
 
-public class DataTableConverter {
+public class UserTableConverter {
     public void addUser(String name, DataTable dataTable) {
 
         User user = new User();
