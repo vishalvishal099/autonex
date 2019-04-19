@@ -7,12 +7,7 @@ import cucumber.api.java.en.Then;
 import io.cucumber.datatable.DataTable;
 
 public class LoginSteps {
-    Navigator navigator =new Navigator();
-
-    @Given("^User Data \"([^\"]*)\"$")
-    public void userData(String name, DataTable dataTable) throws Throwable {
-        new UserTableConverter().addUser(name, dataTable);
-    }
+    Navigator navigator = new Navigator();
 
     @Given("^\"([^\"]*)\" login with correct username and password$")
     public void loginWithCorrectUsernameAndPassword(String userdetails) throws Throwable {
@@ -22,11 +17,10 @@ public class LoginSteps {
 
     @Then("^user should logged into aconex$")
     public void userShouldLoggedIntoAconex() throws Throwable {
-        navigator.on(navigator,page -> {
+        navigator.on(navigator, page -> {
             page.verifyUserPresent();
         });
     }
-
 
     @Given("^\"([^\"]*)\" login with incorrect username and password$")
     public void loginWithIncorrectUsernameAndPassword(String userdetails) throws Throwable {
@@ -35,7 +29,7 @@ public class LoginSteps {
 
     @Then("^user should not logged into aconex$")
     public void userShouldNotLoggedIntoAconex() throws Throwable {
-        navigator.on(navigator,page -> {
+        navigator.on(navigator, page -> {
             page.verifyLoginFailed();
         });
     }

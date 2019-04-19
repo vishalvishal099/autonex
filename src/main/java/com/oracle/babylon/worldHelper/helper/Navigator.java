@@ -78,10 +78,6 @@ public class Navigator {
         $(".loading_progress").should(disappear);
     }
 
-    public void clickMenuSubMenu(String menu, String submenu) {
-        menuFinder("button.uiMenuButton", menu).click();
-        menuFinder("div.navBarPanel-menuItem", submenu).click();
-    }
 
     public WebElement menuFinder(String css, String text) {
         return driver.findElements(By.cssSelector(css)).stream()
