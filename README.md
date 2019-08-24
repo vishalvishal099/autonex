@@ -10,7 +10,7 @@ There is a single feature file with one scenario. The scenario has three steps, 
 
 Git:
 
-    git clone git@git.aconex.cloud:vsingh/cucumber-java-poc.git
+    https://github.com/vishalvishal099/cucumber-java-poc.git
     cd cucumber-java-poc
 
 
@@ -22,6 +22,8 @@ Open a command window and run:
 
 This runs Cucumber com.oracle.babylon.features using Cucumber's JUnit runner. The `@RunWith(Cucumber.class)` annotation on the `RunCukesTest`
 class tells JUnit to kick off Cucumber.
+If you are using IDE right click and run the runner file. find the runner file here /cucumber-java-poc/src/test/java/com/oracle/babylon/RunCucumberTest.java
+
 
 ## Use Gradle
 
