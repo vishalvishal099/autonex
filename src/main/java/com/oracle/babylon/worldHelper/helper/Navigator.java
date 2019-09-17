@@ -35,7 +35,7 @@ public class Navigator {
         if ($(By.xpath("//span[@class='nav-userAvatar']")).isDisplayed()) {
             logout();
             waitForElement();
-            navigator.open(configFileReader.getApplicationUrl());
+            open(configFileReader.getApplicationUrl());
         } else {
             open(configFileReader.getApplicationUrl());
         }
