@@ -1,7 +1,7 @@
 package com.oracle.babylon.steps;
 
-import com.oracle.babylon.worldHelper.setup.dataStore.DataStore;
-import com.oracle.babylon.worldHelper.setup.dataStore.UserTableConverter;
+import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.setup.dataStore.UserTableConverter;
 import cucumber.api.java.en.Given;
 import io.cucumber.datatable.DataTable;
 
