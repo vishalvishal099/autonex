@@ -1,7 +1,7 @@
 package com.oracle.babylon.pages.Mail;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.worldHelper.helper.Navigator;
+import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;

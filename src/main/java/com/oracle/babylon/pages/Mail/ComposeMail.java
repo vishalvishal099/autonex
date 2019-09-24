@@ -1,19 +1,13 @@
 package com.oracle.babylon.pages.Mail;
 
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.WebDriverRunner;
-import com.codeborne.selenide.impl.WebElementsCollection;
-import com.oracle.babylon.worldHelper.helper.Navigator;
-import com.oracle.babylon.worldHelper.setup.dataStore.DataStore;
-import com.oracle.babylon.worldHelper.setup.dataStore.pojo.User;
+import com.oracle.babylon.Utils.helper.Navigator;
+import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.codeborne.selenide.Condition.disappear;

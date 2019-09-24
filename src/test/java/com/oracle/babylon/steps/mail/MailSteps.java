@@ -2,15 +2,10 @@ package com.oracle.babylon.steps.mail;
 
 import com.oracle.babylon.pages.Mail.ComposeMail;
 import com.oracle.babylon.pages.Mail.InboxPage;
-import com.oracle.babylon.worldHelper.helper.Navigator;
-import com.oracle.babylon.worldHelper.setup.dataStore.DataStore;
-import cucumber.api.PendingException;
+import com.oracle.babylon.Utils.helper.Navigator;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import io.cucumber.datatable.DataTable;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

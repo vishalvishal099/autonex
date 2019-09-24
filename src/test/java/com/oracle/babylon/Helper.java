@@ -2,8 +2,8 @@ package com.oracle.babylon;
 
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.worldHelper.setup.utils.ConfigFileReader;
-import com.oracle.babylon.worldHelper.helper.DriverFactory;
+import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
+import com.oracle.babylon.Utils.helper.DriverFactory;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
