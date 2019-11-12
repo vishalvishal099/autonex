@@ -16,10 +16,8 @@ Feature: Mail Test
       | Attribute 1 | Doors                     |
       | Mail Body   | Send Mail feature testing |
 
+  @search_mail
   Scenario: Search Mail in inbox
-    #Given "valid_user" login with correct username and password
-    #Then user should logged into aconex
-    #And User navigate to Mail-inbox page
     When "user1" search mail "WIR-TRANSMIT-000014" in inbox
     Then  user should see the mail "WIR-TRANSMIT-000014" in inbox
 

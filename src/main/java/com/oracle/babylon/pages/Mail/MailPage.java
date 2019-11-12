@@ -12,53 +12,63 @@ import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class to hold the functions related to the the mail inbox page
- * Author : visinghsi
+ * Class that contains common methods related to Mails
+ * Author : susgopal
  */
-public class InboxPage {
-    //Initialization of objects and assigning them references
+public class MailPage {
+    //Object and reference assignment
     WebDriver driver = WebDriverRunner.getWebDriver();
     Navigator navigator = new Navigator();
 
     //Initializing the web elements
-    private By mailNumberTextBox = By.id("rawQueryText");
     private By searchBtn = By.xpath("//button[@title='Search']");
+    private By mailNoTextBox = By.id("rawQueryText");
     private By loadingIcon = By.cssSelector(".loading_progress");
+    private By sendBtn = By.xpath("//button[@id='btnSend']");
+    private By mailNo = By.xpath("//div[@class='mailHeader-numbers']//div[2]//div[2]");
     private By mailNoFromTable = By.xpath("//td[@class='column_documentNo']");
 
     /**
-     * Function to navigate to a sub menu from the Aconex home page
-     */
-    public void selectMenuSubMenu() {
-        navigator.getMenuSubmenu("Mail", "Inbox");
-        CommonMethods commonMethods = new CommonMethods();
-        driver = commonMethods.switchToFrame(driver, "frameMain");
-    }
-
-    /**
-     * Search the mail using the mail number key
+     * Function to search mails by the mail number search key
      *
      * @param mail_number
      */
     public void searchMailNumber(String mail_number) {
-        CommonMethods commonMethods = new CommonMethods();
-        $(mailNumberTextBox).sendKeys(mail_number);
-        commonMethods.waitForElementExplicitly(2000);
+        $(mailNoTextBox).sendKeys(mail_number);
         $(searchBtn).click();
-        //Wait for the results to be retrieved
-        By by = By.xpath("//span[text()='" + mail_number + "']");
-        commonMethods.waitForElement(driver, by, 5000);
+        CommonMethods commonMethods = new CommonMethods();
+        commonMethods.waitForElementExplicitly(500);
         $(loadingIcon).should(disappear);
-
     }
 
-
+    /**
+     * Return the number of rows when we search for the mail
+     *
+     * @return
+     */
     public int searchResultCount() {
         return driver.findElements(By.cssSelector(".dataRow")).stream().filter(e -> e.isDisplayed()).collect(Collectors.toList()).size();
     }
 
+    /**
+     * Retrieve the mail using the mail number as the key
+     *
+     * @return the mail number of the
+     */
     public String getMailNumber() {
-        CommonMethods commonMethods = new CommonMethods();
         return driver.findElement(mailNoFromTable).getText();
     }
+
+    /**
+     * Function to click on Send button
+     *
+     * @return
+     */
+    public String send() {
+        $(sendBtn).click();
+        $(loadingIcon).should(disappear);
+        String mailNumber = $(mailNo).getText();
+        return mailNumber;
+    }
+
 }
