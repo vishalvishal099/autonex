@@ -8,6 +8,7 @@ import java.util.Random;
  */
 public class FakeData {
 
+    private Faker faker = new Faker();
     /**
      * Constructor call to set the company and the document data
      */
@@ -24,7 +25,7 @@ public class FakeData {
      * Function to generate company data and set it
      */
     public void setDocumentNumber(){
-        Faker faker = new Faker();
+
         Random random = new Random(1000);
         this.documentNumber = faker.company().industry() + "-" + random.nextInt();
     }

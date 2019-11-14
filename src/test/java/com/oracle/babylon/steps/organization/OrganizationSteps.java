@@ -27,6 +27,17 @@ import java.util.Map;
  */
 public class OrganizationSteps {
 
+    private ConfigFileReader configFileReader = new ConfigFileReader();
+    private Navigator navigator = new Navigator();
+    private OrganizationUserCreator orgUserObj = new OrganizationUserCreator();
+    private WebDriver driver = null;
+    private OrganizationPage organizationPage = new OrganizationPage();
+    private AdminHome adminHome = null;
+    private AdminSearch adminSearch = null;
+    private  UserInformation userInformation = new UserInformation();
+    private DataSetup dataSetup = new DataSetup();
+    private UserDetails userDetails = new UserDetails();
+
     /**
      * Code which contains a sequence of steps to create a organization
      * @throws IOException
@@ -36,28 +47,22 @@ public class OrganizationSteps {
     @When("^user tries to create a organization$")
     public void createOrganization() throws IOException, ParseException, InterruptedException {
         //Register a organization
-        Navigator navigator = new Navigator();
-        OrganizationUserCreator orgUserObj = new OrganizationUserCreator();
         orgUserObj.generateOrgData();
         orgUserObj.addUser();
         navigator.openAconexUrl();
         navigator.clickRegisterLink();
-
         //Enter details of organization in a file
-        OrganizationPage organizationPage = new OrganizationPage();
         organizationPage.fillOrganizationDetails();
         User user = organizationPage.enterOrgUserDetailsToFile();
-
         //Enable the user for the organization
-        WebDriver driver = WebDriverRunner.getWebDriver();
+        driver = WebDriverRunner.getWebDriver();
         navigator.openAconexUrl();
-        navigator.loginAsAdmin();
-        AdminHome adminHome = new AdminHome(driver);
+        navigator.loginToServer(configFileReader.getAdminUsername(), configFileReader.getAdminPassword(), null);
+         adminHome = new AdminHome(driver);
         adminHome.clickSetupBtn();
         adminHome.clickSearchBtn();
-        AdminSearch adminSearch = new AdminSearch(driver);
+        adminSearch = new AdminSearch(driver);
         adminSearch.clickSearchResults(user.getUserName(), user.getFullName());
-        UserInformation userInformation = new UserInformation();
         userInformation.enableUser();
     }
 
@@ -68,12 +73,8 @@ public class OrganizationSteps {
      */
     @Then("user is able to login to application")
     public void userIsAbleToLoginToApplication() throws IOException, ParseException {
-        CommonMethods commonMethods = new CommonMethods();
-        DataSetup dataSetup = new DataSetup();
-        ConfigFileReader configFileReader = new ConfigFileReader();
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
         Map<String, String> userMap = mapOfMap.get("user");
-        Navigator navigator = new Navigator();
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), null);
 
     }
@@ -86,10 +87,8 @@ public class OrganizationSteps {
      */
     @When("user needs to fill in the account details fields with data")
     public void userNeedsToFillInTheAccountDetailsFieldsWithData(DataTable dataTable) throws IOException, ParseException {
-
         Map<String, String> userInfoMap = dataTable.asMaps().get(0);
         userIsAbleToLoginToApplication();
-        UserDetails userDetails = new UserDetails();
         userDetails.fillUserDetails(userInfoMap);
 
     }

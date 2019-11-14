@@ -8,7 +8,8 @@ import cucumber.api.java.en.Then;
 import java.io.IOException;
 
 public class LoginSteps {
-    Navigator navigator = new Navigator();
+    private Navigator navigator = new Navigator();
+    private JIRAOperations jiraOperations = new JIRAOperations();
 
     @Given("^\"([^\"]*)\" login with correct username and password$")
     public void loginWithCorrectUsernameAndPassword(String userdetails) throws Throwable {
@@ -38,14 +39,13 @@ public class LoginSteps {
 
     @Given("{string} retrieve details")
     public void retrieveDetails(String tablename) throws IOException {
-        JIRAOperations jiraOperations = new JIRAOperations();
+
         jiraOperations.getJiraTicket(tablename);
         //jiraOperations.addComment(tablename);
     }
 
     @Then("views the home page")
     public void viewsTheHomePage() {
-        Navigator navigator = new Navigator();
         navigator.verifyUserPresent();
     }
 }

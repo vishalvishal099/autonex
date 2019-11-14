@@ -2,15 +2,13 @@ package com.oracle.babylon.pages.Setup;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
-import com.oracle.babylon.Utils.helper.CommonMethods;
+import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import java.util.List;
-
 import static com.codeborne.selenide.Selenide.$;
 
-public class ProjectSettingsPage {
+public class ProjectSettingsPage extends Navigator{
 
     private By lockDocFieldsBtn = By.xpath("//button[@id='btnLockDocumentFields']");
     private By unlockDocFieldsBtn = By.id("btnUnlockDocumentFields");
@@ -21,16 +19,14 @@ public class ProjectSettingsPage {
     private By saveBtn = By.id("btnSave");
     private By projectSettingsLabel = By.xpath("//h1[text()='Project Settings']");
 
-
-
     /**
      * Function to lock the document field labels for a project
      */
     public void lockDocFieldsBtn() {
-        CommonMethods commonMethods = new CommonMethods();
-        WebDriver driver = WebDriverRunner.getWebDriver();
+
+        this.driver = WebDriverRunner.getWebDriver();
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
-        String result = commonMethods.returnAttributeValue(lockDocFieldsBtn, "title");
+        String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (!result.equals("Cannot lock field names - already locked")) {
             $(lockDocFieldsBtn).click();
             $(lockFieldOkBtn).click();
@@ -43,7 +39,6 @@ public class ProjectSettingsPage {
      * Function to unlock the field labels
      */
     public void unlockDocFieldsBtn() {
-        CommonMethods commonMethods = new CommonMethods();
         commonMethods.switchToFrame(WebDriverRunner.getWebDriver(), "settingsIframe");
         if ($(unlockDocFieldsBtn).isDisplayed()) {
             $(unlockDocFieldsBtn).click();
@@ -55,19 +50,16 @@ public class ProjectSettingsPage {
      * @param driver
      */
     public WebDriver navigateToProjectSettings(WebDriver driver){
-        CommonMethods commonMethods = new CommonMethods();
-        return commonMethods.selectSubMenu(driver, "Setup", "Project Settings", "frameMain");
+        return getMenuSubmenu( "Setup", "Project Settings");
     }
 
     /**
      * Function to navigate to the Documents setting page and lock the fields button
      */
     public void lockFieldsInDocuments(){
-        WebDriver driver = WebDriverRunner.getWebDriver();
-        ProjectSettingsPage projectSettingsPage = new ProjectSettingsPage();
-        CommonMethods commonMethods = new CommonMethods();
-        driver = projectSettingsPage.navigateToProjectSettings(driver);
-        commonMethods.switchToFrame(driver, "frameMain");
+        this.driver = WebDriverRunner.getWebDriver();
+        this.driver = navigateToProjectSettings(driver);
+        commonMethods.switchToFrame(this.driver, "frameMain");
         commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
         lockDocFieldsBtn();
     }
@@ -87,7 +79,7 @@ public class ProjectSettingsPage {
      * Function to add a attribute for documents
      * @return attribute name
      */
-    public String addAttribute(){
+    public String createNewDocumentAttribute(){
         Faker faker = new Faker();
         String attribute = faker.commerce().department();
         $(attributeTextArea).sendKeys(attribute);
@@ -101,8 +93,7 @@ public class ProjectSettingsPage {
      * @return enabled status
      */
     public boolean isLockFieldsBtnEnabled(){
-        CommonMethods commonMethods = new CommonMethods();
-        String result = commonMethods.returnAttributeValue(lockDocFieldsBtn, "title");
+        String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (result.equals("Cannot lock field names - already locked")) {
             return false;
         } else {

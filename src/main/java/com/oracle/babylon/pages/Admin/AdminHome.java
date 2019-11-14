@@ -1,6 +1,7 @@
 package com.oracle.babylon.pages.Admin;
 
 import com.oracle.babylon.Utils.helper.CommonMethods;
+import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -10,8 +11,8 @@ import static com.codeborne.selenide.Selenide.$;
  * Class file to contain all the functions related the home page when logged in as Administrator
  * Author : susgopal
  */
-public class AdminHome {
-    WebDriver driver = null;
+public class AdminHome extends Navigator {
+
     public AdminHome(WebDriver driver){
         this.driver = driver;
     }
@@ -21,7 +22,7 @@ public class AdminHome {
     private By searchLink = By.id("nav-bar-SETUP-SETUP-ADMINSEARCH");
     private By toolsLink = By.id("nav-bar-SETUP-SETUP-ADMINTOOLS");
 
-    CommonMethods commonMethods = new CommonMethods();
+    private CommonMethods commonMethods = new CommonMethods();
 
     /**
      * Click the Setup Button to view the options available

@@ -13,15 +13,18 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
  */
 public class OrganizationUserCreator {
 
+    private Organization organization = new Organization();
+    private Faker faker = new Faker();
+    private User user = new User();
+
     private String name = null;
 
     /**
      * Function to set the values of the organization with data from Faker class
      */
     public void generateOrgData(){
-        Organization organization = new Organization();
+
         ConfigFileReader configFileReader = new ConfigFileReader();
-        Faker faker = new Faker();
         Company company = faker.company();
         String companyName = company.name();
         organization.setOrganizationName(companyName);
@@ -54,8 +57,6 @@ public class OrganizationUserCreator {
      * Function to create data and set in the User pojo
      */
     public void addUser(){
-        User user = new User();
-        Faker faker = new Faker();
         user.setUserName(faker.name().username());
         if(name!=null){
             user.setFullName(name);
@@ -66,14 +67,5 @@ public class OrganizationUserCreator {
         user.setPassword(password);
         //Store the values in a data store with the name user
         new DataStore().addUser("user", user);
-    }
-
-
-    public static void main(String[] args){
-        Faker faker = new Faker();
-        System.out.println(faker.internet().password());
-        OrganizationUserCreator organizationUserCreator = new OrganizationUserCreator();
-        organizationUserCreator.generateOrgData();
-        organizationUserCreator.addUser();
     }
 }

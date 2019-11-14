@@ -21,7 +21,6 @@ import java.util.Set;
  * Author : susgopal
  */
 public class DataSetup {
-
     /**
      * Converts JSON file data to a Map of Map
      *
@@ -99,22 +98,5 @@ public class DataSetup {
         pw.write(prettyJsonString);
         pw.flush();
         pw.close();
-    }
-
-    /**
-     * For experimentation purpose only
-     *
-     * @param argv
-     * @throws Exception
-     */
-    public static void main(String[] argv) throws Exception {
-
-        DataSetup dataSetup = new DataSetup();
-        String jsonFile = System.getProperty("user.dir") + "/src/main/resources/userData.json";
-        dataSetup.loadJsonDataToMap(jsonFile);
-        String[] array = {"user", "field1"};
-
-
-        dataSetup.writeIntoJson(array, "obh2", jsonFile);
     }
 }

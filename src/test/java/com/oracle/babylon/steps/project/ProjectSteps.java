@@ -18,9 +18,13 @@ import java.util.Map;
 
 public class ProjectSteps {
 
-    DataSetup dataSetup = new DataSetup();
-    ConfigFileReader configFileReader = new ConfigFileReader();
-    Navigator navigator = new Navigator();
+    private DataSetup dataSetup = new DataSetup();
+    private ConfigFileReader configFileReader = new ConfigFileReader();
+    private Navigator navigator = new Navigator();
+    private DataStore dataStore = new DataStore();
+    private CommonMethods commonMethods = new CommonMethods();
+    private ProjectPage projectPage = new ProjectPage();
+    private ProjectDataCreator projectDataCreator = new ProjectDataCreator();
 
     /**
      * Code that contains a series of steps to create a project
@@ -32,24 +36,19 @@ public class ProjectSteps {
         //Retrieve the data from userData.json file
         Map<String, Map<String,String>> mapOfMap =  dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
         Map<String, String> userMap = mapOfMap.get("user");
-        DataStore dataStore = new DataStore();
         //Get project fields from the project data table
         Project project = dataStore.getProjectInfo("project");
         Map<String, String> projectInfoMap = dataTable.asMaps().get(0);
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), null);
-        ProjectDataCreator projectDataCreator = new ProjectDataCreator();
+
         //Set the project data
         projectDataCreator.generateProjectData(projectInfoMap);
         navigator.getMenuSubmenu("Setup", "Create Project");
-        CommonMethods commonMethods = new CommonMethods();
         commonMethods.switchToFrame(WebDriverRunner.getWebDriver(), "frameMain");
-        ProjectPage projectPage = new ProjectPage();
         //Fill up the create project ui
         projectPage.fillUpProjectFields();
         //Update the project details in the userData.json
         projectPage.enterProjectDetailsToFile();
-
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), project.getProjectName());
-
     }
 }

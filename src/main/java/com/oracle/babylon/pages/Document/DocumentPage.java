@@ -1,37 +1,27 @@
 package com.oracle.babylon.pages.Document;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.Utils.helper.APIRequest;
 import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
-import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
-import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Document;
-import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
-import com.oracle.babylon.pages.Admin.AdminTools;
-import com.oracle.babylon.pages.Setup.EditPreferencesPage;
-import com.oracle.babylon.pages.Setup.ProjectSettingsPage;
 import org.apache.http.HttpResponse;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import static com.codeborne.selenide.Selenide.$;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
+import static com.codeborne.selenide.Selenide.$;
 
 /**
  * Class file that contains functions related to the operations for Documents
  * Author : susgopal
  */
-public class DocumentPage {
+public class DocumentPage extends Navigator{
 
-    //Initialization of objects and assignment of references
-    DataStore dataStore = new DataStore();
-    ConfigFileReader configFileReader = new ConfigFileReader();
-
-    //Initialization of web elemets
+    //Initialization of web elements
     private By searchDocumentQuery = By.id("searchQuery");
     private By resultTable = By.id("resultTable");
     private By resultTableRow = By.xpath("//table[@id='resultTable']//tbody//tr");
@@ -48,13 +38,7 @@ public class DocumentPage {
      * @throws InterruptedException
      */
     public String uploadDocumentAPI(String documentTableName) throws IOException, InterruptedException, ParseException {
-        //Retrieving information for creating the request body and the basic auth credentials
-        ConfigFileReader configFileReader = new ConfigFileReader();
-        APIRequest apiRequest = new APIRequest();
-        CommonMethods commonMethods = new CommonMethods();
-
         //The data is taken from userData.json file and we search for the project in admin tool
-        DataSetup dataSetup = new DataSetup();
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
 
         //Project Info
@@ -71,7 +55,6 @@ public class DocumentPage {
         Document document = dataStore.getDocument(documentTableName);
         document.setAttribute1(attributeMap.get("attribute1"));
         StringBuilder documentRequestBody = new StringBuilder(CommonMethods.convertMaptoJsonString(document));
-
 
         //Updating the request body according to the required template
         documentRequestBody.insert(0, "{ \"document\":");
@@ -114,7 +97,6 @@ public class DocumentPage {
      * @param identifier key to be searched
      */
     public void searchDocumentByQuery(WebDriver driver, String identifier) {
-        CommonMethods commonMethods = new CommonMethods();
         commonMethods.waitForElement(driver, searchDocumentQuery, 2);
         $(searchDocumentQuery).sendKeys(identifier);
         $(searchDocumentQuery).pressEnter();
@@ -127,7 +109,6 @@ public class DocumentPage {
      * @param documentNumber key to be searched
      */
     public void searchDocumentNo(WebDriver driver, String documentNumber) {
-        CommonMethods commonMethods = new CommonMethods();
         commonMethods.waitForElement(driver, searchDocumentByNo, 2);
         $(searchDocumentByNo).sendKeys(documentNumber);
         $(searchDocumentByNo).pressEnter();
@@ -149,7 +130,6 @@ public class DocumentPage {
      * @return
      */
     public List<Map<String, String>> returnTableData(WebDriver driver) {
-        CommonMethods commonMethods = new CommonMethods();
         return commonMethods.convertUITableToHashMap(driver, resultTable, resultTableRow);
 
     }
@@ -163,8 +143,8 @@ public class DocumentPage {
     public String searchProjectWrapper(String projectName) throws InterruptedException {
 
         //Retrieve the project id for a particular project
-        WebDriver driver = WebDriverRunner.getWebDriver();
-        CommonMethods commonMethods = new CommonMethods();
+        driver = WebDriverRunner.getWebDriver();
+
         String projectId =  commonMethods.searchProject(driver, projectName);
         driver.switchTo().defaultContent();
         return projectId;

@@ -12,6 +12,7 @@ import java.util.Map;
  * Author : vsingsi
  */
 public class UserTableConverter {
+    private User user = new User();
     /**
      * Function to convert the user data and stores it in a data store
      *
@@ -19,8 +20,6 @@ public class UserTableConverter {
      * @param dataTable contents of the data table
      */
     public void addUser(String name, DataTable dataTable) {
-
-        User user = new User();
         Map<String, String> hashUser = dataTable.transpose().asMap(String.class, String.class);
         user.setFullName(hashUser.get("Fullname"));
         user.setUserName(hashUser.get("Username"));

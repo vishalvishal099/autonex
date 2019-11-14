@@ -13,9 +13,10 @@ import java.io.IOException;
  * Author : susgopal
  */
 public class JIRAOperations {
-    ConfigFileReader configFileReader = new ConfigFileReader();
+    private ConfigFileReader configFileReader = new ConfigFileReader();
     private DataStore dataStore = new DataStore();
     private Ticket ticket = new Ticket();
+    private APIRequest apiRequest = new APIRequest();
 
     /**
      * Get the details of the jira ticket
@@ -24,7 +25,6 @@ public class JIRAOperations {
      * @return the response with the details of the ticket
      */
     public HttpResponse getJiraTicket(String ticketTableName) throws IOException {
-        APIRequest apiRequest = new APIRequest();
         //Parsing the data store and fetching the required table
         ticket = dataStore.getTicket(ticketTableName);
         String url = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/" + ticket.getTicketId();
@@ -54,7 +54,7 @@ public class JIRAOperations {
      * @return
      */
     public HttpResponse addComment(String ticketTableName, String comment) {
-        APIRequest apiRequest = new APIRequest();
+
         ticket = dataStore.getTicket(ticketTableName);
         String url = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/" + ticket.getTicketId() + "/comment";
         String basicAuth = "Basic " + configFileReader.returnSSOAuthString();

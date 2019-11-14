@@ -1,13 +1,9 @@
 package com.oracle.babylon.pages.Project;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.Utils.helper.CommonMethods;
-import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
-import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Project;
-import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -15,7 +11,8 @@ import static com.codeborne.selenide.Selenide.$;
 /**
  * Class to perform some operations on the Project page
  */
-public class ProjectPage {
+public class ProjectPage extends Navigator{
+
     //Initialization of web elements
     private By projectNameTxtBox = By.name("ProjectName");
     private By projectShortNameTxtBox = By.name("ProjectShortName");
@@ -38,7 +35,7 @@ public class ProjectPage {
      * Method to fill up the project fields in the ui
      */
     public void fillUpProjectFields() {
-        DataStore dataStore = new DataStore();
+
 
         Project project = dataStore.getProjectInfo("project");
         $(projectNameTxtBox).sendKeys(project.getProjectName());
@@ -70,16 +67,12 @@ public class ProjectPage {
      */
     public void enterProjectDetailsToFile() throws Exception {
         //Fetch the project id from the admin page
-        DataStore dataStore = new DataStore();
         Project project = dataStore.getProjectInfo("project");
-        DataSetup dataSetup = new DataSetup();
-        ConfigFileReader configFileReader = new ConfigFileReader();
-
-        CommonMethods commonMethods = new CommonMethods();
-        WebDriver driver = WebDriverRunner.getWebDriver();
+        driver = WebDriverRunner.getWebDriver();
+        loginToServer(configFileReader.getAdminUsername(), configFileReader.getAdminPassword(), null);
+        driver = getMenuSubmenu( "Setup","Search");
         //Search for the project in the xoogle search page
         String projectId = commonMethods.searchProject(driver, project.getProjectName());
-
         //Matching the key in the json file and replacing the value with the value from the map
         String[] projectKeysList = {"project", "projectId"};
         dataSetup.writeIntoJson(projectKeysList, projectId, configFileReader.returnUserDataJsonFilePath());

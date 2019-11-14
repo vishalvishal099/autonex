@@ -14,18 +14,20 @@ import java.util.Map;
  * Author : susgopal
  */
 public class ProjectDataCreator {
+    private Project project = new Project();
+    private Faker faker = new Faker();
 
     /**
      * Function to create the project data using Faker class and set it to the Project pojo
+     *
      * @param projectMap
      */
-    public void generateProjectData(Map<String, String> projectMap){
-        Project project = new Project();
-        Faker faker = new Faker();
+    public void generateProjectData(Map<String, String> projectMap) {
+
 
         String projectName = faker.app().name();
         project.setProjectName(projectName);
-        project.setProjectShortName(projectName.substring(0,projectName.length()/2));
+        project.setProjectShortName(projectName.substring(0, projectName.length() / 2));
         project.setProjectCode(projectName);
         project.setProjectType(faker.commerce().department());
         project.setPrimaryRegisterType(projectMap.get("Primary_Register_Type"));
@@ -48,14 +50,5 @@ public class ProjectDataCreator {
         project.setProjectDescription(faker.book().title());
         //Store the values in the data store in the project table
         new DataStore().storeProjectInfo("project", project);
-    }
-
-
-    public static void main(String[] args){
-        Faker faker = new Faker();
-       // System.out.println(faker.ancient().hero());
-        //System.out.println(faker.artist().name());
-        System.out.println(faker.company().profession());
-
     }
 }

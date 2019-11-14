@@ -2,6 +2,7 @@ package com.oracle.babylon.Utils.helper;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.google.gson.Gson;
+import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminHome;
 import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Setup.EditPreferencesPage;
@@ -27,24 +28,17 @@ import static com.codeborne.selenide.Selenide.$;
  * Author : susgopal
  */
 public class CommonMethods {
-    //Initializing the Web Elements
-    By xoogleLabel = By.xpath("//td//label[text(),'Xoogle']");
-    By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
-    By primaryAttributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
-    By attributeAddButton = By.xpath("//button[@id='attributeBidi_PRIMARY_ATTRIBUTE_add']");
 
     /**
      * Takes the screenshot of the current browser window
      *
      * @param driver
-     * @param screenshotName filename of the screenshot
      * @throws IOException
      */
-    public static void takeSnapshot(WebDriver driver, String screenshotName) throws IOException {
+    public static byte[] takeSnapshot(WebDriver driver) throws IOException {
         TakesScreenshot screenshot = ((TakesScreenshot) driver);
-        File screenshotFile = screenshot.getScreenshotAs(OutputType.FILE);
-        File destinationFile = new File(System.getProperty("user.dir") + "/target/cucumber-reports/screenshots/" + screenshotName + ".png");
-        FileUtils.copyFile(screenshotFile, destinationFile);
+        final byte[] screenshotBytes= screenshot.getScreenshotAs(OutputType.BYTES);
+        return screenshotBytes;
     }
 
     /**
@@ -123,38 +117,6 @@ public class CommonMethods {
      * }
      */
 
-    /**
-     * Method to navigate to the sub menu
-     *
-     * @param driver
-     * @param menuText    text for the menu item to be selected
-     * @param subMenuText text for the sub menu item to be selected
-     * @param frameText   select the frame text to be switched to
-     * @return the driver
-     */
-    public WebDriver selectSubMenu(WebDriver driver, String menuText, String subMenuText, String frameText) {
-        Navigator navigator = new Navigator();
-        driver.switchTo().defaultContent();
-        navigator.getMenuSubmenu(menuText, subMenuText);
-        return driver;
-    }
-
-    /**
-     * Method to navigate to the sub menu in the Admin tool
-     *
-     * @param driver
-     * @param menuText    text for the menu item to be selected
-     * @param subMenuText text for the sub menu item to be selected
-     * @param frameText   select the frame text to be switched to
-     * @return the driver
-     */
-    public WebDriver selectSubMenuAdmin(WebDriver driver, String menuText, String subMenuText, String frameText) {
-        Navigator navigator = new Navigator();
-        driver.switchTo().defaultContent();
-        navigator.getMenuSubmenuAdmin(menuText, subMenuText);
-        return driver;
-    }
-
 
     /**
      * Method to convert the API response to the string that can be parsed
@@ -197,10 +159,6 @@ public class CommonMethods {
      * @return project id
      */
     public String searchProject(WebDriver driver, String projectName) throws InterruptedException {
-        Navigator navigator = new Navigator();
-        navigator.loginAsAdmin();
-        CommonMethods commonMethods = new CommonMethods();
-        driver = commonMethods.selectSubMenu(driver, "Setup","Search", "frameMain");
         AdminSearch adminSearch = new AdminSearch(driver);
         return adminSearch.returnResultId(projectName);
     }
@@ -238,8 +196,6 @@ public class CommonMethods {
                 tableHashMap.put(columnHeader, rows.get(i));
                 i++;
             }
-
-
             listMap.add(tableHashMap);
         }
         return listMap;
@@ -289,52 +245,6 @@ public class CommonMethods {
         return rowCellData;
     }
 
-
-    /**
-     * Function to select the field attribute*
-     *
-     * @param attributeIdentifier key to be searched
-     * @param value the value that needs to be selected
-     */
-    public void selectAttribute(String attributeIdentifier, String value) {
-        WebDriver driver = WebDriverRunner.getWebDriver();
-        //Selecting attribute from the left panel to the right panel.Click on OK after it is done.
-        $(By.xpath("//tr[td[label[contains(text(),'" + attributeIdentifier + "')]]]/td[@class='contentcell']/div")).click();
-        CommonMethods commonMethods = new CommonMethods();
-        driver = commonMethods.waitForElement(driver, (primaryAttributeLeftPane));
-        Select select = new Select(driver.findElement(primaryAttributeLeftPane));
-        driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
-        select.selectByVisibleText(value);
-        driver = commonMethods.waitForElement(driver, attributeAddButton);
-        $(attributeAddButton).click();
-        driver = commonMethods.waitForElement(driver, By.xpath("//button[@id='attributePanel-commit' and @title='OK']"));
-        selectAttributeClickOK();
-    }
-
-    /**
-     * Function to select any attribute already present in the server
-     * @param attributeIdentifier
-     */
-    public void selectDefaultAttribute(String attributeIdentifier){
-        WebDriver driver = WebDriverRunner.getWebDriver();
-        //Selecting attribute from the left panel to the right panel.Click on OK after it is done.
-        $(By.xpath("//tr[td[label[contains(text(),'" + attributeIdentifier + "')]]]/td[@class='contentcell']/div")).click();
-        CommonMethods commonMethods = new CommonMethods();
-        driver = commonMethods.waitForElement(driver, (primaryAttributeLeftPane));
-        Select select = new Select(driver.findElement(primaryAttributeLeftPane));
-        select.selectByIndex(0);
-        $(attributeAddButton).click();
-        commonMethods.waitForElement(driver, By.xpath("//button[@id='attributePanel-commit' and @title='OK']"));
-        selectAttributeClickOK();
-    }
-
-    /*
-    Method to select the ok button when selecting the attribute value
-     */
-    public void selectAttributeClickOK() {
-        $(attributeClickOk).click();
-    }
-
     /**
      * Function to validate if the attribute with a certain value is present
      *
@@ -342,7 +252,7 @@ public class CommonMethods {
      * @param attribute attribute to validate
      * @return the status of the validation
      */
-    public boolean isAttributePresent(By by, String attribute) {
+    public boolean isElementAttributePresent(By by, String attribute) {
         String value = $(by).getAttribute(attribute);
         if (value!=null && value.equals("true")) {
             return true;
@@ -356,7 +266,7 @@ public class CommonMethods {
      * @param attribute
      * @return
      */
-    public String returnAttributeValue(By by, String attribute){
+    public String returnElementAttributeValue(By by, String attribute){
         return $(by).getAttribute(attribute);
     }
 

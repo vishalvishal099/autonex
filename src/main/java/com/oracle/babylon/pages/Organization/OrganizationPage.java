@@ -1,22 +1,18 @@
 package com.oracle.babylon.pages.Organization;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.Utils.helper.CommonMethods;
-import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
-import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Organization;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
-import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class OrganizationPage {
+public class OrganizationPage extends Navigator {
 
     //Initialization of the Web Elements
     private By orgNameTxtBox = By.name("ORG_NAME");
@@ -45,15 +41,13 @@ public class OrganizationPage {
      */
     public void fillOrganizationDetails() throws InterruptedException {
         //Initialization of references
-        WebDriver driver = WebDriverRunner.getWebDriver();
-        DataStore dataStore = new DataStore();
-        CommonMethods commonMethods = new CommonMethods();
+        this.driver = WebDriverRunner.getWebDriver();
 
         //Get Organization and User pojos
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
 
-        commonMethods.waitForElement(driver, orgNameTxtBox, 3);
+        commonMethods.waitForElement(this.driver, orgNameTxtBox, 3);
         //Filling up the organization fields in UI by using Selenide
         $(orgNameTxtBox).sendKeys(organization.getOrganizationName());
         $(addressTxtBox).sendKeys(organization.getAddress());
@@ -75,7 +69,7 @@ public class OrganizationPage {
         $(acceptTermsChkBox).click();
         Thread.sleep(3000);
         $(registerBtn).click();
-        commonMethods.waitForElement(driver, thankYouMessage);
+        commonMethods.waitForElement(this.driver, thankYouMessage);
         $(thankYouMessage).isDisplayed();
     }
 
@@ -86,12 +80,8 @@ public class OrganizationPage {
      * @throws ParseException
      */
     public User enterOrgUserDetailsToFile() throws IOException, ParseException {
-        DataStore dataStore = new DataStore();
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
-        DataSetup dataSetup = new DataSetup();
-        ConfigFileReader configFileReader = new ConfigFileReader();
-
         String[] userKeyList = {"user", "username"};
         dataSetup.writeIntoJson(userKeyList, userInfo.getUserName(), configFileReader.returnUserDataJsonFilePath());
 

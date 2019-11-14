@@ -1,24 +1,22 @@
 package com.oracle.babylon.pages.User;
 
+import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import static com.codeborne.selenide.Selenide.$;
 import org.openqa.selenium.support.ui.Select;
-
 import java.util.Map;
+import static com.codeborne.selenide.Selenide.$;
 
 /**
  * Class to fill the details of the user during organization registration page
  * Author : susgopal
  */
-public class UserDetails {
+public class UserDetails extends Navigator {
 
     //Initialization of the Web Elements
     private By titleDrpDwn = By.id("userTitle");
     private By jobFunctionDrpDwn = By.id("jobFunction");
     private By job_title_txt_box = By.xpath("//div[@id='position']//input");
     private By saveBtn = By.id("btnSave");
-
 
     /**
      * Function to fill the details of the user

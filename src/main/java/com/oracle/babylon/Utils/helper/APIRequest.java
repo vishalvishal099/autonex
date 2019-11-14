@@ -17,6 +17,8 @@ import java.util.Base64;
  */
 public class APIRequest {
 
+    private HttpClient client = new DefaultHttpClient();
+
     /**
      * HTTPClient and HTTP Get clients are used to create a method for constructing and executing GET API Request
      *
@@ -26,7 +28,7 @@ public class APIRequest {
      */
     public HttpResponse getRequest(String url, String authorization) {
         try {
-            HttpClient client = new DefaultHttpClient();
+
             HttpGet getRequest = new HttpGet(url);
             getRequest.setHeader("Authorization", authorization);
             return client.execute(getRequest);
@@ -63,7 +65,6 @@ public class APIRequest {
 
     public HttpResponse postRequest(String url, String authorization, String contentType, String body) {
         try {
-            HttpClient client = new DefaultHttpClient();
             HttpPost postRequest = new HttpPost(url);
             postRequest.setHeader("Authorization", authorization);
             postRequest.setHeader("Content-Type", contentType);
@@ -89,11 +90,9 @@ public class APIRequest {
      */
     public HttpResponse deleteRequest(String url, String authorization) {
         try {
-            HttpClient client = new DefaultHttpClient();
             HttpDelete deleteRequest = new HttpDelete(url);
             deleteRequest.setHeader("Authorization", authorization);
             return client.execute(deleteRequest);
-
         } catch (ClientProtocolException cpe) {
             System.out.println("Error in client protocol");
             cpe.printStackTrace();
@@ -130,7 +129,6 @@ public class APIRequest {
         if (authorization != null) {
             return authorization;
         }
-        System.out.println("Failed to generate the auth string");
         return null;
     }
 }

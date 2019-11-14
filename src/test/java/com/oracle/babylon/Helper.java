@@ -39,18 +39,17 @@ public class Helper {
     public void tearDown(Scenario scenario)  throws IOException {
         WebDriver driver = WebDriverRunner.getWebDriver();
         if (scenario.isFailed()) {
-            String screenshotName = scenario.getName().replaceAll(" ", "_");
-            CommonMethods.takeSnapshot(driver, screenshotName);
+            scenario.embed(CommonMethods.takeSnapshot(driver),"image/png");
         }
-        closeBrowser();
+        closeBrowser(driver);
     }
 
     /**
      * Function to quit the browser
      */
-    public void closeBrowser() {
+    public void closeBrowser(WebDriver driver) {
 
-            WebDriverRunner.getWebDriver().quit();
+            driver.quit();
 
 
     }

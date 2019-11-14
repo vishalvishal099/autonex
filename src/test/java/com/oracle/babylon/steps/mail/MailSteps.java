@@ -12,6 +12,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.json.simple.parser.ParseException;
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
@@ -24,13 +25,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Author : vsinghsi
  */
 public class MailSteps {
-    InboxPage inboxPage = new InboxPage();
-    Navigator navigator = new Navigator();
-    ComposeMail composeMail = new ComposeMail();
+    private InboxPage inboxPage = new InboxPage();
+    private Navigator navigator = new Navigator();
+    private ComposeMail composeMail = new ComposeMail();
+    private DataSetup dataSetup = new DataSetup();
+    private ConfigFileReader configFileReader = new ConfigFileReader();
+    private EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
     static String mailNumber;
 
     /**
      * code to search the mail in the inbox
+     *
      * @param user
      * @param mailNumber
      */
@@ -44,6 +49,7 @@ public class MailSteps {
 
     /**
      * Code to verify if the mail is in the mail box
+     *
      * @param mailNumber
      * @throws Throwable
      */
@@ -57,6 +63,7 @@ public class MailSteps {
 
     /**
      * Code to compose a sample mail
+     *
      * @param user
      * @param data
      */
@@ -64,12 +71,13 @@ public class MailSteps {
     public void composeMailWith(String user, String data) {
         navigator.loginAsUser(composeMail, user, page -> {
             page.selectMenuSubMenu();
-           page.composeMail(user,data);
+            page.composeMail(user, data);
         });
     }
 
     /**
      * Code to send mail to a user
+     *
      * @param user2
      * @throws Throwable
      */
@@ -83,12 +91,13 @@ public class MailSteps {
 
     /**
      * Verify if the user has received the mail
+     *
      * @param user2
      * @throws Throwable
      */
     @Then("^verify \"([^\"]*)\" has received mail$")
     public void verifyHasReceivedMail(String user2) throws Throwable {
-        navigator.loginAsUser(inboxPage,user2, page ->{
+        navigator.loginAsUser(inboxPage, user2, page -> {
             page.selectMenuSubMenu();
             page.searchMailNumber(mailNumber);
             assertThat(page.searchResultCount()).isGreaterThan(0);
@@ -98,20 +107,16 @@ public class MailSteps {
 
     @When("Login and add a mail attribute \"([^\"]*)\"")
     public void loginAndAddAMailAttribute(String attributeNumber) throws IOException, ParseException {
-        ConfigFileReader configFileReader = new ConfigFileReader();
         //The data is taken from userData.json file and we search for the project in admin tool
-        DataSetup dataSetup = new DataSetup();
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
         Map<String, String> userMap = mapOfMap.get("user");
         //Project info
         Map<String, String> projectMap = mapOfMap.get("project");
         String projectName = projectMap.get("projectname");
         //Locking in the field labels
-        Navigator navigator = new Navigator();
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectName);
-        EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
-       WebDriver driver = editPreferencesPage.navigateEditPreferences();
-       String attributeValue = editPreferencesPage.createNewMailAttribute(attributeNumber, projectName);
+        editPreferencesPage.navigateEditPreferences();
+        String attributeValue = editPreferencesPage.createNewMailAttribute(attributeNumber, projectName);
         new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
     }
 }

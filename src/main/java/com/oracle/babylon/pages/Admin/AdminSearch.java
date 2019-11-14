@@ -1,23 +1,20 @@
 package com.oracle.babylon.pages.Admin;
 
-import com.oracle.babylon.Utils.helper.CommonMethods;
+import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+
 import static com.codeborne.selenide.Selenide.$;
 
 /**
  * Class file to contain all the function related to the Admin Xoogle Search Page
  * Author : susgopal
  */
-public class AdminSearch {
+public class AdminSearch extends Navigator {
 
     //Initialization the web elements
     private By xoogleLabel = By.xpath("//table[@class='formTable']//td//label[text()='Xoogle']");
     private By searchKeywords = By.name("SRCH_KEYWORDS");
-
-    //Initialization of objects and references
-    CommonMethods commonMethods = new CommonMethods();
-    WebDriver driver = null;
 
     public AdminSearch(WebDriver driver){
        this.driver = driver;

@@ -1,6 +1,7 @@
 package com.oracle.babylon.Utils.helper;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
@@ -15,10 +16,14 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
 public class Navigator {
-    private User user = null;
-    private DataStore dataStore = new DataStore();
-    private ConfigFileReader configFileReader = new ConfigFileReader();
-    private WebDriver driver;
+    protected User user = null;
+    protected DataStore dataStore = new DataStore();
+    protected ConfigFileReader configFileReader = new ConfigFileReader();
+    protected WebDriver driver = null;
+    protected CommonMethods commonMethods = new CommonMethods();
+    protected APIRequest apiRequest = new APIRequest();
+    protected DataSetup dataSetup = new DataSetup();
+
     private By avatar = By.xpath("//span[@class='nav-userAvatar']");
     private By usernameTxtBox = By.id("userName");
     private By passwordTxtBox = By.id("password");
@@ -30,6 +35,7 @@ public class Navigator {
     private By logOutNavigator = By.xpath("//span[@class='nav-userDetails']");
     private By logOffBtn = By.xpath("//a[@id='logoff']");
     private By registerLink = By.xpath("//a[text()='Register']");
+    private By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
 
 
 
@@ -47,7 +53,6 @@ public class Navigator {
         switchTo().defaultContent();
         if ($(avatar).isDisplayed()) {
             logout();
-            CommonMethods commonMethods = new CommonMethods();
             commonMethods.waitForElementExplicitly(2000);
             open(configFileReader.getApplicationUrl());
         } else {
@@ -60,10 +65,8 @@ public class Navigator {
 
     public <P> void loginToServer(String userName, String password, String projectName) {
         switchTo().defaultContent();
-        CommonMethods commonMethods = new CommonMethods();
         if ($(avatar).isDisplayed()) {
             logout();
-
             commonMethods.waitForElementExplicitly(2000);
             open(configFileReader.getApplicationUrl());
         } else {
@@ -71,31 +74,12 @@ public class Navigator {
         }
         enterCreds(userName, password);
         commonMethods.waitForElementExplicitly(2000);
-        if($(projectChangerSelect).isDisplayed()){
+        if(projectName!=null && $(projectChangerSelect).isDisplayed()){
             selectProject(projectName);
         } else{
             System.out.println("No Projects available for the user");
         }
 
-    }
-
-    public <P> void loginAsAdmin(P page, Consumer<P> block) {
-
-        loginAsAdmin();
-        block.accept(page);
-    }
-
-    public <P> void loginAsAdmin() {
-        switchTo().defaultContent();
-        if ($(avatar).isDisplayed()) {
-            logout();
-            CommonMethods commonMethods = new CommonMethods();
-            commonMethods.waitForElementExplicitly(2000);
-            open(configFileReader.getApplicationUrl());
-        } else {
-            open(configFileReader.getApplicationUrl());
-        }
-        enterCreds(configFileReader.getAdminUsername(), configFileReader.getAdminPassword());
     }
 
     public <P> void on(P page, Consumer<P> block) {
@@ -111,8 +95,6 @@ public class Navigator {
 
 
     public void enterCreds(String username, String password){
-
-
         $(usernameTxtBox).setValue(username);
         $(passwordTxtBox).setValue(password);
         $(loginBtn).click();
@@ -120,7 +102,6 @@ public class Navigator {
     }
 
     public void selectProject(String projectName) {
-        CommonMethods commonMethods = new CommonMethods();
         commonMethods.waitForElement(driver, projectChangerSelect, 5);
         if ($(projectChangerSelect).text() == (projectName)) {
         } else
@@ -128,16 +109,22 @@ public class Navigator {
         $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
     }
 
-    public void getMenuSubmenu(String menu, String submenu) {
+    public WebDriver getMenuSubmenu(String menu, String submenu) {
+        driver = WebDriverRunner.getWebDriver();
+        driver.switchTo().defaultContent();
         $(By.xpath("//button[@class='uiButton navBarButton']//div[text()='" + menu + "']")).click();
         $(By.xpath("//div[@class='navBarPanel-menuItem' and contains(text(),'" + submenu + "' )]")).click();
         $(loadingProgressIcon).should(disappear);
+        return driver;
     }
 
-    public void getMenuSubmenuAdmin(String menu, String submenu) {
+    public WebDriver getMenuSubmenuAdmin(String menu, String submenu) {
+        driver = WebDriverRunner.getWebDriver();
+        driver.switchTo().defaultContent();
         $(By.xpath("//button[@class='uiButton navBarButton active']//div[text()='" + menu + "']")).click();
         $(By.xpath("//div[@class='navBarPanel-menuItem' and contains(text(),'" + submenu + "' )]")).click();
         $(loadingProgressIcon).should(disappear);
+        return driver;
     }
 
 
@@ -167,8 +154,6 @@ public class Navigator {
     public void logout() {
 
         $(logOutNavigator).click();
-        CommonMethods commonMethods = new CommonMethods();
-
         driver = commonMethods.waitForElement(driver, logOffBtn);
         $(logOffBtn).click();
         $(loadingProgressIcon).should(disappear);
@@ -183,5 +168,12 @@ public class Navigator {
 
     public void openAconexUrl(){
         open(configFileReader.getApplicationUrl());
+    }
+
+    /*
+   Method to select the ok button when selecting the attribute value
+    */
+    public void selectAttributeClickOK() {
+        $(attributeClickOk).click();
     }
 }

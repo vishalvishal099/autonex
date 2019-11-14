@@ -18,11 +18,11 @@ import java.util.Map;
  * Author : susgopal
  */
 public class DocumentTableConverter {
-
+    private  Document document = new Document();
 
     public void createDocumentData(String name, DataTable dataTable) {
         //Object Initialization
-        Document document = new Document();
+
         Map<String, String> documentHashMap = dataTable.transpose().asMap(String.class, String.class);
         FakeData fakeData = new FakeData();
         Date date = new Date();
@@ -42,11 +42,5 @@ public class DocumentTableConverter {
         document.setRevisionDate(dateFormat.format(date));
         document.setPrintSize("A4");
         new DataStore().uploadDocument(name, document);
-    }
-
-
-    public static void main(String[] args) {
-        Faker faker = new Faker();
-        System.out.println();
     }
 }
