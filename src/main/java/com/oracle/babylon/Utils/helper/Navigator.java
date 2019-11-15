@@ -1,6 +1,7 @@
 package com.oracle.babylon.Utils.helper;
 
 import com.codeborne.selenide.WebDriverRunner;
+import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
@@ -15,32 +16,70 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
 
 public class Navigator {
-    private User user = null;
-    private DataStore dataStore = new DataStore();
-    private ConfigFileReader configFileReader = new ConfigFileReader();
-    private WebDriver driver;
+    protected User user = null;
+    protected DataStore dataStore = new DataStore();
+    protected ConfigFileReader configFileReader = new ConfigFileReader();
+    protected WebDriver driver = null;
+    protected CommonMethods commonMethods = new CommonMethods();
+    protected APIRequest apiRequest = new APIRequest();
+    protected DataSetup dataSetup = new DataSetup();
+
+    private By avatar = By.xpath("//span[@class='nav-userAvatar']");
+    private By usernameTxtBox = By.id("userName");
+    private By passwordTxtBox = By.id("password");
+    private By loginBtn = By.id("login");
+    private By projectChangerSelect = By.id("projectChanger-name");
+    private By userDetails = By.xpath("//span[@class='nav-userDetails']");
+    private By loadingProgressIcon = By.cssSelector(".loading_progress");
+    private By loginFailureMessage = By.xpath("//li[@class='message warning']//div[text()='Your login name or password is incorrect. Check that caps lock is not on.']");
+    private By logOutNavigator = By.xpath("//span[@class='nav-userDetails']");
+    private By logOffBtn = By.xpath("//a[@id='logoff']");
+    private By registerLink = By.xpath("//a[text()='Register']");
+    private By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
+
+
 
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
     }
 
-    public <P> void visit(P page, String username, Consumer<P> block) {
+    public <P> void loginAsUser(P page, String username, Consumer<P> block) {
         user = dataStore.getUser(username);
-        visit(page, user.getUserName());
+        loginAsUser(user);
         block.accept(page);
     }
 
-    public <P> void visit(P page, String username) {
+    public <P> void loginAsUser(User user) {
         switchTo().defaultContent();
-        if ($(By.xpath("//span[@class='nav-userAvatar']")).isDisplayed()) {
+        if ($(avatar).isDisplayed()) {
             logout();
-            waitForElement();
+            commonMethods.waitForElementExplicitly(2000);
             open(configFileReader.getApplicationUrl());
         } else {
             open(configFileReader.getApplicationUrl());
         }
-        login(user);
-        selectProject();
+        enterCreds(user.getUserName(), user.getPassword().toString());
+
+        selectProject(user.getProject());
+    }
+
+    public <P> void loginToServer(String userName, String password, String projectName) {
+        switchTo().defaultContent();
+        if ($(avatar).isDisplayed()) {
+            logout();
+            commonMethods.waitForElementExplicitly(2000);
+            open(configFileReader.getApplicationUrl());
+        } else {
+            open(configFileReader.getApplicationUrl());
+        }
+        enterCreds(userName, password);
+        commonMethods.waitForElementExplicitly(2000);
+        if(projectName!=null && $(projectChangerSelect).isDisplayed()){
+            selectProject(projectName);
+        } else{
+            System.out.println("No Projects available for the user");
+        }
+
     }
 
     public <P> void on(P page, Consumer<P> block) {
@@ -50,32 +89,42 @@ public class Navigator {
     public void as(String username) {
         open(configFileReader.getApplicationUrl());
         user = dataStore.getUser(username);
-        login(user);
+        enterCreds(user.getUserName(), user.getPassword().toString());
     }
 
-    public void login(User user) {
-        $(By.id("userName")).setValue(user.getUserName());
-        $(By.id("password")).setValue(user.getPassword());
-        $(By.id("login")).click();
-        $(".loading_progress").should(disappear); // Waits until element disappears
+
+
+    public void enterCreds(String username, String password){
+        $(usernameTxtBox).setValue(username);
+        $(passwordTxtBox).setValue(password);
+        $(loginBtn).click();
+        $(".loading_progress").should(disappear);
     }
 
-    public void selectProject() {
-        if ($(By.id("projectChanger-name")).text() == (user.getProject().toString())) {
+    public void selectProject(String projectName) {
+        commonMethods.waitForElement(driver, projectChangerSelect, 5);
+        if ($(projectChangerSelect).text() == (projectName)) {
         } else
-            $(By.id("projectChanger-name")).click();
-        $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + user.getProject() + "']")).click();
+            $(projectChangerSelect).click();
+        $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
     }
 
-    public void switchToFrame(String frameId) {
+    public WebDriver getMenuSubmenu(String menu, String submenu) {
+        driver = WebDriverRunner.getWebDriver();
         driver.switchTo().defaultContent();
-        driver.switchTo().frame(driver.findElement(By.id(frameId)));
-    }
-
-    public void getMenuSubmenu(String menu, String submenu) {
         $(By.xpath("//button[@class='uiButton navBarButton']//div[text()='" + menu + "']")).click();
         $(By.xpath("//div[@class='navBarPanel-menuItem' and contains(text(),'" + submenu + "' )]")).click();
-        $(".loading_progress").should(disappear);
+        $(loadingProgressIcon).should(disappear);
+        return driver;
+    }
+
+    public WebDriver getMenuSubmenuAdmin(String menu, String submenu) {
+        driver = WebDriverRunner.getWebDriver();
+        driver.switchTo().defaultContent();
+        $(By.xpath("//button[@class='uiButton navBarButton active']//div[text()='" + menu + "']")).click();
+        $(By.xpath("//div[@class='navBarPanel-menuItem' and contains(text(),'" + submenu + "' )]")).click();
+        $(loadingProgressIcon).should(disappear);
+        return driver;
     }
 
 
@@ -87,29 +136,44 @@ public class Navigator {
     }
 
     public void verifyUserPresent() {
-        $(By.xpath("//span[@class='nav-userDetails']")).shouldHave(text(user.getFullName()));
+        $(userDetails).shouldHave(text(user.getFullName()));
     }
 
     public void verifyUserNotPresent() {
-        $(By.xpath("//span[@class='nav-userDetails']")).shouldNot(text(user.getFullName()));
+        $(userDetails).shouldNot(text(user.getFullName()));
     }
 
     public void verifyLoginFailed() {
-        $(By.xpath("//li[@class='message warning']//div[text()='Your login name or password is incorrect. Check that caps lock is not on.']")).shouldHave(text("Your login name or password is incorrect. Check that caps lock is not on."));
+        $(loginFailureMessage).shouldHave(text("Your login name or password is incorrect. Check that caps lock is not on."));
     }
 
-    public void waitForElement() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
+    /**
+     * Function to logout from the server.
+     */
     public void logout() {
-        $(By.xpath("//span[@class='nav-user-chevron']")).click();
-        waitForElement();
-        $(By.xpath("//a[@id='logoff'] ")).click();
-        $(".loading_progress").should(disappear);
+
+        $(logOutNavigator).click();
+        driver = commonMethods.waitForElement(driver, logOffBtn);
+        $(logOffBtn).click();
+        $(loadingProgressIcon).should(disappear);
+    }
+
+    /**
+     * Function to click on Register link to create a organization
+     */
+    public void clickRegisterLink(){
+        $(registerLink).click();
+    }
+
+    public void openAconexUrl(){
+        open(configFileReader.getApplicationUrl());
+    }
+
+    /*
+   Method to select the ok button when selecting the attribute value
+    */
+    public void selectAttributeClickOK() {
+        $(attributeClickOk).click();
     }
 }

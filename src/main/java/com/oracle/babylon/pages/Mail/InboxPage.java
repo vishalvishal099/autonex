@@ -3,50 +3,48 @@ package com.oracle.babylon.pages.Mail;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.util.stream.Collectors;
-
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 
-public class InboxPage {
-    WebDriver driver = WebDriverRunner.getWebDriver();
-    Navigator navigator = new Navigator();
+/**
+ * Class to hold the functions related to the the mail inbox page
+ * Author : visinghsi
+ */
+public class InboxPage extends MailPage {
 
+    public InboxPage(){
+        this.driver = WebDriverRunner.getWebDriver();
+    }
+
+    //Initializing the web elements
+    private By mailNumberTextBox = By.id("rawQueryText");
+    private By searchBtn = By.xpath("//button[@title='Search']");
+    private By loadingIcon = By.cssSelector(".loading_progress");
+
+    /**
+     * Function to navigate to a sub menu from the Aconex home page
+     */
     public void selectMenuSubMenu() {
-        navigator.getMenuSubmenu("Mail", "Inbox");
-        navigator.switchToFrame("frameMain");
+        getMenuSubmenu("Mail", "Inbox");
+        this.driver = commonMethods.switchToFrame(driver, "frameMain");
     }
 
+    /**
+     * Search the mail using the mail number key
+     *
+     * @param mail_number
+     */
     public void searchMailNumber(String mail_number) {
-        $(By.id("rawQueryText")).sendKeys(mail_number);
-        $(By.xpath("//button[@title='Search']")).click();
-        waitForSearchButtonForBeActive();
-        $(".loading_progress").should(disappear);
+
+        $(mailNumberTextBox).sendKeys(mail_number);
+        commonMethods.waitForElementExplicitly(2000);
+        $(searchBtn).click();
+        //Wait for the results to be retrieved
+        By mailNumberSpan = By.xpath("//span[text()='" + mail_number + "']");
+        commonMethods.waitForElement(this.driver, mailNumberSpan, 5000);
+        $(loadingIcon).should(disappear);
 
     }
 
-    private void waitForSearchButtonForBeActive() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void waitForSearchLoadingToComplete() {
-        WebDriverWait wait = new WebDriverWait(driver, 30);
-        wait.until(ExpectedConditions.invisibilityOfElementWithText(By.cssSelector("div[ng-show='searchInProgress']"), "Loading"));
-    }
-
-    public int searchResultCount() {
-        return driver.findElements(By.cssSelector(".dataRow")).stream().filter(e -> e.isDisplayed()).collect(Collectors.toList()).size();
-    }
-
-    public String getMailNumber(){
-        return driver.findElement(By.xpath("//td[@class='column_documentNo']")).getText();
-    }
 }

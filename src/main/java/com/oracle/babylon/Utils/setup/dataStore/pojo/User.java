@@ -1,5 +1,9 @@
 package com.oracle.babylon.Utils.setup.dataStore.pojo;
 
+/**
+ * Class contains fields related to a User, along with the setters and getters for the fields
+ * Author : vsinghsi
+ */
 public class User {
 
     private String fullName;
