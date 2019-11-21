@@ -32,8 +32,6 @@ public class DirectoryPage extends Navigator {
      * @param divisionVar
      */
     public void fillFieldsAndSearch(String groupNameVar, String familyNameVar, String organizatioNameVar, String jobTitleVar, String divisionVar){
-        commonMethods.switchToFrame(WebDriverRunner.getWebDriver(), "frameMain");
-
         //Checking if we need to set each text box value
         if(groupNameVar!=null){
             $(groupName).sendKeys(groupNameVar);

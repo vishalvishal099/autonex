@@ -60,7 +60,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
     When Login and create a mail of type transmittal, send to user
       | Full_Name    | Mail_Attribute | Comments                     |
       | Mark Perkins | default        | Creating a basic transmittal |
-    Then verify if transmittal is created
+    Then verify if "Transmittal" is created
 
 
 
