@@ -37,7 +37,10 @@ public class TransmittalPage extends Navigator {
         Map<String, String> mailAttributeMap = mapOfMap.get("mailattribute");
         $(directoryBtn).click();
         commonMethods.clickListToChange(By.xpath("//h1[text()='Search - Directory']"), "Global");
-        directoryPage.searchName(featureDataMap.get("Full_Name"));
+        String full_name = featureDataMap.get("Full_Name");
+        String groupName = full_name.split(" ")[0];
+        String familyName = full_name.split(" ")[1];
+        directoryPage.fillFieldsAndSearch(groupName, familyName, null, null, null);
         directoryPage.selectToRecipient();
         directoryPage.clickOkBtn();
         $(subject).sendKeys(featureDataMap.get("Comments") );

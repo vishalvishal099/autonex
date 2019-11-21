@@ -36,62 +36,22 @@ public class DirectoryPage extends Navigator {
 
         //Checking if we need to set each text box value
         if(groupNameVar!=null){
-            fillGroupName(groupNameVar);
+            $(groupName).sendKeys(groupNameVar);
         }
         if(familyNameVar!=null){
-            fillFamilyName(familyNameVar);
+            $(familyName).sendKeys(familyNameVar);
         }
         if(organizatioNameVar!=null){
-            fillOrganizationName(organizatioNameVar);
+            $(organizationName).sendKeys(organizatioNameVar);
         }
         if(jobTitleVar!=null){
-            fillJobTitle(jobTitleVar);
+            $(jobTitle).sendKeys(jobTitleVar);
         }
         if(divisionVar!=null){
-            fillDivision(divisionVar);
+            $(division).sendKeys(divisionVar);
         }
         searchBtnClick();
 
-    }
-
-    /**
-     * Method to enter the group name in its respective text box
-     * @param name
-     */
-    public void fillGroupName(String name){
-        $(groupName).sendKeys(name);
-    }
-
-    /**
-     * Method to enter the family name in its respective text box
-     * @param name
-     */
-    public void fillFamilyName(String name){
-        $(familyName).sendKeys(name);
-    }
-
-    /**
-     * Method to enter the organization name in its respective text box
-     * @param orgName
-     */
-    public void fillOrganizationName(String orgName){
-        $(organizationName).sendKeys(orgName);
-    }
-
-    /**
-     * Method to enter the division name in its respective text box
-     * @param divisionName
-     */
-    public void fillDivision(String divisionName){
-        $(division).sendKeys(divisionName);
-    }
-
-    /**i
-     * Method to enter the title n its respective text box
-     * @param title
-     */
-    public void fillJobTitle(String title){
-        $(jobTitle).sendKeys(title);
     }
 
     /**
@@ -123,63 +83,6 @@ public class DirectoryPage extends Navigator {
         clickToBtn();
     }
 
-    /**
-     * Method to search the directory when group name is provided as input
-     * @param groupName
-     */
-    public void searchGroupName(String groupName){
-        fillGroupName(groupName);
-        searchBtnClick();
-    }
-
-    /**
-     * Method to search the directory when family name is provided as input
-     * @param familyName
-     */
-    public void searchFamilyName(String familyName){
-        fillFamilyName(familyName);
-        searchBtnClick();
-    }
-
-    /**
-     * Method to search the directory when organization name is provided as input
-     * @param organizationName
-     */
-    public void searchOrganizationName(String organizationName){
-        fillOrganizationName(organizationName);
-        searchBtnClick();
-    }
-
-    /**
-     * Method to search the directory when job title is provided as input
-     * @param jobTitle
-     */
-    public void searchJobTitle(String jobTitle){
-        fillJobTitle(jobTitle);
-        searchBtnClick();
-
-    }
-
-    /**
-     * Method to search the directory when division is provided as input
-     * @param divisionName
-     */
-    public void searchDivision(String divisionName){
-        fillDivision(divisionName);
-        searchBtnClick();
-    }
-
-    /**
-     * Method to obtain group name and family name from full name provided
-     * @param fullName
-     */
-    public void searchName(String fullName){
-        String groupName = fullName.split(" ")[0];
-        String familyName = fullName.split(" ")[1];
-        fillGroupName(groupName);
-        fillFamilyName(familyName);
-        searchBtnClick();
-    }
 
     /**
      * Method to click on the OK Button
