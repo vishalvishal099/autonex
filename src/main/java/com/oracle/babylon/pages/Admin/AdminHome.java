@@ -8,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class file to contain all the functions related the home page when logged in as Administrator
+ * Class file to contain all the methods related the home page when logged in as Administrator
  * Author : susgopal
  */
 public class AdminHome extends Navigator {

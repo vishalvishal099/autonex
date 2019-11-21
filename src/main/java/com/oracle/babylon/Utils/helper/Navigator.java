@@ -5,10 +5,13 @@ import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
+import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.io.IOException;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.codeborne.selenide.Condition.disappear;
@@ -118,16 +121,6 @@ public class Navigator {
         return driver;
     }
 
-    public WebDriver getMenuSubmenuAdmin(String menu, String submenu) {
-        driver = WebDriverRunner.getWebDriver();
-        driver.switchTo().defaultContent();
-        $(By.xpath("//button[@class='uiButton navBarButton active']//div[text()='" + menu + "']")).click();
-        $(By.xpath("//div[@class='navBarPanel-menuItem' and contains(text(),'" + submenu + "' )]")).click();
-        $(loadingProgressIcon).should(disappear);
-        return driver;
-    }
-
-
     public WebElement menuFinder(String css, String text) {
         return driver.findElements(By.cssSelector(css)).stream()
                 .filter(e -> e.getText().equalsIgnoreCase(text) && e.isDisplayed() && e.isEnabled())
@@ -136,7 +129,16 @@ public class Navigator {
     }
 
     public void verifyUserPresent() {
-        $(userDetails).shouldHave(text(user.getFullName()));
+        try{
+            Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
+            Map<String, String> userMap = mapOfMap.get("user1");
+            $(userDetails).shouldHave(text(userMap.get("firstname")));
+        } catch (ParseException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 
     public void verifyUserNotPresent() {

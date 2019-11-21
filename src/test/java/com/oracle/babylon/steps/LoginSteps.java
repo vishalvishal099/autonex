@@ -18,9 +18,10 @@ public class LoginSteps {
     }
 
     @Then("^user should logged into aconex$")
-    public void userShouldLoggedIntoAconex() throws Throwable {
+    public void userShouldLoggedIntoAconex() {
         navigator.on(navigator, page -> {
-            page.verifyUserPresent();
+                page.verifyUserPresent();
+
         });
 
     }
@@ -45,7 +46,7 @@ public class LoginSteps {
     }
 
     @Then("views the home page")
-    public void viewsTheHomePage() {
-        navigator.verifyUserPresent();
+    public void viewsTheHomePage(){
+            navigator.verifyUserPresent();
     }
 }

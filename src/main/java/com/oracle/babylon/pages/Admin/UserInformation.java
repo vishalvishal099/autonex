@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class file that contains function to perform any operations on the user
+ * Class file that contains method to perform any operations on the user
  * Author : susgopal
  */
 public class UserInformation extends Navigator {

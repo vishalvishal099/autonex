@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class to hold the functions related to the the mail inbox page
+ * Class to hold the methods related to the the mail inbox page
  * Author : visinghsi
  */
 public class InboxPage extends MailPage {

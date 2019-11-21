@@ -35,8 +35,6 @@ public class ProjectPage extends Navigator{
      * Method to fill up the project fields in the ui
      */
     public void fillUpProjectFields() {
-
-
         Project project = dataStore.getProjectInfo("project");
         $(projectNameTxtBox).sendKeys(project.getProjectName());
         $(projectShortNameTxtBox).sendKeys(project.getProjectShortName());
@@ -74,9 +72,9 @@ public class ProjectPage extends Navigator{
         //Search for the project in the xoogle search page
         String projectId = commonMethods.searchProject(driver, project.getProjectName());
         //Matching the key in the json file and replacing the value with the value from the map
-        String[] projectKeysList = {"project", "projectId"};
+        String[] projectKeysList = {"project1", "projectId"};
         dataSetup.writeIntoJson(projectKeysList, projectId, configFileReader.returnUserDataJsonFilePath());
-        projectKeysList = new String[]{"project", "projectname"};
+        projectKeysList = new String[]{"project1", "projectname"};
         dataSetup.writeIntoJson(projectKeysList, project.getProjectName(), configFileReader.returnUserDataJsonFilePath());
     }
 

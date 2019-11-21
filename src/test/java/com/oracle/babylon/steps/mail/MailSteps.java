@@ -109,14 +109,15 @@ public class MailSteps {
     public void loginAndAddAMailAttribute(String attributeNumber) throws IOException, ParseException {
         //The data is taken from userData.json file and we search for the project in admin tool
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
+        Map<String, String> userMap = mapOfMap.get("user1");
         //Project info
-        Map<String, String> projectMap = mapOfMap.get("project");
+        Map<String, String> projectMap = mapOfMap.get("project1");
         String projectName = projectMap.get("projectname");
         //Locking in the field labels
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectName);
         editPreferencesPage.navigateEditPreferences();
         String attributeValue = editPreferencesPage.createNewMailAttribute(attributeNumber, projectName);
+        attributeNumber = attributeNumber.replace(" ", "");
         new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
     }
 }

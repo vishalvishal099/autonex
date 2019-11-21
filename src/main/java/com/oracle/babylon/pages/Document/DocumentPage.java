@@ -16,16 +16,16 @@ import java.util.Map;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class file that contains functions related to the operations for Documents
+ * Class file that contains methods related to the operations for Documents
  * Author : susgopal
  */
 public class DocumentPage extends Navigator{
 
     //Initialization of web elements
-    private By searchDocumentQuery = By.id("searchQuery");
-    private By resultTable = By.id("resultTable");
+    private By searchDocumentQuery = By.xpath("//input[@id='searchQuery']");
+    private By resultTable = By.xpath("//table[@id='resultTable']");
     private By resultTableRow = By.xpath("//table[@id='resultTable']//tbody//tr");
-    private By searchDocumentByNo = By.id("docno");
+    private By searchDocumentByNo = By.xpath("//input[@id='docno']");
 
     private By editPreferencesLabel = By.xpath("//h1[text()='Edit Preferences']");
 
@@ -42,16 +42,20 @@ public class DocumentPage extends Navigator{
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
 
         //Project Info
-        Map<String, String> projectMap = mapOfMap.get("project");
+        Map<String, String> projectMap = mapOfMap.get("project1");
         String projectName = projectMap.get("projectname");
-        String projectId = searchProjectWrapper(projectName);
+
 
         //Generating the basic auth for the api
-        Map<String, String> userMap = mapOfMap.get("user");
+        Map<String, String> userMap = mapOfMap.get("user1");
         String basicAuth = apiRequest.basicAuthGenerator(userMap.get("username"), userMap.get("password"));
 
+        //login as admin
+        loginToServer(configFileReader.getAdminUsername(),configFileReader.getAdminPassword(), null);
+        getMenuSubmenu("Setup", "Search");
+        String projectId = searchProjectWrapper(projectName);
         //Creating the request body template
-        Map<String, String> attributeMap = mapOfMap.get("attribute");
+        Map<String, String> attributeMap = mapOfMap.get("docattribute");
         Document document = dataStore.getDocument(documentTableName);
         document.setAttribute1(attributeMap.get("attribute1"));
         StringBuilder documentRequestBody = new StringBuilder(CommonMethods.convertMaptoJsonString(document));
@@ -105,11 +109,11 @@ public class DocumentPage extends Navigator{
     /**
      * Search the document by using the document number
      *
-     * @param driver
      * @param documentNumber key to be searched
      */
-    public void searchDocumentNo(WebDriver driver, String documentNumber) {
-        commonMethods.waitForElement(driver, searchDocumentByNo, 2);
+    public void searchDocumentNo( String documentNumber) throws InterruptedException {
+        driver = WebDriverRunner.getWebDriver();
+        commonMethods.waitForElement(driver, searchDocumentByNo);
         $(searchDocumentByNo).sendKeys(documentNumber);
         $(searchDocumentByNo).pressEnter();
     }
@@ -119,7 +123,9 @@ public class DocumentPage extends Navigator{
      *
      * @return
      */
-    public int getTableSize() {
+    public int getTableSize() throws InterruptedException {
+
+        $(resultTable).scrollTo();
         return Integer.parseInt($(resultTable).findElement(By.xpath("//tbody//input[@name='totalDocsInPage']")).getAttribute("value"));
     }
 

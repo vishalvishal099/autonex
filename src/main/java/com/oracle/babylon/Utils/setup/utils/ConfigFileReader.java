@@ -34,7 +34,7 @@ public class ConfigFileReader {
         }
     }
 
-    //Each field in the config file has a respective Getter function
+    //Each field in the config file has a respective Getter method
     public String getDriverPath() {
         String driverPath = properties.getProperty("DriverPath");
         if (driverPath != null) return driverPath;

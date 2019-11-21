@@ -74,7 +74,7 @@ public class OrganizationSteps {
     @Then("user is able to login to application")
     public void userIsAbleToLoginToApplication() throws IOException, ParseException {
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
+        Map<String, String> userMap = mapOfMap.get("user1");
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), null);
 
     }

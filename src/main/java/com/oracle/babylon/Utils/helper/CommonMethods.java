@@ -79,7 +79,8 @@ public class CommonMethods {
      * @return
      */
     public WebDriver switchToFrame(WebDriver driver, String frameId) {
-        driver.switchTo().frame(driver.findElement(By.id(frameId)));
+        waitForElement(driver, By.xpath("//iframe[@id='"+ frameId + "']"));
+        driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@id='"+ frameId + "']")));
         return driver;
     }
 
@@ -272,13 +273,25 @@ public class CommonMethods {
 
 
     /**
-     * Function to select the link that we need to change the settings for
+     * Function to select the hyperlink 'a' tag that we need to change the settings for
      *
      * @param linkText
      */
-    public void clickLinkToChange(By pageHeader, String linkText) {
+    public void clickHyperLinkToChange(By pageHeader, String linkText) {
         $(pageHeader).isDisplayed();
         $(By.xpath("//a[text()='" + linkText + "']")).click();
+
+    }
+
+
+    /**
+     * Function to select the attribute 'li' that we need to change the settings for
+     *
+     * @param linkText
+     */
+    public void clickListToChange(By pageHeader, String linkText) {
+        $(pageHeader).isDisplayed();
+        $(By.xpath("//li[text()='" + linkText + "']")).click();
 
     }
 

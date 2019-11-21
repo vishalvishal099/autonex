@@ -82,16 +82,16 @@ public class OrganizationPage extends Navigator {
     public User enterOrgUserDetailsToFile() throws IOException, ParseException {
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
-        String[] userKeyList = {"user", "username"};
+        String[] userKeyList = {"user1", "username"};
         dataSetup.writeIntoJson(userKeyList, userInfo.getUserName(), configFileReader.returnUserDataJsonFilePath());
 
-        userKeyList = new String[]{"user", "password"};
+        userKeyList = new String[]{"user1", "password"};
         dataSetup.writeIntoJson(userKeyList, userInfo.getPassword(), configFileReader.returnUserDataJsonFilePath());
 
-        userKeyList = new String[]{"user", "firstname"};
+        userKeyList = new String[]{"user1", "firstname"};
         dataSetup.writeIntoJson(userKeyList, userInfo.getFullName(), configFileReader.returnUserDataJsonFilePath());
 
-        String[] orgList = {"organization", "orgname"};
+        String[] orgList = {"organization1", "orgname"};
         dataSetup.writeIntoJson(orgList, organization.getOrganizationName(), configFileReader.returnUserDataJsonFilePath());
         return userInfo;
 

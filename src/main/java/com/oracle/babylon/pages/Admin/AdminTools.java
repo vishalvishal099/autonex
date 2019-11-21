@@ -11,7 +11,7 @@ import java.util.Set;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class that contains functions to manage configurations
+ * Class that contains methods to manage configurations
  * Author : susgopal
  */
 public class AdminTools extends Navigator{
@@ -74,12 +74,11 @@ public class AdminTools extends Navigator{
 
     /**
      * Navigate to the tools page
-     * @param driver
      * @return
      */
-    public WebDriver navigateToTools(WebDriver driver) {
+    public WebDriver navigateToTools() {
 
-        return getMenuSubmenuAdmin( "Setup", "Tools");
+        return getMenuSubmenu( "Setup", "Tools");
     }
 
 

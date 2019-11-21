@@ -25,6 +25,7 @@ public class ProjectSteps {
     private CommonMethods commonMethods = new CommonMethods();
     private ProjectPage projectPage = new ProjectPage();
     private ProjectDataCreator projectDataCreator = new ProjectDataCreator();
+    private Project project = null;
 
     /**
      * Code that contains a series of steps to create a project
@@ -35,9 +36,9 @@ public class ProjectSteps {
     public void weLoginAndCreateProject(DataTable dataTable) throws Exception {
         //Retrieve the data from userData.json file
         Map<String, Map<String,String>> mapOfMap =  dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
+        Map<String, String> userMap = mapOfMap.get("user1");
         //Get project fields from the project data table
-        Project project = dataStore.getProjectInfo("project");
+
         Map<String, String> projectInfoMap = dataTable.asMaps().get(0);
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), null);
 
@@ -49,6 +50,7 @@ public class ProjectSteps {
         projectPage.fillUpProjectFields();
         //Update the project details in the userData.json
         projectPage.enterProjectDetailsToFile();
+        project = dataStore.getProjectInfo("project");
         navigator.loginToServer(userMap.get("username"), userMap.get("password"), project.getProjectName());
     }
 }

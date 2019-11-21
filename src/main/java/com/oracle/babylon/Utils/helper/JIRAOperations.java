@@ -9,7 +9,7 @@ import org.apache.http.HttpResponse;
 import java.io.IOException;
 
 /**
- * Class that contains all the function related to the operations that can be performed in JIRA
+ * Class that contains all the method related to the operations that can be performed in JIRA
  * Author : susgopal
  */
 public class JIRAOperations {

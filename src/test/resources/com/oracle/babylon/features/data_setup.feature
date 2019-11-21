@@ -29,7 +29,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
 
   @lock_fields_documents
   @data_setup
-  Scenario: Login to the server and lock the fiels for the document
+  Scenario: Login to the server and lock the fields for the document
     When Login and lock the documents fields
     Then verify if lock fields is disabled
 
@@ -43,20 +43,24 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @data_setup
   Scenario: Uploading a document through Registration
     Given upload document with data "uploadDoc_data" and write it in userData.json
+      | Document_type_id | Revision | Attribute1 | HasFile | Comments             | Discipline | Document_Status_Id |
+      | 1879048197       | A        | Airport    | false   | Uploading a document | Structural | 1879048196         |
     When search document for user
     Then verify if document is present
 
-    @add_mail_attribute
-    @data_setup
-      Scenario: Add mail attribute and write the attribute to userData.json
-      When Login and add a mail attribute "Attribute 1"
-      Then Write "Attribute1" for "Mail" in userData.json
+  @add_mail_attribute
+  @data_setup
+  Scenario: Add mail attribute and write the attribute to userData.json
+    When Login and add a mail attribute "Attribute 1"
+    Then Write "Attribute1" for "Mail" in userData.json
 
-      @create_transmittal
-      @data_setup
-        Scenario: Create a transmittal for a document
-        When Login and create a transmittal
-        Then verify if transmittal is created
+  @create_transmittal
+  @data_setup
+  Scenario: Create a transmittal for a document
+    When Login and create a mail of type transmittal, send to user
+      | Full_Name    | Mail_Attribute | Comments                     |
+      | Mark Perkins | default        | Creating a basic transmittal |
+    Then verify if transmittal is created
 
 
 

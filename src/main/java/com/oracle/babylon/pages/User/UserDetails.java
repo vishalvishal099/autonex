@@ -23,15 +23,19 @@ public class UserDetails extends Navigator {
      * @param userDetailsMap
      */
     public void fillUserDetails(Map<String, String> userDetailsMap){
-        Select select = new Select($(titleDrpDwn));
-        select.selectByValue(userDetailsMap.get("Title"));
-        select = new Select($(jobFunctionDrpDwn));
-        $(jobFunctionDrpDwn).click();
-        select.selectByVisibleText(userDetailsMap.get("Job_Function"));
-        $(jobFunctionDrpDwn).pressEscape();
-        $(job_title_txt_box).click();
-        $(job_title_txt_box).sendKeys(userDetailsMap.get("Job_Title"));
-        $(saveBtn).click();
+        if($(titleDrpDwn).isDisplayed()) {
+            Select select = new Select($(titleDrpDwn));
+            select.selectByValue(userDetailsMap.get("Title"));
+            select = new Select($(jobFunctionDrpDwn));
+            $(jobFunctionDrpDwn).click();
+            select.selectByVisibleText(userDetailsMap.get("Job_Function"));
+            $(jobFunctionDrpDwn).pressEscape();
+            $(job_title_txt_box).click();
+            $(job_title_txt_box).sendKeys(userDetailsMap.get("Job_Title"));
+            $(saveBtn).click();
+        } else {
+            System.out.println("User details are already filled");
+        }
     }
 
 }

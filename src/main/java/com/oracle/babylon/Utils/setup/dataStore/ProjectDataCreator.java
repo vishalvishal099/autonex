@@ -26,8 +26,9 @@ public class ProjectDataCreator {
 
 
         String projectName = faker.app().name();
+        projectName = projectName.replaceAll("[^a-zA-Z0-9]", "");
         project.setProjectName(projectName);
-        project.setProjectShortName(projectName.substring(0, projectName.length() / 2));
+        project.setProjectShortName(projectName);
         project.setProjectCode(projectName);
         project.setProjectType(faker.commerce().department());
         project.setPrimaryRegisterType(projectMap.get("Primary_Register_Type"));

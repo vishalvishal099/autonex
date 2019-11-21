@@ -22,10 +22,10 @@ public class ProjectSettingsPage extends Navigator{
     /**
      * Function to lock the document field labels for a project
      */
-    public void lockDocFieldsBtn() {
-
+    public void lockDocFieldsBtn() throws InterruptedException {
+        Thread.sleep(1000);
         this.driver = WebDriverRunner.getWebDriver();
-        commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
+        this.driver = commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (!result.equals("Cannot lock field names - already locked")) {
             $(lockDocFieldsBtn).click();
@@ -47,20 +47,18 @@ public class ProjectSettingsPage extends Navigator{
 
     /**
      * Function to navigate to the project settings page under Setup
-     * @param driver
      */
-    public WebDriver navigateToProjectSettings(WebDriver driver){
+    public WebDriver navigateToProjectSettings(){
         return getMenuSubmenu( "Setup", "Project Settings");
     }
 
     /**
      * Function to navigate to the Documents setting page and lock the fields button
      */
-    public void lockFieldsInDocuments(){
-        this.driver = WebDriverRunner.getWebDriver();
-        this.driver = navigateToProjectSettings(driver);
+    public void lockFieldsInDocuments() throws InterruptedException {
+        this.driver = navigateToProjectSettings();
         commonMethods.switchToFrame(this.driver, "frameMain");
-        commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
+        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
         lockDocFieldsBtn();
     }
 
@@ -68,8 +66,13 @@ public class ProjectSettingsPage extends Navigator{
      * Function to click on any link to configure any label
      * @param labelToEdit
      */
-    public void clickLabelToEdit(String labelToEdit){
-        By editLabelLink = By.xpath("//td[text()='" + labelToEdit + "']//..//td[6]");
+    public void clickLabelToEdit(String labelToEdit) throws InterruptedException {
+        commonMethods.switchToFrame(this.driver, "frameMain");
+        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
+        Thread.sleep(2000);
+        commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
+        By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
+        $(editLabelLink).scrollTo();
         $(editLabelLink).click();
         $(saveChangesBtn).click();
 
@@ -79,11 +82,13 @@ public class ProjectSettingsPage extends Navigator{
      * Function to add a attribute for documents
      * @return attribute name
      */
-    public String createNewDocumentAttribute(){
+    public String createNewDocumentAttribute() throws InterruptedException {
         Faker faker = new Faker();
-        String attribute = faker.commerce().department();
+        String attribute = faker.address().city();
         $(attributeTextArea).sendKeys(attribute);
+        Thread.sleep(2000);
         $(addBtn).click();
+        Thread.sleep(2000);
         $(saveBtn).click();
         return attribute;
     }

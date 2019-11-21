@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.util.Base64;
 
 /**
- * Helper class where we create functions required to carry out api operations
+ * Helper class where we create methods required to carry out api operations
  */
 public class APIRequest {
 

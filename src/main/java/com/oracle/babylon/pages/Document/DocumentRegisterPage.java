@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class that contains all the functions specific to the Document Register page
+ * Class that contains all the methods specific to the Document Register page
  */
 public class DocumentRegisterPage extends DocumentPage{
 

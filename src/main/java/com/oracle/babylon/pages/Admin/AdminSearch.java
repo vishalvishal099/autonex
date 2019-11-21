@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class file to contain all the function related to the Admin Xoogle Search Page
+ * Class file to contain all the method related to the Admin Xoogle Search Page
  * Author : susgopal
  */
 public class AdminSearch extends Navigator {

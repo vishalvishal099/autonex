@@ -40,7 +40,6 @@ public class DocumentTableConverter {
         document.setRevision(documentHashMap.get("Revision"));
         document.setTitle(companyName + " Doc");
         document.setRevisionDate(dateFormat.format(date));
-        document.setPrintSize("A4");
         new DataStore().uploadDocument(name, document);
     }
 }
