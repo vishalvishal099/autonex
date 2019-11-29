@@ -111,8 +111,6 @@
                 <version>2.22.1</version>
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
-                    <parallel>methods</parallel>
-                    <threadCount>5</threadCount>
                 </configuration>
             </plugin>
             <plugin>
