@@ -30,9 +30,9 @@ public class ComposeMail extends MailPage{
     /**
      * Function to navigate to a sub menu from the Aconex home page
      */
-    public void selectMenuSubMenu() {
+    public void navigateAndVerifyPage() {
         getMenuSubmenu("Mail", "Blank Mail");
-        this.driver = commonMethods.switchToFrame(driver, "frameMain");
+        verifyPageTitle("New Mail");
     }
 
     /**
@@ -43,6 +43,7 @@ public class ComposeMail extends MailPage{
      */
     public void composeMail(String user1, String data) {
         //Fetch the table from the data store
+        commonMethods.switchToFrame(driver, "frameMain");
         Map<String, String> table = dataStore.getTable(data);
         //According to the keys passed in the table, we select the fields
         for (String tableData : table.keySet()) {

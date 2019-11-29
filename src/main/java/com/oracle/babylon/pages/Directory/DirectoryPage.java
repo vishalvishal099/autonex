@@ -1,8 +1,10 @@
 package com.oracle.babylon.pages.Directory;
 
-import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
+import org.junit.Assert;
 import org.openqa.selenium.By;
+
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -83,11 +85,35 @@ public class DirectoryPage extends Navigator {
 
 
     /**
+     * Method to navigate to Project Directory and verify for the title of the page
+     */
+    public void navigateToProjectDirAndVerify() {
+        getMenuSubmenu("Setup", "Project Directory");
+        Assert.assertTrue(verifyPageTitle("Search - Directory"));
+    }
+
+    /**
+     * Method to navigate to Global Directory and verify for the title of the page
+     */
+    public void navigateToGlobalDirAndVerify() {
+        getMenuSubmenu("Setup", "Global Directory");
+        Assert.assertTrue(verifyPageTitle("Search - Directory"));
+    }
+
+
+    /**
      * Method to click on the OK Button
       */
     public void clickOkBtn(){
         $(okBtn).click();
     }
 
-
+    public void addRecipient(Map<String, String> map){
+        String full_name = map.get("Full_Name");
+        String groupName = full_name.split(" ")[0];
+        String familyName = full_name.split(" ")[1];
+        fillFieldsAndSearch(groupName, familyName, null, null, null);
+        selectToRecipient();
+        clickOkBtn();
+    }
 }

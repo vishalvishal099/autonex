@@ -1,23 +1,23 @@
 {
   "user1": {
-    "password": "[C@6f7317598",
-    "firstname": "Jeremy Ziemann",
-    "username": "saul.larson"
+    "password": "[C@5e1a986c9",
+    "fullname": "Rhett McLaughlin",
+    "username": "jules.braun"
   },
   "project1": {
-    "projectname": "Regrant",
-    "projectId": "1879051309"
+    "projectname": "Namfix",
+    "projectId": "1879051539"
   },
   "organization1": {
-    "orgname": "DuBuque Group"
+    "orgname": "Batz and Sons"
   },
   "docattribute": {
-    "attribute1": "Colefort"
+    "attribute1": "South Normand"
   },
   "document1": {
-    "docno": "Photography--1244746321"
+    "docno": "Computer Software--1244746321"
   },
   "mailattribute": {
-    "attribute1": "Colefort"
+    "attribute1": "South Normand"
   }
 }

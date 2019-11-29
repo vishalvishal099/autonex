@@ -21,13 +21,14 @@ public class InboxPage extends MailPage {
     private By mailNumberTextBox = By.id("rawQueryText");
     private By searchBtn = By.xpath("//button[@title='Search']");
     private By loadingIcon = By.cssSelector(".loading_progress");
+    private By pageTitle = By.xpath("//h1//span[text()='Search Mail']");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
      */
-    public void selectMenuSubMenu() {
+    public void navigateAndVerifyPage() {
         getMenuSubmenu("Mail", "Inbox");
-        this.driver = commonMethods.switchToFrame(driver, "frameMain");
+        verifyPageTitle(pageTitle);
     }
 
     /**
@@ -36,7 +37,7 @@ public class InboxPage extends MailPage {
      * @param mail_number
      */
     public void searchMailNumber(String mail_number) {
-
+        commonMethods.switchToFrame(driver, "frameMain");
         $(mailNumberTextBox).sendKeys(mail_number);
         commonMethods.waitForElementExplicitly(2000);
         $(searchBtn).click();

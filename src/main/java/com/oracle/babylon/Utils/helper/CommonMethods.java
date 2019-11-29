@@ -8,8 +8,12 @@ import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Setup.EditPreferencesPage;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONObject;
 import org.json.XML;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -25,7 +29,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 /**
  * Class containing all the common methods required for the framework
- * Author : susgopal
+ * Author : susgopal, vsingsi
  */
 public class CommonMethods {
 
@@ -37,7 +41,7 @@ public class CommonMethods {
      */
     public static byte[] takeSnapshot(WebDriver driver) throws IOException {
         TakesScreenshot screenshot = ((TakesScreenshot) driver);
-        final byte[] screenshotBytes= screenshot.getScreenshotAs(OutputType.BYTES);
+        final byte[] screenshotBytes = screenshot.getScreenshotAs(OutputType.BYTES);
         return screenshotBytes;
     }
 
@@ -62,10 +66,10 @@ public class CommonMethods {
      */
     public WebDriver waitForElement(WebDriver driver, By by, int seconds) {
         try {
-            Thread.sleep(2000);
+            waitForElementExplicitly(2000);
             WebDriverWait wait = new WebDriverWait(driver, seconds);
             wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
-        } catch (ElementNotVisibleException | InterruptedException e) {
+        } catch (ElementNotVisibleException e) {
             e.printStackTrace();
         }
         return driver;
@@ -79,14 +83,15 @@ public class CommonMethods {
      * @return
      */
     public WebDriver switchToFrame(WebDriver driver, String frameId) {
-        waitForElement(driver, By.xpath("//iframe[@id='"+ frameId + "']"));
-        driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@id='"+ frameId + "']")));
+        waitForElement(driver, By.xpath("//iframe[@id='" + frameId + "']"));
+        driver.switchTo().frame(driver.findElement(By.xpath("//iframe[@id='" + frameId + "']")));
         return driver;
     }
 
     /**
      * Function to switch the frame with the element attribute insted of the id
      * If we do not have a id attribute for the frame, we need to use other attributes
+     *
      * @param driver
      * @param by
      * @return
@@ -95,7 +100,6 @@ public class CommonMethods {
         driver.switchTo().frame(driver.findElement(by));
         return driver;
     }
-
 
 
     /**
@@ -155,12 +159,11 @@ public class CommonMethods {
     /**
      * Function to search the project and return the project id
      *
-     * @param driver
      * @param projectName
      * @return project id
      */
-    public String searchProject(WebDriver driver, String projectName) throws InterruptedException {
-        AdminSearch adminSearch = new AdminSearch(driver);
+    public String searchProject(String projectName) {
+        AdminSearch adminSearch = new AdminSearch();
         return adminSearch.returnResultId(projectName);
     }
 
@@ -255,7 +258,7 @@ public class CommonMethods {
      */
     public boolean isElementAttributePresent(By by, String attribute) {
         String value = $(by).getAttribute(attribute);
-        if (value!=null && value.equals("true")) {
+        if (value != null && value.equals("true")) {
             return true;
         }
         return false;
@@ -263,11 +266,12 @@ public class CommonMethods {
 
     /**
      * Function to return the value of an attribute from a Web Element
+     *
      * @param by
      * @param attribute
      * @return
      */
-    public String returnElementAttributeValue(By by, String attribute){
+    public String returnElementAttributeValue(By by, String attribute) {
         return $(by).getAttribute(attribute);
     }
 
@@ -295,6 +299,23 @@ public class CommonMethods {
 
     }
 
+    /**
+     * Method to convert the HttpResponse to a string
+     *
+     * @param response
+     * @return
+     */
+    public String returnResponseBody(HttpResponse response) {
+        try {
+            ResponseHandler<String> handler = new BasicResponseHandler();
+            return handler.handleResponse(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Unable to complete the response body conversion process");
+            Assert.fail();
+        }
+        return null;
+    }
 
 
 }

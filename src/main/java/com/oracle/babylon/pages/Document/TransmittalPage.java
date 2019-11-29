@@ -26,25 +26,24 @@ public class TransmittalPage extends Navigator {
 
     private DirectoryPage directoryPage = new DirectoryPage();
 
+
     /**
      *  Create a transmittal with minimal data. To id, subject and attribute is provided.
      */
-    public void createBasicTransmittal(DataTable dataTable) throws IOException, ParseException {
+    public void createBasicTransmittal(DataTable dataTable) {
+        driver = WebDriverRunner.getWebDriver();
         Map<String, String> featureDataMap = dataTable.transpose().asMap(String.class, String.class);
         //The data is taken from userData.json file and we search for the project in admin tool
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
         //Project info
         Map<String, String> mailAttributeMap = mapOfMap.get("mailattribute");
+        commonMethods.waitForElement(driver, directoryBtn);
         $(directoryBtn).click();
         commonMethods.clickListToChange(By.xpath("//h1[text()='Search - Directory']"), "Global");
-        String full_name = featureDataMap.get("Full_Name");
-        String groupName = full_name.split(" ")[0];
-        String familyName = full_name.split(" ")[1];
-        directoryPage.fillFieldsAndSearch(groupName, familyName, null, null, null);
-        directoryPage.selectToRecipient();
-        directoryPage.clickOkBtn();
+        directoryPage.addRecipient(featureDataMap);
         $(subject).sendKeys(featureDataMap.get("Comments") );
         $(subject).pressEnter();
+        commonMethods.waitForElementExplicitly(2000);
         MailPage mailPage = new MailPage();
         if(featureDataMap.get("Mail_Attribute").equals("default")){
             mailPage.selectMailAttribute("Attribute 1", mailAttributeMap.get("attribute1"));
@@ -54,6 +53,7 @@ public class TransmittalPage extends Navigator {
         $(reasonForIssueSelectBox).selectOption(1);
 
         $(sendBtn).click();
+        driver.switchTo().defaultContent();
 
     }
 }

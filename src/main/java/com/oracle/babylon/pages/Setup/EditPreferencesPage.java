@@ -17,9 +17,11 @@ public class EditPreferencesPage extends Navigator{
     private By addLink = By.xpath("//a[text()='Add']");
     private By saveBtn = By.id("btnSave");
 
-    public WebDriver navigateEditPreferences() {
+    public void navigateAndVerifyPage() {
 
-        return getMenuSubmenu( "Setup", "Preferences");
+         getMenuSubmenu( "Setup", "Preferences");
+         verifyPageTitle("Edit Preferences");
+
     }
 
 

@@ -2,6 +2,7 @@ package com.oracle.babylon.pages.Admin;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -88,6 +89,14 @@ public class AdminTools extends Navigator{
      */
     public boolean isFeatureSettingsSaved(){
         return $(successMsg).isDisplayed();
+    }
+
+    /**
+     * Method to navigate and verify for the title of the page
+     */
+    public void navigateAndVerifyPage() {
+        getMenuSubmenu("Setup", "Tools");
+        Assert.assertTrue(verifyPageTitle("Aconex Admin Tools"));
     }
 
 

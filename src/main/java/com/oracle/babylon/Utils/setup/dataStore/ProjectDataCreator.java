@@ -38,18 +38,11 @@ public class ProjectDataCreator {
         project.setCounty(faker.address().state());
         project.setCountry(faker.address().country());
         project.setPostCode(faker.address().zipCode());
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        project.setProjectStartDate(dateFormat.format(date));
-        //Generate future date. Adding one year to current date
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.YEAR, 1);
-        date = c.getTime();
-        project.setEstimatedCompletionDate(dateFormat.format(date));
+        project.setProjectStartDate("01/01/2016");
+        project.setEstimatedCompletionDate("01/01/2025");
         project.setProjectValue(String.valueOf(faker.number().randomNumber()));
         project.setProjectDescription(faker.book().title());
         //Store the values in the data store in the project table
-        new DataStore().storeProjectInfo("project", project);
+         new DataStore().storeProjectInfo("project", project);
     }
 }
