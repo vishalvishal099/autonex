@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class OrganizationPage extends Navigator {
+public class RegisterOrganizationPage extends Navigator {
 
     //Initialization of the Web Elements
     private By orgNameTxtBox = By.name("ORG_NAME");
@@ -34,12 +34,15 @@ public class OrganizationPage extends Navigator {
     private By acceptTermsChkBox = By.name("acceptTermsOfService");
     private By registerBtn = By.xpath("//button//span[text()='Register']");
     private By thankYouMessage = By.xpath("//p[text()='Thank you, your registration is now being processed.']");
+    private By registerYourOrganization = By.xpath("//div[text()='Register your organization']");
 
-
+    public void verifyPage(){
+        verifyPageTitle(registerYourOrganization);
+    }
     /**
      * Fill up all the fields of the Create Organization page using Selenium libraries
      */
-    public void fillOrganizationDetails() throws InterruptedException {
+    public void fillOrganizationDetails(){
         //Initialization of references
         this.driver = WebDriverRunner.getWebDriver();
 
@@ -67,7 +70,7 @@ public class OrganizationPage extends Navigator {
         $(passwordTxtBox).sendKeys(userInfo.getPassword().toString());
         $(confirmPasswordTxtBox).sendKeys(userInfo.getPassword().toString());
         $(acceptTermsChkBox).click();
-        Thread.sleep(3000);
+        commonMethods.waitForElementExplicitly(3000);
         $(registerBtn).click();
         commonMethods.waitForElement(this.driver, thankYouMessage);
         $(thankYouMessage).isDisplayed();
@@ -79,20 +82,19 @@ public class OrganizationPage extends Navigator {
      * @throws IOException
      * @throws ParseException
      */
-    public User enterOrgUserDetailsToFile() throws IOException, ParseException {
+    public User enterOrgUserDetailsToFile(String userId, String organizationId) {
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
-        String[] userKeyList = {"user", "username"};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getUserName(), configFileReader.returnUserDataJsonFilePath());
+        String[] keys = {"username", "password", "fullname"};
+        String[] userKeyList = {userId, keys[0]};
+        dataSetup.writeIntoJson(userKeyList, userInfo.getUserName(), filePath);
+        userKeyList = new String[]{userId, keys[1]};
+        dataSetup.writeIntoJson(userKeyList, userInfo.getPassword(), filePath);
+        userKeyList = new String[]{userId, keys[2]};
+        dataSetup.writeIntoJson(userKeyList, userInfo.getFullName(), filePath);
 
-        userKeyList = new String[]{"user", "password"};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getPassword(), configFileReader.returnUserDataJsonFilePath());
-
-        userKeyList = new String[]{"user", "firstname"};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getFullName(), configFileReader.returnUserDataJsonFilePath());
-
-        String[] orgList = {"organization", "orgname"};
-        dataSetup.writeIntoJson(orgList, organization.getOrganizationName(), configFileReader.returnUserDataJsonFilePath());
+        String[] orgList = {organizationId, "orgname"};
+        dataSetup.writeIntoJson(orgList, organization.getOrganizationName(), filePath);
         return userInfo;
 
     }

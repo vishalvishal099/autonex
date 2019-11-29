@@ -29,8 +29,4 @@ public class TestDataSteps {
         new TicketTableConverter().createTicketData(name, dataTable);
     }
 
-    @Given("Upload Document Data \"([^\"]*)\"$")
-    public void uploadDocumentData(String name, DataTable dataTable) throws Throwable{
-        new DocumentTableConverter().createDocumentData(name, dataTable);
-    }
 }

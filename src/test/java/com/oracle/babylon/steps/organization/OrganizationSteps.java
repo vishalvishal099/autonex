@@ -1,7 +1,5 @@
 package com.oracle.babylon.steps.organization;
 
-import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.OrganizationUserCreator;
@@ -10,8 +8,8 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminHome;
 import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Admin.UserInformation;
-import com.oracle.babylon.pages.Organization.OrganizationPage;
-import com.oracle.babylon.pages.User.UserDetails;
+import com.oracle.babylon.pages.Organization.RegisterOrganizationPage;
+import com.oracle.babylon.pages.User.NewAccountDetails;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
@@ -31,39 +29,44 @@ public class OrganizationSteps {
     private Navigator navigator = new Navigator();
     private OrganizationUserCreator orgUserObj = new OrganizationUserCreator();
     private WebDriver driver = null;
-    private OrganizationPage organizationPage = new OrganizationPage();
-    private AdminHome adminHome = null;
-    private AdminSearch adminSearch = null;
+    private RegisterOrganizationPage registerOrganizationPage = new RegisterOrganizationPage();
+    private AdminHome adminHome = new AdminHome();
+    private AdminSearch adminSearch = new AdminSearch();
     private  UserInformation userInformation = new UserInformation();
     private DataSetup dataSetup = new DataSetup();
-    private UserDetails userDetails = new UserDetails();
+    private NewAccountDetails newAccountDetails = new NewAccountDetails();
+    private User user = null;
+    String filepath = configFileReader.returnUserDataJsonFilePath();
 
     /**
      * Code which contains a sequence of steps to create a organization
-     * @throws IOException
-     * @throws ParseException
-     * @throws InterruptedException
      */
-    @When("^user tries to create a organization$")
-    public void createOrganization() throws IOException, ParseException, InterruptedException {
+    @When("user {string} tries to create {string}")
+    public void user_tries_to_create_organization(String userId, String organizationId) {
+
         //Register a organization
-        orgUserObj.generateOrgData();
-        orgUserObj.addUser();
-        navigator.openAconexUrl();
-        navigator.clickRegisterLink();
-        //Enter details of organization in a file
-        organizationPage.fillOrganizationDetails();
-        User user = organizationPage.enterOrgUserDetailsToFile();
-        //Enable the user for the organization
-        driver = WebDriverRunner.getWebDriver();
-        navigator.openAconexUrl();
-        navigator.loginToServer(configFileReader.getAdminUsername(), configFileReader.getAdminPassword(), null);
-         adminHome = new AdminHome(driver);
-        adminHome.clickSetupBtn();
-        adminHome.clickSearchBtn();
-        adminSearch = new AdminSearch(driver);
-        adminSearch.clickSearchResults(user.getUserName(), user.getFullName());
-        userInformation.enableUser();
+        navigator.on(orgUserObj, page -> {
+            page.generateOrgData();
+            page.addUser();
+            navigator.openAconexUrl();
+            navigator.clickRegisterLink();
+        });
+        navigator.on(registerOrganizationPage, page ->{
+            page.verifyPage();
+            page.fillOrganizationDetails();
+            user = page.enterOrgUserDetailsToFile(userId,organizationId);
+        });
+        navigator.loginAsUser(adminHome, page -> {
+            page.verifyPage();
+        });
+        navigator.on(adminSearch, page -> {
+            page.navigateAndVerifyPage();
+            page.clickSearchResults(user.getUserName(), user.getFullName());
+        });
+        navigator.on(userInformation, page -> {
+            page.verifyPage();
+            page.enableUser();
+        });
     }
 
     /**
@@ -71,11 +74,11 @@ public class OrganizationSteps {
      * @throws IOException
      * @throws ParseException
      */
-    @Then("user is able to login to application")
-    public void userIsAbleToLoginToApplication() throws IOException, ParseException {
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), null);
+    @Then("user {string} is able to login to application")
+    public void userIsAbleToLoginToApplication(String userId) {
+        navigator.loginAsUser(newAccountDetails, userId, filepath, page -> {
+            page.verifyPage();
+        });
 
     }
 
@@ -85,11 +88,15 @@ public class OrganizationSteps {
      * @throws IOException
      * @throws ParseException
      */
-    @When("user needs to fill in the account details fields with data")
-    public void userNeedsToFillInTheAccountDetailsFieldsWithData(DataTable dataTable) throws IOException, ParseException {
+    @When("user {string} needs to fill in the account details fields with data")
+    public void fillUserDetails(String userId, DataTable dataTable)  {
         Map<String, String> userInfoMap = dataTable.asMaps().get(0);
-        userIsAbleToLoginToApplication();
-        userDetails.fillUserDetails(userInfoMap);
+        userIsAbleToLoginToApplication(userId);
+        navigator.on(newAccountDetails, page-> {
+            page.verifyPage();
+            page.fillUserDetails(userInfoMap);
+        });
 
     }
+
 }

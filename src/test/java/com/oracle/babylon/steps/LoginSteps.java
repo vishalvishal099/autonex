@@ -18,9 +18,10 @@ public class LoginSteps {
     }
 
     @Then("^user should logged into aconex$")
-    public void userShouldLoggedIntoAconex() throws Throwable {
+    public void userShouldLoggedIntoAconex() {
         navigator.on(navigator, page -> {
-            page.verifyUserPresent();
+                page.verifyUserPresent();
+
         });
 
     }
@@ -37,15 +38,15 @@ public class LoginSteps {
         });
     }
 
-    @Given("{string} retrieve details")
-    public void retrieveDetails(String tablename) throws IOException {
-
-        jiraOperations.getJiraTicket(tablename);
+    @Given("\"([^\"]*)\", retrieve details")
+    public void retrieveDetails(String jiraId) throws IOException {
+        String issueId = jiraOperations.returnIssueId(jiraId);
+        System.out.println(issueId);
         //jiraOperations.addComment(tablename);
     }
 
     @Then("views the home page")
-    public void viewsTheHomePage() {
-        navigator.verifyUserPresent();
+    public void viewsTheHomePage(){
+            navigator.verifyUserPresent();
     }
 }

@@ -15,7 +15,7 @@ import java.net.URL;
 
 /**
  * Class to handle the operations related to the driver
- * Author : vsinghsi, susgopal
+ * Author : vsingsi, susgopal
  */
 public class DriverFactory {
     //Initialization of objects and assigning references to the object.

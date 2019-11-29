@@ -8,16 +8,19 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import java.util.Base64;
 
 /**
- * Helper class where we create functions required to carry out api operations
+ * Helper class where we create methods required to carry out api operations
+ * Author : susgopal
  */
 public class APIRequest {
 
-    private HttpClient client = new DefaultHttpClient();
+    private CloseableHttpClient client = HttpClients.createDefault();
 
     /**
      * HTTPClient and HTTP Get clients are used to create a method for constructing and executing GET API Request
