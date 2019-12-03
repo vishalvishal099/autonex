@@ -127,9 +127,9 @@ public class Navigator {
         block.accept(page);
     }
 
-    public void as(String username) {
+    public void as(String tablename) {
         open(configFileReader.getApplicationUrl());
-        user = dataStore.getUser(username);
+        user = dataStore.getUser(tablename);
         enterCreds(user.getUserName(), user.getPassword().toString());
     }
 
@@ -169,10 +169,8 @@ public class Navigator {
                 .get();
     }
 
-    public void verifyUserPresent() {
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user1");
-        $(userDetails).shouldHave(text(userMap.get("fullname")));
+    public void verifyUserPresent(String fullname) {
+        $(userDetails).shouldHave(text(fullname));
     }
 
     public void verifyUserNotPresent() {
