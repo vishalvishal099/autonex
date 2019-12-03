@@ -11,11 +11,11 @@ import static com.codeborne.selenide.Selenide.switchTo;
 
 public class AssignUserRoleProjectTab extends AssignUserRolePage {
     public void navigateAndVerifyPage(){
-        navigator.getMenuSubmenu("Setup", "Assign User Roles");
+        getMenuSubmenu("Setup", "Assign User Roles");
         switchTo().defaultContent();
         switchTo().frame("frameMain");
         $(projectTab).click();
-        navigator.verifyPageTitle("Roles / User");
+        verifyPageTitle("Roles / User");
     }
     public void selectProject(String project) {
         $("#SECURITY_ADMIN_PROJECT_ID").selectOption(project);

@@ -1,8 +1,11 @@
 package com.oracle.babylon.pages.Setup;
+
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import java.util.List;
+
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.switchTo;
 
@@ -12,11 +15,11 @@ import static com.codeborne.selenide.Selenide.switchTo;
  */
 
 public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
-
+    private EditRolePage editRolePage = new EditRolePage();
 
     public void navigateAndVerifyPage() {
-        navigator.getMenuSubmenu("Setup", "Assign User Roles");
-        navigator.verifyPageTitle("Roles / User");
+        getMenuSubmenu("Setup", "Assign User Roles");
+        verifyPageTitle("Roles / User");
     }
 
     public void checkboxUserRole(String user, String role, String flag) {
@@ -25,16 +28,7 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
         By searchedUser = By.cssSelector(".dataRow");
         commonMethods.waitForElementExplicitly(2000);
         Assert.assertTrue($(searchedUser).text().contains(user));
-        List<WebElement> listOfColumns = driver.findElement(resultTable).findElements(By.xpath("//thead//tr//th"));
-        int column_index = 0;
-        for (WebElement e : listOfColumns) {
-            String actualRole = e.getText();
-            column_index = column_index + 1;
-            if (role.equals(actualRole)) {
-                break;
-            }
-        }
-        String columnIndex = Integer.toString(column_index);
+        String columnIndex = Integer.toString(roleColumnIndex(role));
         WebElement checkBox = driver.findElement(resultTable).findElement(By.xpath("//tr[1]//td[" + columnIndex + "]//input[@type='checkbox']"));
         switch (flag) {
             case "assigned":
@@ -69,5 +63,25 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
     public void gotoPage(String page) {
         By pageElement = By.linkText(page);
         $(pageElement).click();
+    }
+
+    public void editRole(String roleName,String newRoleName, boolean assignRoleToNewMemberFlag) {
+        String columnIndex = Integer.toString(roleColumnIndex(roleName));
+        By editRole = By.xpath("//table[@id='resultTable']//tr[@class='dataHeaders']//th[" + columnIndex + "]/a[contains(@title,'Edit security role')]");
+        $(editRole).click();
+        editRolePage.editRoleNameAndFlag(newRoleName, assignRoleToNewMemberFlag);
+    }
+
+    public int roleColumnIndex(String roleName) {
+        List<WebElement> listOfColumns = driver.findElement(resultTable).findElements(By.xpath("//thead//tr//th"));
+        int column_index = 0;
+        for (WebElement e : listOfColumns) {
+            String actualRole = e.getText();
+            column_index = column_index + 1;
+            if (roleName.equals(actualRole)) {
+                break;
+            }
+        }
+        return column_index;
     }
 }

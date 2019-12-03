@@ -16,8 +16,7 @@ import static com.codeborne.selenide.Selenide.switchTo;
  */
 
 public class AssignUserRolePage extends Navigator {
-    protected Navigator navigator = new Navigator();
-    protected CommonMethods commonMethods = new CommonMethods();
+
     protected By givenName = By.xpath("//input[@id='display.givenName']");
     protected By familyName = By.xpath("//input[@id='display.familyName']");
     protected By search = By.xpath("//div[contains(text(),'Search')]");
@@ -34,8 +33,8 @@ public class AssignUserRolePage extends Navigator {
 
 
     public void navigateAndVerifyPage() {
-        navigator.getMenuSubmenu("Setup", "Assign User Roles");
-        navigator.verifyPageTitle("Roles / User");
+        getMenuSubmenu("Setup", "Assign User Roles");
+        verifyPageTitle("Roles / User");
     }
 
     public void selectProjectTab(){
