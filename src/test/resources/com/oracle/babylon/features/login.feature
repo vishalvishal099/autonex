@@ -14,7 +14,7 @@ Feature: Login Test
 
   Scenario: Successful Login
     Given "valid_user" login with correct username and password
-    Then user should logged into aconex
+    Then user "valid_user" should logged into aconex
 
   Scenario: Failed Login
     Given "invalid_user" login with incorrect username and password
