@@ -63,6 +63,7 @@ public class ComposeMail extends MailPage{
 
             }
         }
+        driver.switchTo().defaultContent();
     }
 
 
@@ -121,7 +122,7 @@ public class ComposeMail extends MailPage{
         commonMethods.waitForElementExplicitly(3000);
         $(sendBtn).click();
         $(loadingIcon).should(disappear);
-        commonMethods.waitForElement(driver, mailNumberField, 3000);
+        commonMethods.waitForElementExplicitly(5000);
         String mailNumber = $(mailNumberField).getText();
         return mailNumber;
     }
