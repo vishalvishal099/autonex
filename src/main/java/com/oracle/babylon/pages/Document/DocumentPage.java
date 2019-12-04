@@ -174,7 +174,11 @@ public class DocumentPage extends Navigator {
         //Basic Mandatory fields for Document are Document Status ID, Document Type ID, Attribute 1 and Discipline
         //API response for Document Schema
         commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*1000);
+        System.out.println("User id---->" + userId);
+        System.out.println("Project ID---->" + projectId);
         HttpResponse documentSchemaResponse = getDocumentSchema(userId, projectId);
+
+        System.out.println("Doc Schema---->"  + documentSchemaResponse);
         List<String> mandatoryList;
         //Return the response body from the HTTP Response
         String responseString = commonMethods.returnResponseBody(documentSchemaResponse);
