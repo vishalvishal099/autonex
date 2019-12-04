@@ -5,6 +5,7 @@ import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Organization;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import org.json.simple.parser.ParseException;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
@@ -37,7 +38,11 @@ public class RegisterOrganizationPage extends Navigator {
     private By registerYourOrganization = By.xpath("//div[text()='Register your organization']");
 
     public void verifyPage(){
-        verifyPageTitle(registerYourOrganization);
+        commonMethods.waitForElementExplicitly(3000);
+        if(!$(registerYourOrganization).isDisplayed()){
+            Assert.fail("Navigation to Register organization page failed");
+        }
+
     }
     /**
      * Fill up all the fields of the Create Organization page using Selenium libraries

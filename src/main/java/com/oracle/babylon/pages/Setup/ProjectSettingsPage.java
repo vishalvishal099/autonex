@@ -31,7 +31,7 @@ public class ProjectSettingsPage extends Navigator{
      * Function to lock the document field labels for a project
      */
     public void lockDocFieldsBtn() {
-        commonMethods.waitForElementExplicitly(1000);
+        commonMethods.waitForElementExplicitly(3000);
         driver = WebDriverRunner.getWebDriver();
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
