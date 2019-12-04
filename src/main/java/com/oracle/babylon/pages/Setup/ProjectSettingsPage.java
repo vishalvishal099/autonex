@@ -31,7 +31,7 @@ public class ProjectSettingsPage extends Navigator{
      * Function to lock the document field labels for a project
      */
     public void lockDocFieldsBtn() {
-        commonMethods.waitForElementExplicitly(3000);
+        commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*500);
         driver = WebDriverRunner.getWebDriver();
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
@@ -71,7 +71,7 @@ public class ProjectSettingsPage extends Navigator{
     public void clickLabelToEdit(String labelToEdit) {
         commonMethods.switchToFrame(this.driver, "frameMain");
         commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
-        commonMethods.waitForElementExplicitly(2000);
+        commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*500);
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
         $(editLabelLink).scrollTo();
