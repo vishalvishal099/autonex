@@ -173,6 +173,7 @@ public class DocumentPage extends Navigator {
     public Document setMandatoryFields(Document document, String userId, String projectId){
         //Basic Mandatory fields for Document are Document Status ID, Document Type ID, Attribute 1 and Discipline
         //API response for Document Schema
+        commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*1000);
         HttpResponse documentSchemaResponse = getDocumentSchema(userId, projectId);
         List<String> mandatoryList;
         //Return the response body from the HTTP Response
