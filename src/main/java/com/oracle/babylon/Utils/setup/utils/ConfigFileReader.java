@@ -53,9 +53,14 @@ public class ConfigFileReader {
         else throw new RuntimeException("implicitlyWait not specified in the CconfigFile.properties file.");
     }
 
-    public boolean getProxySetStatus() {
-        String setProxy = properties.getProperty("PROXY");
-        System.out.println("proxy port 21");
+    public boolean getHttpProxySetStatus() {
+        String setProxy = properties.getProperty("HTTP_PROXY");
+        if (setProxy != null && setProxy.equals("true")) return true;
+        else return false;
+    }
+
+    public boolean getAPIProxySetStatus() {
+        String setProxy = properties.getProperty("API_PROXY");
         if (setProxy != null && setProxy.equals("true")) return true;
         else return false;
     }
