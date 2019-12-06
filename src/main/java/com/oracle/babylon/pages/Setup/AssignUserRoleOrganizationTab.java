@@ -24,7 +24,6 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
 
     public void checkboxUserRole(String user, String role, String flag) {
         searchUser(user);
-        System.out.println(user);
         By searchedUser = By.cssSelector(".dataRow");
         commonMethods.waitForElementExplicitly(2000);
         Assert.assertTrue($(searchedUser).text().contains(user));

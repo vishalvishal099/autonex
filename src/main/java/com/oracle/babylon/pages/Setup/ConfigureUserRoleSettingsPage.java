@@ -23,8 +23,6 @@ public class ConfigureUserRoleSettingsPage extends Navigator {
     protected By assetTable = By.xpath("//table[@id='roleSecuredAssetTable']");
 
 
-
-
     public void verifyCreateRole() {
         $(createRoleButton).shouldBe(Condition.visible);
     }
@@ -36,6 +34,7 @@ public class ConfigureUserRoleSettingsPage extends Navigator {
     public void saveButton() {
         $(saveButton).shouldBe(Condition.visible);
     }
+
     public int getAssetRow(String parentAsset, String assetName) {
         switchTo().defaultContent();
         switchTo().frame("frameMain");
@@ -69,12 +68,10 @@ public class ConfigureUserRoleSettingsPage extends Navigator {
                 roleColumn = i + 1;
                 break;
             }
-            else{
-                System.out.println("Role not Available");
-            }
         }
         return roleColumn;
     }
+
     public int getProjectRoleColumn(String roleName) {
 //        switchTo().defaultContent();
 //        switchTo().frame("frameMain");
