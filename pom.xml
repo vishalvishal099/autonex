@@ -10,7 +10,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.2.5</junit.version>
         <cucumber.version>4.2.5</cucumber.version>
         <maven.compiler.version>3.3</maven.compiler.version>
     </properties>
@@ -30,14 +30,19 @@
             <version>${cucumber.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -110,7 +115,26 @@
                 <version>2.22.1</version>
                 <configuration>
                     <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <parallel>methods</parallel>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <parallel>methods</parallel>
+                            <useUnlimitedThreads>true</useUnlimitedThreads>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>net.masterthought</groupId>

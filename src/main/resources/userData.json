@@ -1,23 +1,23 @@
 {
-  "organization": {
-    "orgname": "Welch, Mraz and Aufderhar"
+  "user1": {
+    "password": "[C@5e1a986c9",
+    "fullname": "Rhett McLaughlin",
+    "username": "jules.braun"
   },
-  "project": {
-    "projectname": "Kon",
-    "projectId": "1879051263"
+  "project1": {
+    "projectname": "Namfix",
+    "projectId": "1879051539"
   },
-  "user": {
-    "password": "[C@a93c7988",
-    "firstname": "Jose Kuhn",
-    "username": "deann.cassin"
+  "organization1": {
+    "orgname": "Batz and Sons"
   },
   "docattribute": {
-    "attribute1": ""
+    "attribute1": "South Normand"
+  },
+  "document1": {
+    "docno": "Computer Software--1244746321"
   },
   "mailattribute": {
-    "attribute1": ""
-  },
-  "document": {
-    "docno" : ""
+    "attribute1": "South Normand"
   }
 }

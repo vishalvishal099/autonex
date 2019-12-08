@@ -1,23 +1,48 @@
 package com.oracle.babylon.Utils.helper;
 
 
+import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Base64;
 
 /**
- * Helper class where we create functions required to carry out api operations
+ * Helper class where we create methods required to carry out api operations
+ * Author : susgopal
  */
 public class APIRequest {
 
-    private HttpClient client = new DefaultHttpClient();
+    private CloseableHttpClient client = HttpClients.createDefault();
+
+    /**
+     * Method to set the proxy to the HTTP Client
+     */
+    public void setHttpClient(){
+        ConfigFileReader configFileReader = new ConfigFileReader();
+        String proxyStr = configFileReader.getProxyURL();
+        String proxyUrl = proxyStr.split(":")[0];
+        int proxyPort = Integer.parseInt(proxyStr.split(":")[1]);
+        Boolean checkProxy = configFileReader.getAPIProxySetStatus();
+        if(checkProxy) {
+            HttpHost proxy = new HttpHost(proxyUrl, proxyPort, "http");
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            client = HttpClients.custom()
+                    .setRoutePlanner(routePlanner)
+                    .build();
+        }
+    }
+
 
     /**
      * HTTPClient and HTTP Get clients are used to create a method for constructing and executing GET API Request
@@ -28,7 +53,7 @@ public class APIRequest {
      */
     public HttpResponse getRequest(String url, String authorization) {
         try {
-
+            setHttpClient();
             HttpGet getRequest = new HttpGet(url);
             getRequest.setHeader("Authorization", authorization);
             return client.execute(getRequest);
@@ -65,6 +90,7 @@ public class APIRequest {
 
     public HttpResponse postRequest(String url, String authorization, String contentType, String body) {
         try {
+            setHttpClient();
             HttpPost postRequest = new HttpPost(url);
             postRequest.setHeader("Authorization", authorization);
             postRequest.setHeader("Content-Type", contentType);
@@ -90,6 +116,7 @@ public class APIRequest {
      */
     public HttpResponse deleteRequest(String url, String authorization) {
         try {
+            setHttpClient();
             HttpDelete deleteRequest = new HttpDelete(url);
             deleteRequest.setHeader("Authorization", authorization);
             return client.execute(deleteRequest);

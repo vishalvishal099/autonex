@@ -2,6 +2,7 @@ package com.oracle.babylon.pages.Admin;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -11,7 +12,7 @@ import java.util.Set;
 import static com.codeborne.selenide.Selenide.$;
 
 /**
- * Class that contains functions to manage configurations
+ * Class that contains methods to manage configurations
  * Author : susgopal
  */
 public class AdminTools extends Navigator{
@@ -74,12 +75,11 @@ public class AdminTools extends Navigator{
 
     /**
      * Navigate to the tools page
-     * @param driver
      * @return
      */
-    public WebDriver navigateToTools(WebDriver driver) {
+    public WebDriver navigateToTools() {
 
-        return getMenuSubmenuAdmin( "Setup", "Tools");
+        return getMenuSubmenu( "Setup", "Tools");
     }
 
 
@@ -89,6 +89,14 @@ public class AdminTools extends Navigator{
      */
     public boolean isFeatureSettingsSaved(){
         return $(successMsg).isDisplayed();
+    }
+
+    /**
+     * Method to navigate and verify for the title of the page
+     */
+    public void navigateAndVerifyPage() {
+        getMenuSubmenu("Setup", "Tools");
+        Assert.assertTrue(verifyPageTitle("Aconex Admin Tools"));
     }
 
 

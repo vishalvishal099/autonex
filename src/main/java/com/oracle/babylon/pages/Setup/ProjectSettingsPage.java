@@ -20,11 +20,19 @@ public class ProjectSettingsPage extends Navigator{
     private By projectSettingsLabel = By.xpath("//h1[text()='Project Settings']");
 
     /**
+     * Function to navigate to the project settings page under Setup
+     */
+    public void navigateAndVerifyPage(){
+        getMenuSubmenu( "Setup", "Project Settings");
+        verifyPageTitle("Project Settings");
+    }
+
+    /**
      * Function to lock the document field labels for a project
      */
     public void lockDocFieldsBtn() {
-
-        this.driver = WebDriverRunner.getWebDriver();
+        commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*500);
+        driver = WebDriverRunner.getWebDriver();
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (!result.equals("Cannot lock field names - already locked")) {
@@ -46,21 +54,13 @@ public class ProjectSettingsPage extends Navigator{
     }
 
     /**
-     * Function to navigate to the project settings page under Setup
-     * @param driver
-     */
-    public WebDriver navigateToProjectSettings(WebDriver driver){
-        return getMenuSubmenu( "Setup", "Project Settings");
-    }
-
-    /**
      * Function to navigate to the Documents setting page and lock the fields button
      */
-    public void lockFieldsInDocuments(){
+    public void lockFieldsInDocuments() {
+        navigateAndVerifyPage();
         this.driver = WebDriverRunner.getWebDriver();
-        this.driver = navigateToProjectSettings(driver);
         commonMethods.switchToFrame(this.driver, "frameMain");
-        commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
+        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
         lockDocFieldsBtn();
     }
 
@@ -68,8 +68,13 @@ public class ProjectSettingsPage extends Navigator{
      * Function to click on any link to configure any label
      * @param labelToEdit
      */
-    public void clickLabelToEdit(String labelToEdit){
-        By editLabelLink = By.xpath("//td[text()='" + labelToEdit + "']//..//td[6]");
+    public void clickLabelToEdit(String labelToEdit) {
+        commonMethods.switchToFrame(this.driver, "frameMain");
+        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
+        commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*500);
+        commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
+        By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
+        $(editLabelLink).scrollTo();
         $(editLabelLink).click();
         $(saveChangesBtn).click();
 
@@ -79,11 +84,13 @@ public class ProjectSettingsPage extends Navigator{
      * Function to add a attribute for documents
      * @return attribute name
      */
-    public String createNewDocumentAttribute(){
+    public String createNewDocumentAttribute() {
         Faker faker = new Faker();
-        String attribute = faker.commerce().department();
+        String attribute = faker.address().city();
         $(attributeTextArea).sendKeys(attribute);
+        commonMethods.waitForElementExplicitly(2000);
         $(addBtn).click();
+        commonMethods.waitForElementExplicitly(2000);
         $(saveBtn).click();
         return attribute;
     }
@@ -93,6 +100,7 @@ public class ProjectSettingsPage extends Navigator{
      * @return enabled status
      */
     public boolean isLockFieldsBtnEnabled(){
+        commonMethods.waitForElement(driver, lockDocFieldsBtn);
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (result.equals("Cannot lock field names - already locked")) {
             return false;

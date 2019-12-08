@@ -87,7 +87,7 @@ public class DriverFactory {
             driverPath = driverPath + "win64/geckodriver.exe";
             return setPropertyAndInitFirefoxDriver(driverPath);
         } else if (os.contains("Windows") && configFileReader.getBrowser().toLowerCase().equals("ie")) {
-            driverPath = driverPath + "win64/IEDriverServer.exe";
+            driverPath = driverPath + "win64/geckodriver.exe";
             return setPropertyAndInitIEDriver(driverPath);
         } else if (os.contains("Mac") && configFileReader.getBrowser().toLowerCase().equals("chrome")) {
             driverPath = driverPath + "mac64/chromedriver";
