@@ -107,7 +107,7 @@ public class CommonMethods {
      *
      * @param millis
      */
-    public void waitForElementExplicitly(int millis) {
+    public void waitForElementExplicitly(long millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
