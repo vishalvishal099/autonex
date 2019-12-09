@@ -102,12 +102,6 @@ public class ConfigFileReader {
         else throw new RuntimeException("Admin Username is not specified in the configuration.propertied file");
     }
 
-    public String getAdminPassword() {
-        String admin_pwd = properties.getProperty("ADMIN_PASSWORD");
-        if (admin_pwd != null) return admin_pwd;
-        else throw new RuntimeException("Admin Password is not specified in the configuration.propertied file");
-    }
-
     public String getEmailId() {
         String email_id = properties.getProperty("EMAIL");
         if (email_id != null) return email_id;
