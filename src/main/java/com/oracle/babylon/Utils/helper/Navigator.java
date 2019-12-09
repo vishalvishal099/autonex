@@ -102,7 +102,7 @@ public class Navigator {
      */
     public <P> void loginAsUser(P page, Consumer<P> block) {
         user.setUserName(configFileReader.getAdminUsername());
-        user.setPassword(configFileReader.getAdminPassword());
+        user.setPassword(configFileReader.getPassword());
 
         loginAsUser(user);
         block.accept(page);
