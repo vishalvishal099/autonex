@@ -36,7 +36,7 @@ public class AssignUserRolePage extends Navigator {
         getMenuSubmenu("Setup", "Assign User Roles");
         verifyPageTitle("Roles / User");
     }
-
+ //Repeated method
     public void selectProjectTab(){
         switchTo().defaultContent();
         switchTo().frame("frameMain");
@@ -53,6 +53,7 @@ public class AssignUserRolePage extends Navigator {
     }
 
     public void showDisabledAccount() {
+        //Keep the coding style same for all conditional statements
         if (!$(disabledAccount).isSelected())
             $(disabledAccount).click();
     }
@@ -66,6 +67,7 @@ public class AssignUserRolePage extends Navigator {
 
     public void saveButton() {
         $(saveButton).shouldBe(Condition.visible);
+        //Name the method according to the action
     }
 
 

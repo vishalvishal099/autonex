@@ -14,6 +14,7 @@ import static com.codeborne.selenide.Selenide.switchTo;
  * Author : kukumavi
  */
 
+//Please provide comments for methods 
 public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
     private EditRolePage editRolePage = new EditRolePage();
 
@@ -24,14 +25,14 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
 
     public void checkboxUserRole(String user, String role, String flag) {
         searchUser(user);
-        By searchedUser = By.cssSelector(".dataRow");
+        By searchedUser = By.cssSelector(".dataRow"); //Identifiers on start of page
         commonMethods.waitForElementExplicitly(2000);
         Assert.assertTrue($(searchedUser).text().contains(user));
         String columnIndex = Integer.toString(roleColumnIndex(role));
         WebElement checkBox = driver.findElement(resultTable).findElement(By.xpath("//tr[1]//td[" + columnIndex + "]//input[@type='checkbox']"));
         switch (flag) {
             case "assigned":
-                if (!checkBox.isSelected()) {
+                if (!checkBox.isSelected()) { //no need for seperate brackets
                     checkBox.click();
                 }
                 break;
@@ -60,7 +61,7 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
     }
 
     public void gotoPage(String page) {
-        By pageElement = By.linkText(page);
+        By pageElement = By.linkText(page);  //No need for extra variables
         $(pageElement).click();
     }
 
@@ -77,7 +78,7 @@ public class AssignUserRoleOrganizationTab extends AssignUserRolePage {
         for (WebElement e : listOfColumns) {
             String actualRole = e.getText();
             column_index = column_index + 1;
-            if (roleName.equals(actualRole)) {
+            if (roleName.equals(actualRole)) { //No need for extra brackets 
                 break;
             }
         }

@@ -17,6 +17,8 @@ import java.net.URL;
  * Class to handle the operations related to the driver
  * Author : vsinghsi, susgopal
  */
+ 
+ //No need to check in this file
 public class DriverFactory {
     //Initialization of objects and assigning references to the object.
     ConfigFileReader configFileReader = new ConfigFileReader();
