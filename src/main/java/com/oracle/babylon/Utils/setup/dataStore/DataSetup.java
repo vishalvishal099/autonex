@@ -72,7 +72,8 @@ public class DataSetup {
      * @throws ParseException
      */
     public void writeIntoJson(String[] keyList, String value, String filePath) {
-
+        System.out.println("Coming inside write to json");
+        System.out.println("Value----->" + value);
         //Fetch the json from the file
         try {
             Object obj = new JSONParser().parse(new FileReader(filePath));
