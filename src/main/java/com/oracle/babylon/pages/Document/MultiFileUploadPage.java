@@ -60,48 +60,6 @@ public class MultiFileUploadPage extends Navigator {
     }
 
     /**
-     * Function For MultiFile Upload
-     * @param fileLocation
-     */
-    public Boolean multiFileUpload(String fileLocation)
-    {
-        Boolean successMsg=false;
-        try{
-            getMenuSubmenu("Documents", "Multiple File Upload");
-            this.driver = commonMethods.switchToFrame(driver, "frameMain");
-            commonMethods.waitForElement(driver,multiFileUpload);
-            $(multiFileUpload).click();
-            $(chooseMultiFileUpload).click();
-            Robot robot=new Robot();
-            robot.setAutoDelay(2000);
-            StringSelection pathOfFile=new StringSelection(fileLocation);
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(pathOfFile,null);
-            robot.setAutoDelay(1000);
-            robot.keyPress(KeyEvent.VK_CONTROL);
-            robot.keyPress(KeyEvent.VK_V);
-            robot.keyRelease(KeyEvent.VK_CONTROL);
-            robot.keyRelease(KeyEvent.VK_V);
-            robot.setAutoDelay(1000);
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-            $(startUploadButton).click();
-            commonMethods.wait(5000);
-
-
-        }
-
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        commonMethods.waitForElement(driver,fileUploadMessage);
-       successMsg= $(fileUploadMessage).isDisplayed();
-        $(closeButton).click();
-        return successMsg;
-    }
-
-    /**
      * Function to  Upload Zipfile
      * @param fileName
      * @param fileLocation
