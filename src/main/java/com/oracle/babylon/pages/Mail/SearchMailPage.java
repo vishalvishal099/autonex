@@ -1,4 +1,5 @@
 package com.oracle.babylon.pages.Mail;
+import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
@@ -20,6 +21,12 @@ public class SearchMailPage extends Navigator {
     private By okButton=By.xpath("//button[@id='ok']");
     private By removeButton=By.xpath("//button[@title='Remove item from list']");
     private By resetButton=By.xpath("//button[@title='Cancel your current changes']");
+
+    //Save search
+    private By saveButton=By.id("savedSearches-saveButton");
+    private By nameOfSearch=By.className("auiField-input ng-pristine ng-empty ng-invalid ng-invalid-required ng-valid-maxlength ng-touched");
+    private By saveOkButton=By.xpath("//input[@id='ok']");
+
 
     /**
      * Function to Export Reports
@@ -89,6 +96,21 @@ public class SearchMailPage extends Navigator {
         }
 
 
+    }
+    /**
+     * Function to save created search
+     * @param sharingInfo
+     * Sharinginfo is radio button to whom we need to share the created saved search
+     */
+    public String createSaveSearch(String sharingInfo)
+    {
+        $(saveButton).click();
+        Faker faker=new Faker();
+        String name=faker.app().name();
+        $(nameOfSearch).sendKeys(name);
+        $(By.xpath("//span[text()='"+sharingInfo+"']/..//input")).click();
+        $(saveOkButton).click();
+        return name;
     }
 
 
