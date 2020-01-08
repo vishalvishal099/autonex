@@ -1,14 +1,19 @@
 package com.oracle.babylon.Utils.helper;
 
 
-import com.google.gson.JsonObject;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Ticket;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
+import io.restassured.RestAssured;
+import io.restassured.http.Method;
+import io.restassured.path.json.JsonPath;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.openqa.selenium.json.Json;
 
 
 /**
@@ -43,6 +48,23 @@ public class JIRAOperations {
         }
         return response;
     }
+
+    public static RequestSpecification httpRequest;
+    public static Response response;
+    public static JsonPath extractor;
+    String basicAuth = "Basic " + configFileReader.returnSSOAuthString();
+    String getIssueIdUrl = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/";
+
+    public String getJiraId(String issueID) {
+        httpRequest = RestAssured.given();
+        String url = getIssueIdUrl + issueID;
+        httpRequest.header("Authorization", basicAuth);
+        response = httpRequest.request(Method.GET, url);
+        extractor = response.jsonPath();
+        String issueId = extractor.get("id");
+        return issueId;
+    }
+
 
     /**
      * Function only declared, will write the implementation in the future
