@@ -37,9 +37,11 @@ public class LoginSteps {
 
     @Given("\"([^\"]*)\", retrieve details")
     public void retrieveDetails(String jiraId) throws IOException {
-        String issueId = jiraOperations.returnIssueId(jiraId);
-        System.out.println(issueId);
+        //String issueId = jiraOperations.returnIssueId(jiraId);
+       // System.out.println(issueId);
         //jiraOperations.addComment(tablename);
+       String issueId = jiraOperations.getJiraId(jiraId);
+        System.out.println(issueId);
     }
 
     @Then("views the home page")
