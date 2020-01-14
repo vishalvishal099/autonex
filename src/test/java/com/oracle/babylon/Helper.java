@@ -18,7 +18,7 @@ import java.net.MalformedURLException;
 
 public class Helper {
 
-    DriverFactory driverFactory = new DriverFactory();
+
 
     /**
      * Function to launch the browser
@@ -26,6 +26,7 @@ public class Helper {
      */
     @Before
     public void driverSetup() throws MalformedURLException{
+        DriverFactory driverFactory = new DriverFactory();
         WebDriver driver = driverFactory.getDriver();
         WebDriverRunner.setWebDriver(driver);
     }
