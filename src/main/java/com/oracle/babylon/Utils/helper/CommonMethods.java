@@ -276,17 +276,6 @@ public class CommonMethods {
     }
 
 
-    /**
-     * Function to select the hyperlink 'a' tag that we need to change the settings for
-     *
-     * @param linkText
-     */
-    public void clickHyperLinkToChange(By pageHeader, String linkText) {
-        $(pageHeader).isDisplayed();
-        $(By.xpath("//a[text()='" + linkText + "']")).click();
-
-    }
-
 
     /**
      * Function to select the attribute 'li' that we need to change the settings for
@@ -299,6 +288,16 @@ public class CommonMethods {
 
     }
 
+    /**
+     * Function to select the link that we need to change the settings for
+     *
+     * @param linkText
+     */
+    public void clickLinkToChange(By pageHeader, String linkText) {
+        $(pageHeader).isDisplayed();
+        $(By.xpath("//a[text()='" + linkText + "']")).click();
+
+    }
 
 
 }
