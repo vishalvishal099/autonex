@@ -18,15 +18,5 @@ import cucumber.api.junit.Cucumber;
 
 public class MailTest{
 
-    /**@Override
-    @DataProvider(parallel = true)
-    public Object[][] scenarios() {
-        long threadId = Thread.currentThread().getId();
-        System.out.println("Thread ID--->" + threadId);
-        return super.scenarios();
-    }*/
-
-
-
 }
 

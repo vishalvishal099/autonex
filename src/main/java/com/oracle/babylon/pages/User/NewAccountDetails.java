@@ -21,7 +21,7 @@ public class NewAccountDetails extends Navigator {
     private By job_title_txt_box = By.xpath("//div[@id='position']//input");
     private By saveBtn = By.id("btnSave");
 
-    public void verifyPage() {
+    public void verifyPage(){
         //Added the code directly because page does not have a frame
         commonMethods.waitForElementExplicitly(3000);
         String headerName = $(header).text();

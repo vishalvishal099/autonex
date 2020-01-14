@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import java.util.Map;
+
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.switchTo;
@@ -14,7 +15,7 @@ import static com.codeborne.selenide.Selenide.switchTo;
  * Function that contains the methods related to Compose Mail
  * Author : vsinghsi
  */
-public class ComposeMail extends MailPage{
+public class ComposeMail extends MailPage {
 
     //Initializing the objects and assigning references to it
 
@@ -70,8 +71,6 @@ public class ComposeMail extends MailPage{
     }
 
 
-
-
     /**
      * Enter the subject required while composing the mail
      *
@@ -110,16 +109,16 @@ public class ComposeMail extends MailPage{
         user = dataStore.getUser(userTo);
         userTo = user.getFullName();
         this.driver = commonMethods.switchToFrame(driver, "frameMain");
-       /** $(attachBtn).click();
-        driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
-        driver.switchTo().frame("attachFiles-frame");
-        WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
-        WebElement child = element.findElement(By.xpath(".//input"));
-        System.out.println(child.getAttribute("title"));
-        child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
-       // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
-          System.out.println("Printing test");
-        */
+        /** $(attachBtn).click();
+         driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
+         driver.switchTo().frame("attachFiles-frame");
+         WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
+         WebElement child = element.findElement(By.xpath(".//input"));
+         System.out.println(child.getAttribute("title"));
+         child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
+         // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
+         System.out.println("Printing test");
+         */
         $(to_mailId).setValue(userTo);
         $(to_mailId).pressEnter();
         this.driver = commonMethods.waitForElement(driver, to_mailId);

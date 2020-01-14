@@ -77,7 +77,7 @@ public class DocumentPage extends Navigator {
         String url = configFileReader.getApplicationUrl() + "api/projects/" + projectId + "/register";
         RequestSpecification httpRequest = RestAssured.given().config(RestAssured.config().encoderConfig(encoderConfig().encodeContentTypeAs("multipart/mixed", ContentType.TEXT)));
 
-        apiRequest.execRequest(httpRequest, Method.POST, url, headersList , requestBodyXML);
+        apiRequest.execRequest(httpRequest, Method.POST, url, headersList, requestBodyXML);
         //executing the api request
         //HttpResponse response = apiRequest.postRequest(url, basicAuth, "multipart/mixed", requestBodyXML);
         //return the document number
@@ -87,6 +87,7 @@ public class DocumentPage extends Navigator {
 
     /**
      * Method to retrieve the document schema through a api call
+     *
      * @param userId
      * @param projectId
      * @return
@@ -172,6 +173,7 @@ public class DocumentPage extends Navigator {
 
     /**
      * Generate the basic auth credentials for api requests
+     *
      * @param userId userId to retireve the password and generate the auth credentials
      * @return basic auth string
      */
@@ -184,12 +186,13 @@ public class DocumentPage extends Navigator {
 
     /**
      * Method to set the mandatory fields for Document API by retieving it from Document Schema
-     * @param document document fields object
-     * @param userId generate auth credentials
+     *
+     * @param document  document fields object
+     * @param userId    generate auth credentials
      * @param projectId projectid to retieve the schema
      * @return
      */
-    public Document setMandatoryFields(Document document, String userId, String projectId){
+    public Document setMandatoryFields(Document document, String userId, String projectId) {
         //Basic Mandatory fields for Document are Document Status ID, Document Type ID, Attribute 1 and Discipline
         //API response for Document Schema
         Response documentSchemaResponse = getDocumentSchema(userId, projectId);
@@ -198,22 +201,22 @@ public class DocumentPage extends Navigator {
         String responseString = documentSchemaResponse.body().asString();
         SchemaHelperPage schemaHelper = new SchemaHelperPage();
         //Check if the document fields are not set in Document object. If not set, then retrieve from Document Schema response body and set it.
-        if(document.getDiscipline() == null){
+        if (document.getDiscipline() == null) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Discipline", "Value");
             document.setDiscipline(mandatoryList.get(0));
         }
 
-        if(document.getAttribute1() == null){
+        if (document.getAttribute1() == null) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Attribute1", "Value");
             document.setAttribute1(mandatoryList.get(0));
         }
 
-        if(document.getDocumentStatusId() == 0){
+        if (document.getDocumentStatusId() == 0) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentStatusId", "Id");
             document.setDocumentStatusId(Integer.parseInt(mandatoryList.get(0)));
         }
 
-        if(document.getDocumentTypeId() == 0){
+        if (document.getDocumentTypeId() == 0) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentTypeId", "Id");
             document.setDocumentTypeId(Integer.parseInt(mandatoryList.get(0)));
         }
