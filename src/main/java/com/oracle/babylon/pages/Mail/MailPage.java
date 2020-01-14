@@ -6,16 +6,20 @@ import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.navigator;
 
 /**
  * Class that contains common methods related to Mails
- * Author : susgopal
+ * Author : susgopal, sunilvve
+ *
  */
 public class MailPage extends Navigator {
 
@@ -38,9 +42,11 @@ public class MailPage extends Navigator {
     //Add Or Remove Column
     private By addOrRemoveButton=By.xpath("//button[@title='Choose the columns displayed in the search results']");
     private By addButton=By.xpath("//button[@title='Add item to list']");
-    private By okButton=By.xpath("//button[@id='ok']");
     private By removeButton=By.xpath("//button[@title='Remove item from list']");
+    private By okButton=By.xpath("//button[@id='ok']");
     private By resetButton=By.xpath("//button[@title='Cancel your current changes']");
+    private By checkBoxSaveAsDefault= By.xpath("//label[@class='auiField-checkbox']//input[@class='auiField-input ng-pristine ng-untouched ng-valid ng-empty']");
+
 
     //Save search
     private By saveButton=By.id("savedSearches-saveButton");
@@ -52,6 +58,12 @@ public class MailPage extends Navigator {
     private By deleteSavedSearchButton=By.xpath("//button[@title='Delete this item']");
     private By confirmDeleteButton=By.xpath("//button[@name='actionButton']");
     private By newSearchName=By.xpath("auiField-input ng-pristine ng-valid ng-not-empty ng-valid-required ng-valid-maxlength ng-touched");
+
+    //Advanced search
+    private By advancedSearchButton=By.xpath("//button[@type='button' and text()='Advanced Search']");
+    private By selectFilter=By.xpath("//select[@class='auiField-input ng-pristine ng-untouched ng-valid ng-empty']");
+
+
     /**
      * Function to search mails by the mail number search key
      *
@@ -132,27 +144,19 @@ public class MailPage extends Navigator {
      * Example reportType=Export to Excel - Extended Report,Export to Excel - Standard Report,Export to Excel
      *          typeOfExport=Row per recipient,Row per mail
      */
-    public Boolean exportReports(String reportType,String typeOfExport)
+    public void exportReports(String reportType,String typeOfExport)
     {
+        commonMethods.waitForElement(driver,reportsButton);
+        $(reportsButton).click();
+        selectReportType(reportType);
         if(typeOfExport !=null)
         {
-            getMenuSubmenu("Mail", "Inbox");
-            this.driver = commonMethods.switchToFrame(driver, "frameMain");
-            commonMethods.waitForElement(driver,reportsButton);
-            $(reportsButton).click();
-            selectReportType(reportType);
             $(By.xpath("//button[@type='button' and text()='"+typeOfExport+"']")).click();
-            return $(successMsg).isDisplayed();
+
         }
-        else
-        {
-            getMenuSubmenu("Mail", "Inbox");
-            this.driver = commonMethods.switchToFrame(driver, "frameMain");
-            $(reportsButton).click();
-            selectReportType(reportType);
-            return $(successMsg).isDisplayed();
-        }
+
     }
+
 
     /**
      * Function to Select Report Type
@@ -171,9 +175,8 @@ public class MailPage extends Navigator {
      * columnName:Name of the column which we need to Add or Remove
      *
      */
-    public void addOrRemoveColumns(boolean add,String columnName)
+    public void addOrRemoveColumns(Boolean add,String columnName, Boolean saveAsDefault)
     {
-        this.driver = commonMethods.switchToFrame(driver, "frameMain");
         if(add)
         {
             $(addOrRemoveButton).click();
@@ -181,6 +184,11 @@ public class MailPage extends Navigator {
             $(addButton).click();
             $(okButton).click();
 
+
+        }
+        if(saveAsDefault)
+        {
+            $(checkBoxSaveAsDefault).click();
         }
         else
         {
@@ -195,7 +203,7 @@ public class MailPage extends Navigator {
     }
     /**
      * Function to save created search
-     * @param sharingInfo
+     * @param sharingInfo with whom we can share created search
      * Sharinginfo is radio button to whom we need to share the created saved search
      */
     public String createSaveSearch(String sharingInfo)
@@ -218,23 +226,19 @@ public class MailPage extends Navigator {
      */
     public void editSavedSearch(String mySavedSearch,String sharingInfo,String newSearchName)
     {
-        this.driver = commonMethods.switchToFrame(driver, "frameMain");
+        $(savedSearches).click();
+        $(By.xpath("//div[text()='"+mySavedSearch+"']/..//i[@title='Manage Saved Searches']")).click();
         if(newSearchName != null)
         {
-
-            $(savedSearches).click();
-            $(By.xpath("//div[text()='"+mySavedSearch+"']/..//i[@title='Manage Saved Searches']")).click();
             $(newSearchName).clear();
             $(newSearchName).sendKeys(newSearchName);
-            $(saveOkButton).click();
-
         }
-        else {
-            $(savedSearches).click();
-            $(By.xpath("//div[text()='" + mySavedSearch + "']/..//i[@title='Manage Saved Searches']")).click();
+        if (sharingInfo !=null)
+        {
             $(By.xpath("//span[text()='" + sharingInfo + "']/..//input")).click();
-            $(saveOkButton).click();
         }
+        $(saveOkButton).click();
+
 
     }
 
@@ -251,4 +255,19 @@ public class MailPage extends Navigator {
         $(confirmDeleteButton).click();
 
     }
+
+    /**
+     * Function to Add Filter in Advanced search
+     * @param filterName Name of the filter
+     */
+    public void addFilterToAdvancedSearch(String filterName)
+    {
+
+        $(advancedSearchButton).click();
+        $(selectFilter).selectOption(filterName);
+
+    }
+
+
+
 }
