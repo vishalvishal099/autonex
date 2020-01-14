@@ -4,11 +4,6 @@ project.ext {
     cucumberVersion = '4.2.5'
 }
 
-repositories {
-    maven{
-        url 'https://packages.atlassian.com/maven/repository/public'
-    }
-}
 dependencies {
     testCompile 'io.cucumber:cucumber-java:' + cucumberVersion
     testCompile 'io.cucumber:cucumber-junit:' + cucumberVersion
