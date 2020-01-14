@@ -6,3 +6,6 @@ Feature: Document upload, search and update tests
       | 1879048197       | A        | Airport    | false   | Uploading a document | Structural | 1879048196         |
     When search document for user "user1"
     Then verify if document is present
+
+    Scenario: Multiple file upload
+      Given upload Multiple files

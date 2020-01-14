@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
-            <version>5.2.2</version>
+            <version>5.2.8</version>
         </dependency>
 
         <dependency>
@@ -111,7 +111,6 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.12.2</version>
-<!--            <scope>test</scope>-->
         </dependency>
 
         <dependency>
@@ -132,7 +131,7 @@
                     <encoding>UTF-8</encoding>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-<!--                    <compilerArgument>-Werror</compilerArgument>-->
+                   <!-- <compilerArgument>-Werror</compilerArgument>-->
                 </configuration>
             </plugin>
             <plugin>

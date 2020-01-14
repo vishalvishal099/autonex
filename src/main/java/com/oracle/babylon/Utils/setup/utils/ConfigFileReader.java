@@ -108,23 +108,35 @@ public class ConfigFileReader {
         else throw new RuntimeException("Email is not specified in the configuration.properties file");
     }
 
-    public String returnUserDataJsonFilePath() {
+    public String getUserDataJsonFilePath() {
         String filePath = System.getProperty("user.dir") + properties.getProperty("USER_DATA_JSON");
         if (filePath != null) return filePath;
         else throw new RuntimeException("File Path is not specified in the configuration.properties file");
     }
 
-    public String returnSSOAuthString() {
+    public String getSSOAuthString() {
         String sso_auth_string = properties.getProperty("SSO_Auth_String");
         if (sso_auth_string != null) return sso_auth_string;
         else throw new RuntimeException("SSO Auth String not specified in the configuration.properties file");
 
     }
 
-    public Boolean returnUseJsonFileFlag() {
+    public Boolean getUseJsonFileFlag() {
         String use_json_file = properties.getProperty("USE_JSON_FILE");
         if (use_json_file.equals("true")) return true;
         else return false;
+    }
+
+    public String getJiraExecutionUrl(){
+        String jira_exec_url = properties.getProperty("ZEPHYR_EXECUTION_URL");
+        if(jira_exec_url != null) return jira_exec_url;
+        else return null;
+    }
+
+    public String getJiraIssueUrl(){
+        String jira_issue_url = properties.getProperty("JIRA_ISSUE_URL");
+        if(jira_issue_url != null) return jira_issue_url;
+        else return null;
     }
 }
 

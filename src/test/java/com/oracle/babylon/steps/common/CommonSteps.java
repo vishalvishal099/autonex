@@ -1,21 +1,13 @@
 package com.oracle.babylon.steps.common;
 
-import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminTools;
-import com.oracle.babylon.pages.Document.DocumentPage;
-import com.oracle.babylon.pages.Setup.ProjectSettingsPage;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.json.simple.parser.ParseException;
-import org.junit.Assert;
-import org.openqa.selenium.WebDriver;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class CommonSteps {
@@ -25,7 +17,7 @@ public class CommonSteps {
     private AdminTools adminTools = new AdminTools();
     private DataStore dataStore = new DataStore();
     Navigator navigator = new Navigator();
-    String filepath = configFileReader.returnUserDataJsonFilePath();
+    String filepath = configFileReader.getUserDataJsonFilePath();
 
     @When("Login and set the web services api checkbox for project \"([^\"]*)\"")
     public void enableWebServicesAPI(String projectIdentifier)  {
