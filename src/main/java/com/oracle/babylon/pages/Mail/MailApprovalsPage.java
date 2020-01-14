@@ -39,17 +39,6 @@ public class MailApprovalsPage extends Navigator {
     private By addLinkForMail= By.xpath("//table[@id='tblApprovabieItemList']//tbody[@id='tbdNoMailItems']//a");
 
 
-    /**
-     * Function to configure Mail Approvals
-     *
-     */
-    public Boolean configureMailApproverPage()
-    {
-        $(configureApproverBtn).click();
-        if(driver.getTitle().equalsIgnoreCase("Approvals"));
-        return true;
-
-    }
 
     /**
      * Function to create Approver For Organization or Peoject level
