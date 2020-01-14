@@ -124,7 +124,7 @@ public class DriverFactory {
      * @param path
      * @return browser reference
      */
-    private WebDriver setPropertyAndInitFirefoxDriver(String path) {
+    public WebDriver setPropertyAndInitFirefoxDriver(String path) {
         //For latest version of firefox we need to configure the gecko driver
         System.setProperty("webdriver.gecko.driver", path);
         WebDriver firefoxDriver = null;

@@ -2,23 +2,27 @@ package com.oracle.babylon.pages.Document;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.CommonMethods;
-import com.oracle.babylon.Utils.helper.SchemaHelperPage;
 import com.oracle.babylon.Utils.helper.Navigator;
+import com.oracle.babylon.Utils.helper.SchemaHelperPage;
 import com.oracle.babylon.Utils.setup.dataStore.DocumentTableConverter;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Document;
 import io.cucumber.datatable.DataTable;
-import org.apache.http.HttpResponse;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import io.restassured.http.Method;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
+import static io.restassured.config.EncoderConfig.encoderConfig;
 
 /**
  * Class file that contains methods related to the operations for Documents
@@ -57,14 +61,25 @@ public class DocumentPage extends Navigator {
         //Updating the request body according to the required template
         documentRequestBody.insert(0, "{ \"document\":");
         documentRequestBody.append("}");
+        //String requestBodyXML = "\n\n" + commonMethods.convertJsonStringToXMLString(documentRequestBody.toString()) + "\n";
         String requestBodyXML = "--myboundary\n\n" + commonMethods.convertJsonStringToXMLString(documentRequestBody.toString()) + "\n--myboundary";
         requestBodyXML = capitalizeXMLTags(requestBodyXML, "<");
         requestBodyXML = capitalizeXMLTags(requestBodyXML, "</");
 
+        //Creating the headers
+        Header authHeader = new Header("Authorization", basicAuth);
+        Header contentTypeHeader = new Header("Content-Type", "multipart/mixed");
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(authHeader);
+        headersList.add(contentTypeHeader);
+
         //Forming the url
         String url = configFileReader.getApplicationUrl() + "api/projects/" + projectId + "/register";
+        RequestSpecification httpRequest = RestAssured.given().config(RestAssured.config().encoderConfig(encoderConfig().encodeContentTypeAs("multipart/mixed", ContentType.TEXT)));
+
+        apiRequest.execRequest(httpRequest, Method.POST, url, headersList, requestBodyXML);
         //executing the api request
-        HttpResponse response = apiRequest.postRequest(url, basicAuth, "multipart/mixed", requestBodyXML);
+        //HttpResponse response = apiRequest.postRequest(url, basicAuth, "multipart/mixed", requestBodyXML);
         //return the document number
         return document.getDocumentNumber();
     }
@@ -72,14 +87,19 @@ public class DocumentPage extends Navigator {
 
     /**
      * Method to retrieve the document schema through a api call
+     *
      * @param userId
      * @param projectId
      * @return
      */
-    public HttpResponse getDocumentSchema(String userId, String projectId) {
+    public Response getDocumentSchema(String userId, String projectId) {
         String basicAuth = basicAuthCredentialsProvider(userId);
         String url = configFileReader.getApplicationUrl() + "api/projects/" + projectId + "/register/schema";
-        HttpResponse response = apiRequest.getRequest(url, basicAuth);
+        Header header = new Header("Authorization", basicAuth);
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(header);
+        Response response = apiRequest.execRequest(Method.GET, url, headersList, null);
+        //HttpResponse response = apiRequest.getRequest(url, basicAuth);
         return response;
     }
 
@@ -153,6 +173,7 @@ public class DocumentPage extends Navigator {
 
     /**
      * Generate the basic auth credentials for api requests
+     *
      * @param userId userId to retireve the password and generate the auth credentials
      * @return basic auth string
      */
@@ -165,36 +186,37 @@ public class DocumentPage extends Navigator {
 
     /**
      * Method to set the mandatory fields for Document API by retieving it from Document Schema
-     * @param document document fields object
-     * @param userId generate auth credentials
+     *
+     * @param document  document fields object
+     * @param userId    generate auth credentials
      * @param projectId projectid to retieve the schema
      * @return
      */
-    public Document setMandatoryFields(Document document, String userId, String projectId){
+    public Document setMandatoryFields(Document document, String userId, String projectId) {
         //Basic Mandatory fields for Document are Document Status ID, Document Type ID, Attribute 1 and Discipline
         //API response for Document Schema
-        HttpResponse documentSchemaResponse = getDocumentSchema(userId, projectId);
+        Response documentSchemaResponse = getDocumentSchema(userId, projectId);
         List<String> mandatoryList;
         //Return the response body from the HTTP Response
-        String responseString = commonMethods.returnResponseBody(documentSchemaResponse);
+        String responseString = documentSchemaResponse.body().asString();
         SchemaHelperPage schemaHelper = new SchemaHelperPage();
         //Check if the document fields are not set in Document object. If not set, then retrieve from Document Schema response body and set it.
-        if(document.getDiscipline() == null){
+        if (document.getDiscipline() == null) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Discipline", "Value");
             document.setDiscipline(mandatoryList.get(0));
         }
 
-        if(document.getAttribute1() == null){
+        if (document.getAttribute1() == null) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Attribute1", "Value");
             document.setAttribute1(mandatoryList.get(0));
         }
 
-        if(document.getDocumentStatusId() == 0){
+        if (document.getDocumentStatusId() == 0) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentStatusId", "Id");
             document.setDocumentStatusId(Integer.parseInt(mandatoryList.get(0)));
         }
 
-        if(document.getDocumentTypeId() == 0){
+        if (document.getDocumentTypeId() == 0) {
             mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentTypeId", "Id");
             document.setDocumentTypeId(Integer.parseInt(mandatoryList.get(0)));
         }

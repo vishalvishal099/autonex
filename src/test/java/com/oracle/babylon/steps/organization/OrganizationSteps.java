@@ -36,7 +36,7 @@ public class OrganizationSteps {
     private DataSetup dataSetup = new DataSetup();
     private NewAccountDetails newAccountDetails = new NewAccountDetails();
     private User user = null;
-    String filepath = configFileReader.returnUserDataJsonFilePath();
+    String filepath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * Code which contains a sequence of steps to create a organization

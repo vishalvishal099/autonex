@@ -20,6 +20,7 @@ Feature: Login Test
     Given "invalid_user" login with incorrect username and password
     Then user should not logged into aconex
 
-    #Scenario: JIRA Details
-     # Given "ACONEXQA-568", retrieve details
+
+  Scenario: JIRA Details
+     Given "ACONEXQA-568", retrieve details
 
