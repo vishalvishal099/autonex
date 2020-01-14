@@ -52,7 +52,7 @@ public class Navigator {
 
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
-        filePath = configFileReader.returnUserDataJsonFilePath();
+        filePath = configFileReader.getUserDataJsonFilePath();
     }
 
     /**

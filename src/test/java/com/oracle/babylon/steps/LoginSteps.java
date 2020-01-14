@@ -8,7 +8,6 @@ import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
-import io.cucumber.datatable.DataTable;
 
 import java.io.IOException;
 import java.util.Map;
@@ -37,18 +36,17 @@ public class LoginSteps {
 
     @Given("\"([^\"]*)\", retrieve details")
     public void retrieveDetails(String jiraId) throws IOException {
-        //String issueId = jiraOperations.returnIssueId(jiraId);
-       // System.out.println(issueId);
-        //jiraOperations.addComment(tablename);
-       String issueId = jiraOperations.getJiraId(jiraId);
-        System.out.println(issueId);
+        String issueId = jiraOperations.getJiraId(jiraId);
+        int executionId = jiraOperations.returnLatestExecutionId(issueId, "19.9.100");
+       // System.out.println(jiraOperations.updateLatestExecutionStatus(executionId, 1).getBody().asString());
+
     }
 
     @Then("views the home page")
     public void viewsTheHomePage(){
         DataSetup dataSetup = new DataSetup();
         ConfigFileReader configFileReader = new ConfigFileReader();
-        String filePath = configFileReader.returnUserDataJsonFilePath();
+        String filePath = configFileReader.getUserDataJsonFilePath();
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filePath);
         Map<String, String> userMap = mapOfMap.get("user1");
         String fullname = userMap.get("fullname");

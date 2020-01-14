@@ -4,16 +4,13 @@ package com.oracle.babylon.Utils.helper;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Ticket;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
-import io.restassured.RestAssured;
+import io.restassured.http.Header;
 import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-import org.openqa.selenium.json.Json;
+
+import java.util.*;
 
 
 /**
@@ -25,6 +22,9 @@ public class JIRAOperations {
     private DataStore dataStore = new DataStore();
     private Ticket ticket = new Ticket();
     private APIRequest apiRequest = new APIRequest();
+    String basicAuth = "Basic " + configFileReader.getSSOAuthString();
+    public static Response response;
+    public static JsonPath extractor;
 
     /**
      * Get the details of the jira ticket
@@ -32,39 +32,91 @@ public class JIRAOperations {
      * @param ticketId id of the ticket
      * @return the response with the details of the ticket
      */
-    public HttpResponse getJiraTicketDetails(String ticketId) {
-        //Parsing the data store and fetching the required table
-        String url = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/" + ticketId;
-        String basicAuth = "Basic " + configFileReader.returnSSOAuthString();
-        String headers = basicAuth ;
-        HttpResponse response =  apiRequest.getRequest(url, headers);
-        HttpEntity entity = response.getEntity();
-        try {
-            String responseString = EntityUtils.toString(entity, "UTF-8");
-            System.out.println(responseString);
+    public Response getJiraTicketDetails(String ticketId) {
 
-        } catch (Exception e){
-
-        }
-        return response;
+        String url = configFileReader.getJiraIssueUrl() + ticketId;
+        Header header = new Header("Authorization", basicAuth);
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(header);
+        return apiRequest.execRequest(Method.GET, url, headersList, null);
     }
 
-    public static RequestSpecification httpRequest;
-    public static Response response;
-    public static JsonPath extractor;
-    String basicAuth = "Basic " + configFileReader.returnSSOAuthString();
-    String getIssueIdUrl = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/";
+    /**
+     * Method to return all the information about the test executions for a issue id
+     * @param issueId
+     * @return
+     */
+    public  Response getTestExecResults(String issueId){
+        String url = configFileReader.getJiraExecutionUrl() + "?issueId=" + issueId;
+        Header header = new Header("Authorization", basicAuth);
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(header);
+        return apiRequest.execRequest(Method.GET, url, headersList, null);
+    }
 
-    public String getJiraId(String issueID) {
-        httpRequest = RestAssured.given();
-        String url = getIssueIdUrl + issueID;
-        httpRequest.header("Authorization", basicAuth);
-        response = httpRequest.request(Method.GET, url);
+    /**
+     * Method to return the test execution id of a JIRA issue
+     * @param issueId
+     * @return
+     */
+    public  int returnLatestExecutionId(String issueId){
+        response = getTestExecResults(issueId);
+        extractor = response.jsonPath();
+        List list = extractor.get("executions");
+
+        Map<String, Object> map = (Map)list.get(0);
+        return Integer.parseInt(map.get("id").toString());
+    }
+
+    /**
+     *  Method to return the test execution id of a JIRA issue for a specific test execution version
+     * @param issueId
+     * @param versionName  release version for which test will be executed
+     * @return
+     */
+    public  int returnLatestExecutionId(String issueId, String versionName){
+        response = getTestExecResults(issueId);
+        extractor = response.jsonPath();
+        List list = extractor.get("executions");
+        Map<String, Object> table = new Hashtable<>();
+        Iterator<HashMap<String,Object>> iterator = list.iterator();
+        while (iterator.hasNext()){
+            table = iterator.next();
+            if(table.get("versionName").equals(versionName)){
+                return Integer.parseInt(table.get("id").toString());
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Updates the result of the test execution
+     * @param executionid
+     * @param statusId
+     * @return
+     */
+    public Response updateLatestExecutionStatus(int executionid, int statusId){
+        Map<String, Object> updateBody = new Hashtable<String, Object>();
+        updateBody.put("status", statusId);
+        String requestBody = CommonMethods.convertMaptoJsonString(updateBody);
+        String url = configFileReader.getJiraExecutionUrl() + "/" + executionid + "/execute";
+        Header authHeader = new Header("Authorization", basicAuth);
+        Header contentTypeHeader = new Header("Content-Type", "application/json");
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(authHeader);
+        headersList.add(contentTypeHeader);
+        return apiRequest.execRequest(Method.PUT, url, headersList, requestBody);
+    }
+
+
+
+    public String getJiraId(String ticketId) {
+
+        response = getJiraTicketDetails(ticketId);
         extractor = response.jsonPath();
         String issueId = extractor.get("id");
         return issueId;
     }
-
 
     /**
      * Function only declared, will write the implementation in the future
@@ -79,40 +131,28 @@ public class JIRAOperations {
     /**
      * Function to add a comment to a Jira id provided
      * We use the encoded string to protect the password
+     *
      * @param ticketId name of the ticket table in the data store
      * @return
      */
     public HttpResponse addComment(String ticketId, String comment) {
 
 
-        String url = configFileReader.getJiraUrl() + "/jira/rest/api/2/issue/" + ticketId + "/comment";
+        String url = configFileReader.getJiraIssueUrl() + ticketId + "/comment";
 
-        String basicAuth = "Basic " + configFileReader.returnSSOAuthString();
+        String basicAuth = "Basic " + configFileReader.getSSOAuthString();
         String jsonString = "{ \"body\": " + comment + " }";
         HttpResponse response = apiRequest.postRequest(url, basicAuth, jsonString);
         return response;
     }
 
-    public String returnIssueId(String jiraId){
-        HttpResponse response = getJiraTicketDetails(jiraId);
-        HttpEntity entity = response.getEntity();
-        try {
-            String responseString = EntityUtils.toString(entity, "UTF-8");
-            System.out.println(responseString);
-        } catch (Exception e){
 
-        }
-        JSONObject jsonObject = new JSONObject(response.getEntity());
-        return jsonObject.get("id").toString();
-    }
 
-    public static  void main(String[] args) {
+    public static void main(String[] args) {
         JIRAOperations jira = new JIRAOperations();
-        System.out.println(jira.getJiraTicketDetails("ACONEXQA-568"));
-      // jira.addComment("ACONEXQA-568", "TEST COMMENT");
+        jira.getJiraTicketDetails("ACONEXQA-568");
+        // jira.addComment("ACONEXQA-568", "TEST COMMENT");
     }
-
-
 
 
 }

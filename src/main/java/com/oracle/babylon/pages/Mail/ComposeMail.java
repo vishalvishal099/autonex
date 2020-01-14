@@ -3,6 +3,8 @@ package com.oracle.babylon.pages.Mail;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.Map;
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
@@ -26,6 +28,7 @@ public class ComposeMail extends MailPage{
     private By to_mailId = By.xpath("//input[@name='SPEED_ADDRESS_TO']");
     private By sendBtn = By.xpath("//button[@id='btnSend']");
     private By loadingIcon = By.cssSelector(".loading_progress");
+    private By attachBtn = By.id("btnMailAttachments");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -107,6 +110,16 @@ public class ComposeMail extends MailPage{
         user = dataStore.getUser(userTo);
         userTo = user.getFullName();
         this.driver = commonMethods.switchToFrame(driver, "frameMain");
+       /** $(attachBtn).click();
+        driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
+        driver.switchTo().frame("attachFiles-frame");
+        WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
+        WebElement child = element.findElement(By.xpath(".//input"));
+        System.out.println(child.getAttribute("title"));
+        child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
+       // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
+          System.out.println("Printing test");
+        */
         $(to_mailId).setValue(userTo);
         $(to_mailId).pressEnter();
         this.driver = commonMethods.waitForElement(driver, to_mailId);

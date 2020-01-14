@@ -299,23 +299,6 @@ public class CommonMethods {
 
     }
 
-    /**
-     * Method to convert the HttpResponse to a string
-     *
-     * @param response
-     * @return
-     */
-    public String returnResponseBody(HttpResponse response) {
-        try {
-            ResponseHandler<String> handler = new BasicResponseHandler();
-            return handler.handleResponse(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Unable to complete the response body conversion process");
-            Assert.fail();
-        }
-        return null;
-    }
 
 
 }

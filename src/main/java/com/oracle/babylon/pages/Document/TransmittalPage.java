@@ -5,9 +5,8 @@ import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.pages.Directory.DirectoryPage;
 import com.oracle.babylon.pages.Mail.MailPage;
 import io.cucumber.datatable.DataTable;
-import org.json.simple.parser.ParseException;
 import org.openqa.selenium.By;
-import java.io.IOException;
+
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -34,7 +33,7 @@ public class TransmittalPage extends Navigator {
         driver = WebDriverRunner.getWebDriver();
         Map<String, String> featureDataMap = dataTable.transpose().asMap(String.class, String.class);
         //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.getUserDataJsonFilePath());
         //Project info
         Map<String, String> mailAttributeMap = mapOfMap.get("mailattribute");
         commonMethods.waitForElement(driver, directoryBtn);
