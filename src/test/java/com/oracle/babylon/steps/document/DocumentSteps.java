@@ -5,9 +5,11 @@ import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Document.DocumentRegisterPage;
+import com.oracle.babylon.pages.Document.MultipleFileUpload;
 import com.oracle.babylon.pages.Document.TransmittalPage;
 import com.oracle.babylon.pages.Setup.ProjectSetting.ProjectSettingsPage;
 import cucumber.api.java.en.Given;
@@ -36,9 +38,10 @@ public class DocumentSteps {
     private ProjectSettingsPage projectSettingsPage = new ProjectSettingsPage();
     private TransmittalPage transmittalPage = new TransmittalPage();
     AdminSearch adminSearch = new AdminSearch();
+    MultipleFileUpload multipleFileUpload = new MultipleFileUpload();
 
     String documentNumber = null;
-    String filePath = configFileReader.returnUserDataJsonFilePath();
+    String filePath = configFileReader.getUserDataJsonFilePath();
 
 
 
@@ -126,5 +129,20 @@ public class DocumentSteps {
         transmittalPage.createBasicTransmittal(dataTable);
 
 
+    }
+
+    @Given("upload Multiple files")
+    public void uploadMultipleFiles() {
+       // multipleFileUpload.returnRequiredDate("yesterday");
+       // multipleFileUpload.returnFileNames("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
+
+        navigator.loginAsUser(multipleFileUpload, "user1" , filePath, page -> {
+
+           navigator.getMenuSubmenu("Documents", "Multiple File Upload");
+           page.clickMultiFileUploadBtn("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
+
+
+
+        });
     }
 }

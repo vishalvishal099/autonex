@@ -4,7 +4,9 @@ import com.oracle.babylon.Utils.helper.Navigator;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
+
 import java.util.Map;
+
 import static com.codeborne.selenide.Selenide.$;
 
 /**
@@ -21,17 +23,19 @@ public class NewAccountDetails extends Navigator {
 
     public void verifyPage(){
         //Added the code directly because page does not have a frame
-            String headerName = $(header).text();
-            Assert.assertTrue(headerName.contains("Welcome to your new account"));
+        commonMethods.waitForElementExplicitly(3000);
+        String headerName = $(header).text();
+        Assert.assertTrue(headerName.contains("Welcome to your new account"));
 
     }
 
     /**
      * Function to fill the details of the user
+     *
      * @param userDetailsMap
      */
-    public void fillUserDetails(Map<String, String> userDetailsMap){
-        if($(titleDrpDwn).isDisplayed()) {
+    public void fillUserDetails(Map<String, String> userDetailsMap) {
+        if ($(titleDrpDwn).isDisplayed()) {
             Select select = new Select($(titleDrpDwn));
             select.selectByValue(userDetailsMap.get("Title"));
             select = new Select($(jobFunctionDrpDwn));

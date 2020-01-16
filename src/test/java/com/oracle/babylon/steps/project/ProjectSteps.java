@@ -1,6 +1,5 @@
 package com.oracle.babylon.steps.project;
 
-import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
@@ -28,7 +27,7 @@ public class ProjectSteps {
     private CreateProjectPage createProjectPage = new CreateProjectPage();
     private ProjectDataCreator projectDataCreator = new ProjectDataCreator();
     private Project project = null;
-    String filepath = configFileReader.returnUserDataJsonFilePath();
+    String filepath = configFileReader.getUserDataJsonFilePath();
     AdminHome adminHome = new AdminHome();
     AdminSearch adminSearch = new AdminSearch();
     private User user = new User();

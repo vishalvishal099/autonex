@@ -77,6 +77,7 @@ public class RegisterOrganizationPage extends Navigator {
         $(acceptTermsChkBox).click();
         commonMethods.waitForElementExplicitly(3000);
         $(registerBtn).click();
+        commonMethods.waitForElementExplicitly(3000);
         commonMethods.waitForElement(this.driver, thankYouMessage);
         $(thankYouMessage).isDisplayed();
     }

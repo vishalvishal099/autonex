@@ -42,10 +42,10 @@ public class DataSetup {
             Map<String, Map<String, String>> mapOfMap = new HashMap<>();
 
             JSONObject completeJson = (JSONObject) obj;
-            Set<String> keyList = new HashSet<String>();
-            keyList = completeJson.keySet();
+            Set<String> keySet = new HashSet<String>();
+            keySet = completeJson.keySet();
 
-            for (String key : keyList) {
+            for (String key : keySet) {
                 if (completeJson.get(key).getClass().equals(JSONObject.class)) {
                     mapOfMap.put(key, (HashMap) completeJson.get(key));
                 } else if (completeJson.get(key).getClass().equals(String.class)) {
@@ -72,7 +72,6 @@ public class DataSetup {
      * @throws ParseException
      */
     public void writeIntoJson(String[] keyList, String value, String filePath) {
-
         //Fetch the json from the file
         try {
             Object obj = new JSONParser().parse(new FileReader(filePath));

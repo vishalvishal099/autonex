@@ -10,9 +10,7 @@ import com.oracle.babylon.pages.Setup.EditPreferencesPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +27,7 @@ public class MailSteps {
     private ConfigFileReader configFileReader = new ConfigFileReader();
     private EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
     static String mailNumber;
-    String filePath = configFileReader.returnUserDataJsonFilePath();
+    String filePath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * code to search the mail in the inbox
