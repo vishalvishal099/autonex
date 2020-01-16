@@ -153,11 +153,12 @@ public class DataStore {
      * @param name name of the data table
      * @param project pojo of the Project that contains values
      */
-    public void storeProjectInfo(String name, Project project){
+    public Map<String, Project> storeProjectInfo(String name, Project project){
         if(projectHashMap.containsKey(name)){
             projectHashMap.remove(name);
         }
         projectHashMap.put(name, project);
+        return projectHashMap;
     }
 
     /**
@@ -175,6 +176,9 @@ public class DataStore {
      * @param attributeValue
      */
     public void storeAttributeInfo(String key, String attributeValue){
+        if(key.contains(" ")) {
+            key = key.replace(" ", "");
+        }
         attributeHashMap.put(key,attributeValue);
     }
 

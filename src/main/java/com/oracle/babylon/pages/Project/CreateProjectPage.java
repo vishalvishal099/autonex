@@ -5,13 +5,14 @@ import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Project;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
 
 /**
  * Class to perform some operations on the Project page
  */
-public class ProjectPage extends Navigator{
+public class CreateProjectPage extends Navigator{
 
     //Initialization of web elements
     private By projectNameTxtBox = By.name("ProjectName");
@@ -31,13 +32,14 @@ public class ProjectPage extends Navigator{
     private By projectDescriptionTxtArea = By.name("ProjectDescription");
     private By saveBtn = By.id("btnSave");
 
+    public void navigateToPage(){
+        getMenuSubmenu("Setup", "Create Project");
+    }
     /**
      * Method to fill up the project fields in the ui
      */
-    public void fillUpProjectFields() {
-
-
-        Project project = dataStore.getProjectInfo("project");
+    public void fillUpProjectFields(Project project) {
+        commonMethods.switchToFrame(WebDriverRunner.getWebDriver(), "frameMain");
         $(projectNameTxtBox).sendKeys(project.getProjectName());
         $(projectShortNameTxtBox).sendKeys(project.getProjectShortName());
         $(projectCodeTxtBox).sendKeys(project.getProjectCode());
@@ -62,22 +64,14 @@ public class ProjectPage extends Navigator{
 
     /**
      * Store the details of a project in the json data file for future references
-     *
-     * @throws Exception
      */
-    public void enterProjectDetailsToFile() throws Exception {
-        //Fetch the project id from the admin page
-        Project project = dataStore.getProjectInfo("project");
-        driver = WebDriverRunner.getWebDriver();
-        loginToServer(configFileReader.getAdminUsername(), configFileReader.getAdminPassword(), null);
-        driver = getMenuSubmenu( "Setup","Search");
-        //Search for the project in the xoogle search page
-        String projectId = commonMethods.searchProject(driver, project.getProjectName());
-        //Matching the key in the json file and replacing the value with the value from the map
-        String[] projectKeysList = {"project", "projectId"};
-        dataSetup.writeIntoJson(projectKeysList, projectId, configFileReader.returnUserDataJsonFilePath());
-        projectKeysList = new String[]{"project", "projectname"};
-        dataSetup.writeIntoJson(projectKeysList, project.getProjectName(), configFileReader.returnUserDataJsonFilePath());
+    public void enterProjectDetailsToFile(String mainKey, Map<String, String> map, String filepath) {
+
+        for (String key: map.keySet()) {
+             String[] projectKeysList = { mainKey, key};
+            dataSetup.writeIntoJson(projectKeysList, map.get(key), filepath);
+
+        }
     }
 
 

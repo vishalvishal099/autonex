@@ -3,7 +3,10 @@ package com.oracle.babylon.pages.Mail;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
 import java.util.Map;
+
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.switchTo;
@@ -12,7 +15,7 @@ import static com.codeborne.selenide.Selenide.switchTo;
  * Function that contains the methods related to Compose Mail
  * Author : vsinghsi
  */
-public class ComposeMail extends MailPage{
+public class ComposeMail extends MailPage {
 
     //Initializing the objects and assigning references to it
 
@@ -26,13 +29,14 @@ public class ComposeMail extends MailPage{
     private By to_mailId = By.xpath("//input[@name='SPEED_ADDRESS_TO']");
     private By sendBtn = By.xpath("//button[@id='btnSend']");
     private By loadingIcon = By.cssSelector(".loading_progress");
+    private By attachBtn = By.id("btnMailAttachments");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
      */
-    public void selectMenuSubMenu() {
+    public void navigateAndVerifyPage() {
         getMenuSubmenu("Mail", "Blank Mail");
-        this.driver = commonMethods.switchToFrame(driver, "frameMain");
+        verifyPageTitle("New Mail");
     }
 
     /**
@@ -43,6 +47,7 @@ public class ComposeMail extends MailPage{
      */
     public void composeMail(String user1, String data) {
         //Fetch the table from the data store
+        commonMethods.switchToFrame(driver, "frameMain");
         Map<String, String> table = dataStore.getTable(data);
         //According to the keys passed in the table, we select the fields
         for (String tableData : table.keySet()) {
@@ -62,9 +67,8 @@ public class ComposeMail extends MailPage{
 
             }
         }
+        driver.switchTo().defaultContent();
     }
-
-
 
 
     /**
@@ -105,6 +109,16 @@ public class ComposeMail extends MailPage{
         user = dataStore.getUser(userTo);
         userTo = user.getFullName();
         this.driver = commonMethods.switchToFrame(driver, "frameMain");
+        /** $(attachBtn).click();
+         driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
+         driver.switchTo().frame("attachFiles-frame");
+         WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
+         WebElement child = element.findElement(By.xpath(".//input"));
+         System.out.println(child.getAttribute("title"));
+         child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
+         // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
+         System.out.println("Printing test");
+         */
         $(to_mailId).setValue(userTo);
         $(to_mailId).pressEnter();
         this.driver = commonMethods.waitForElement(driver, to_mailId);
@@ -120,7 +134,7 @@ public class ComposeMail extends MailPage{
         commonMethods.waitForElementExplicitly(3000);
         $(sendBtn).click();
         $(loadingIcon).should(disappear);
-        commonMethods.waitForElement(driver, mailNumberField, 3000);
+        commonMethods.waitForElementExplicitly(5000);
         String mailNumber = $(mailNumberField).getText();
         return mailNumber;
     }

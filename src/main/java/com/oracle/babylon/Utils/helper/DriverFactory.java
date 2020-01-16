@@ -4,10 +4,9 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -16,7 +15,7 @@ import java.net.URL;
 
 /**
  * Class to handle the operations related to the driver
- * Author : vsinghsi, susgopal
+ * Author : vsingsi, susgopal
  */
 public class DriverFactory {
     //Initialization of objects and assigning references to the object.
@@ -48,19 +47,22 @@ public class DriverFactory {
         switch (configFileReader.getBrowser().toLowerCase()) {
 
             case "chrome":
-                DesiredCapabilities capability = new DesiredCapabilities().chrome();
-                WebDriver chromDriver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capability);
+                DesiredCapabilities desiredCapabilities = new DesiredCapabilities().chrome();
+                desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
+                WebDriver chromDriver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), desiredCapabilities);
                 configureDriver(chromDriver);
                 return chromDriver;
 
             case "firefox":
                 DesiredCapabilities ffCapability = new DesiredCapabilities().firefox();
+                ffCapability.setCapability(CapabilityType.PROXY,setUpProxy());
                 WebDriver firefoxDriver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), ffCapability);
                 configureDriver(firefoxDriver);
                 return firefoxDriver;
 
             case "ie":
                 DesiredCapabilities IEcapability = new DesiredCapabilities().internetExplorer();
+                IEcapability.setCapability(CapabilityType.PROXY,setUpProxy());
                 WebDriver IEDriver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), IEcapability);
                 configureDriver(IEDriver);
                 return IEDriver;
@@ -85,7 +87,7 @@ public class DriverFactory {
             driverPath = driverPath + "win64/geckodriver.exe";
             return setPropertyAndInitFirefoxDriver(driverPath);
         } else if (os.contains("Windows") && configFileReader.getBrowser().toLowerCase().equals("ie")) {
-            driverPath = driverPath + "win64/geckodriver.exe";
+            driverPath = driverPath + "win32/IEDriverServer.exe";
             return setPropertyAndInitIEDriver(driverPath);
         } else if (os.contains("Mac") && configFileReader.getBrowser().toLowerCase().equals("chrome")) {
             driverPath = driverPath + "mac64/chromedriver";
@@ -106,14 +108,10 @@ public class DriverFactory {
         WebDriver chromeDriver = null;
         System.setProperty("webdriver.chrome.driver", path);
         //Setting the proxy for the driver by getting the configuration from configFile.properties
-        if (configFileReader.getProxySetStatus()) {
-            ChromeOptions options = new ChromeOptions();
-            Proxy proxy = new Proxy();
-            proxy.setHttpProxy(configFileReader.getProxyURL())
-                    .setFtpProxy(configFileReader.getProxyURL())
-                    .setSslProxy(configFileReader.getProxyURL());
-            options.setCapability("proxy", proxy);
-            chromeDriver = new ChromeDriver(options);
+        if (configFileReader.getHttpProxySetStatus()) {
+            DesiredCapabilities desiredCapabilities = DesiredCapabilities.chrome();
+            desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
+            chromeDriver = new ChromeDriver(desiredCapabilities);
 
         } else {
             chromeDriver = new ChromeDriver();
@@ -126,16 +124,14 @@ public class DriverFactory {
      * @param path
      * @return browser reference
      */
-    private WebDriver setPropertyAndInitFirefoxDriver(String path) {
+    public WebDriver setPropertyAndInitFirefoxDriver(String path) {
         //For latest version of firefox we need to configure the gecko driver
         System.setProperty("webdriver.gecko.driver", path);
         WebDriver firefoxDriver = null;
-        if (configFileReader.getProxySetStatus()) {
-            FirefoxOptions options = new FirefoxOptions();
-            Proxy proxy = new Proxy();
-            proxy.setHttpProxy(configFileReader.getProxyURL());
-            options.setCapability("proxy", proxy);
-            firefoxDriver = new FirefoxDriver(options);
+        if (configFileReader.getHttpProxySetStatus()) {
+            DesiredCapabilities desiredCapabilities = DesiredCapabilities.firefox();
+            desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
+            firefoxDriver = new FirefoxDriver(desiredCapabilities);
         } else {
             firefoxDriver = new FirefoxDriver();
         }
@@ -151,9 +147,29 @@ public class DriverFactory {
      */
     private WebDriver setPropertyAndInitIEDriver(String path) {
         System.setProperty("webdriver.ie.driver", path);
-        WebDriver ieDriver = new InternetExplorerDriver();
+        WebDriver ieDriver= null;
+        if(configFileReader.getHttpProxySetStatus()){
+            DesiredCapabilities desiredCapabilities = DesiredCapabilities.internetExplorer();
+            desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
+            ieDriver = new InternetExplorerDriver(desiredCapabilities);
+        }else {
+            ieDriver = new InternetExplorerDriver();
+        }
         configureDriver(ieDriver);
         return ieDriver;
+    }
+
+
+    /**
+     * Function to Setup proxy for oracle
+     * @param
+     * @return proxy
+     */
+
+    public Proxy setUpProxy() {
+        String proxyURL = configFileReader.getProxyURL();
+        Proxy proxy = new Proxy();
+        return proxy.setHttpProxy(proxyURL).setFtpProxy(proxyURL).setSslProxy(proxyURL).setSslProxy(proxyURL);
     }
 
     /**
@@ -165,3 +181,4 @@ public class DriverFactory {
     }
 
 }
+

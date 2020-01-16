@@ -27,7 +27,7 @@ public class FakeData {
     public void setDocumentNumber(){
 
         Random random = new Random(1000);
-        this.documentNumber = faker.company().industry() + "-" + random.nextInt();
+        this.documentNumber = faker.company().buzzword() + "-" + random.nextInt();
     }
 
     /**

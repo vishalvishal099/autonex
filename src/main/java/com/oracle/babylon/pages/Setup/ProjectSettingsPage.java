@@ -3,8 +3,8 @@ package com.oracle.babylon.pages.Setup;
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.helper.Navigator;
+import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -18,6 +18,7 @@ public class ProjectSettingsPage extends Navigator{
     private By addBtn = By.id("btnAdd");
     private By saveBtn = By.id("btnSave");
     private By projectSettingsLabel = By.xpath("//h1[text()='Project Settings']");
+    private By pageTitle = By.xpath("//h1[contains(text(),'Project Settings')]");
 
     /**
      * Function to lock the document field labels for a project
@@ -47,10 +48,10 @@ public class ProjectSettingsPage extends Navigator{
 
     /**
      * Function to navigate to the project settings page under Setup
-     * @param driver
      */
-    public WebDriver navigateToProjectSettings(WebDriver driver){
-        return getMenuSubmenu( "Setup", "Project Settings");
+    public void navigateAndVerifyPage(){
+        getMenuSubmenu( "Setup", "Project Settings");
+        Assert.assertTrue(verifyPageTitle(pageTitle));
     }
 
     /**
@@ -58,7 +59,7 @@ public class ProjectSettingsPage extends Navigator{
      */
     public void lockFieldsInDocuments(){
         this.driver = WebDriverRunner.getWebDriver();
-        this.driver = navigateToProjectSettings(driver);
+        navigateAndVerifyPage();
         commonMethods.switchToFrame(this.driver, "frameMain");
         commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
         lockDocFieldsBtn();
