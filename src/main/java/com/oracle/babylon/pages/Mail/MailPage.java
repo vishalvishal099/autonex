@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.navigator;
+
 
 /**
  * Class that contains common methods related to Mails

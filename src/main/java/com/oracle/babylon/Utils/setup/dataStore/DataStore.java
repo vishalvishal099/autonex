@@ -20,7 +20,7 @@ public class DataStore {
     private static Map<String, Organization> organizationHashMap = new HashMap<>();
     private static Map<String, Project> projectHashMap = new HashMap<>();
     private static Map<String, String> attributeHashMap = new HashMap<>();
-    private static Map<String,CreateUser> createUserHashMap=new HashMap<>();
+
 
     /**
      * Function to add the user details in a hash map
@@ -129,26 +129,9 @@ public class DataStore {
         return hashDataTable.get(tableName);
     }
 
-    /**
-     * Create a hash map for the create new user data
-     * @param name
-     * @param crateuser
-     */
-    public  void storeCreatedUserInfo(String name,CreateUser crateuser){
-        if(createUserHashMap.containsKey(name)){
-            createUserHashMap.remove(name);
-        }
-        createUserHashMap.put(name, crateuser);
-    }
 
-    /**
-     * Function to return new user datails in hash map
-     * @param name
-     * @return
-     */
-    public CreateUser getCreateUserInto(String name){
-        return createUserHashMap.get(name);
-    }
+
+
 
     /**
      * Create a hash map for the Organization data
