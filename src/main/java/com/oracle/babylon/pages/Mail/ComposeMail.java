@@ -1,9 +1,7 @@
 package com.oracle.babylon.pages.Mail;
 
 import com.codeborne.selenide.WebDriverRunner;
-import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.util.Map;
 
@@ -30,6 +28,8 @@ public class ComposeMail extends MailPage {
     private By sendBtn = By.xpath("//button[@id='btnSend']");
     private By loadingIcon = By.cssSelector(".loading_progress");
     private By attachBtn = By.id("btnMailAttachments");
+    private By saveToDraftButton=By.xpath("//button[@id='btnSaveToDraft']");
+
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -60,6 +60,9 @@ public class ComposeMail extends MailPage {
                     break;
                 case "Attribute 1":
                     selectMailAttribute("Attribute 1", table.get(tableData));
+                    break;
+                case "Attribute 2":
+                    selectMailAttribute("Attribute 2", table.get(tableData));
                     break;
                 case "Mail Body":
                     setMailBody(table.get(tableData));
@@ -138,6 +141,17 @@ public class ComposeMail extends MailPage {
         String mailNumber = $(mailNumberField).getText();
         return mailNumber;
     }
+
+    /**
+     * Function to click on save to darft
+     *
+     */
+    public void saveToDraft()
+    {
+        commonMethods.waitForElementExplicitly(3000);
+        $(saveToDraftButton).click();
+    }
+
 
 
 }

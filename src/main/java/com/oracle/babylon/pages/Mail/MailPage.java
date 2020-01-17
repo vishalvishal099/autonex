@@ -2,14 +2,10 @@ package com.oracle.babylon.pages.Mail;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
-import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.Condition.disappear;
@@ -31,8 +27,12 @@ public class MailPage extends Navigator {
     private By mailNo = By.xpath("//div[@class='mailHeader-numbers']//div[2]//div[2]");
     private By mailNoFromTable = By.xpath("//td[@class='column_documentNo']");
     private By primaryAttributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
+    private By secondoryAttributePane=By.xpath("//div[@id='attributeBidi_SECONDARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
+
     private By attributeAddButton = By.xpath("//button[@id='attributeBidi_PRIMARY_ATTRIBUTE_add']");
     private By correspondenceTypeId = By.id("Correspondence_correspondenceTypeID");
+    private By attributeAddSecondButton=By.xpath("//button[@id='attributeBidi_SECONDARY_ATTRIBUTE_add']");
+
 
     //Reports
     private By reportsButton= By.xpath("//button[@class='auiMenuButton auiButton dropdown-toggle' and @title='Reports']");
@@ -127,12 +127,23 @@ public class MailPage extends Navigator {
         driver = WebDriverRunner.getWebDriver();
         //Selecting attribute from the left panel to the right panel.Click on OK after it is done.
         $(By.xpath("//tr[td[label[contains(text(),'" + attributeIdentifier + "')]]]/td[@class='contentcell']/div")).click();
-        driver = commonMethods.waitForElement(driver, (primaryAttributeLeftPane));
-        Select select = new Select(driver.findElement(primaryAttributeLeftPane));
-        driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
-        select.selectByVisibleText(value);
-        driver = commonMethods.waitForElement(driver, attributeAddButton);
-        $(attributeAddButton).click();
+        if(attributeIdentifier.equalsIgnoreCase("Attribute 2"))
+        {
+            driver = commonMethods.waitForElement(driver, (secondoryAttributePane));
+            Select select = new Select(driver.findElement(secondoryAttributePane));
+            driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
+            select.selectByVisibleText(value);
+            driver = commonMethods.waitForElement(driver, attributeAddSecondButton);
+            $(attributeAddSecondButton).click();
+        }
+        else {
+            driver = commonMethods.waitForElement(driver, (primaryAttributeLeftPane));
+            Select select = new Select(driver.findElement(primaryAttributeLeftPane));
+            driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
+            select.selectByVisibleText(value);
+            driver = commonMethods.waitForElement(driver, attributeAddButton);
+            $(attributeAddButton).click();
+        }
         driver = commonMethods.waitForElement(driver, By.xpath("//button[@id='attributePanel-commit' and @title='OK']"));
         selectAttributeClickOK();
     }
