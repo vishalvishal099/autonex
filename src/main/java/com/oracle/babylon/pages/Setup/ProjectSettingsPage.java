@@ -19,6 +19,8 @@ public class ProjectSettingsPage extends Navigator{
     private By saveBtn = By.id("btnSave");
     private By projectSettingsLabel = By.xpath("//h1[text()='Project Settings']");
     private By pageTitle = By.xpath("//h1[contains(text(),'Project Settings')]");
+    private By documentSettings = By.xpath("//span[contains(text(),'Documents')]");
+    private By documentFields = By.xpath("//div[contains(text(),'Document Fields')]");
 
     /**
      * Function to lock the document field labels for a project
@@ -26,7 +28,7 @@ public class ProjectSettingsPage extends Navigator{
     public void lockDocFieldsBtn() {
 
         this.driver = WebDriverRunner.getWebDriver();
-        commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
+        commonMethods.switchToFrame(driver, By.xpath("//iframe[@id='project-settings-page']"));
         String result = commonMethods.returnElementAttributeValue(lockDocFieldsBtn, "title");
         if (!result.equals("Cannot lock field names - already locked")) {
             $(lockDocFieldsBtn).click();
@@ -61,7 +63,9 @@ public class ProjectSettingsPage extends Navigator{
         this.driver = WebDriverRunner.getWebDriver();
         navigateAndVerifyPage();
         commonMethods.switchToFrame(this.driver, "frameMain");
-        commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
+
+        commonMethods.clickLinkToChange( projectSettingsLabel, documentSettings);
+        commonMethods.clickLinkToChange(projectSettingsLabel, documentFields );
         lockDocFieldsBtn();
     }
 
@@ -70,7 +74,7 @@ public class ProjectSettingsPage extends Navigator{
      * @param labelToEdit
      */
     public void clickLabelToEdit(String labelToEdit){
-        By editLabelLink = By.xpath("//td[text()='" + labelToEdit + "']//..//td[6]");
+        By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
         $(editLabelLink).click();
         $(saveChangesBtn).click();
 
