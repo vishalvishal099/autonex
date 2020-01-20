@@ -293,9 +293,9 @@ public class CommonMethods {
      *
      * @param linkText
      */
-    public void clickLinkToChange(By pageHeader, String linkText) {
+    public void clickLinkToChange(By pageHeader, By by) {
         $(pageHeader).isDisplayed();
-        $(By.xpath("//a[text()='" + linkText + "']")).click();
+        $(by).click();
 
     }
 
