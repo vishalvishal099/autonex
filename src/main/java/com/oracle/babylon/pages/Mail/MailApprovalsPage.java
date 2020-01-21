@@ -15,6 +15,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class MailApprovalsPage extends Navigator {
 
     //Initializing the web elements
+    //Rename button to btn
     private By configureApproverBtn= By.xpath("//button[@title='Configure the approval requirements for different types of correspondences']");
     private By addButton=By.xpath("//button[@id='btnAdd']");
     private By approverSearchBox=By.xpath("//input[@id='lookupApprovers_query']");
@@ -25,7 +26,7 @@ public class MailApprovalsPage extends Navigator {
     private By successMsgPanel=By.xpath("//ul[@class='messagePanel']");
     private By acceptButton=By.xpath("//img[@src='/html/Images/ic_appr_add.gif']");
     private By rejectButton=By.xpath("//img[@src='/html/Images/ic_appr_remv.gif']");
-
+    //organization
     private By tabOrganiation=By.xpath("//li[@id='organization']");
 
     //Multiple Mail Type
@@ -36,6 +37,7 @@ public class MailApprovalsPage extends Navigator {
     private By addLinkForTenders=By.xpath("//table[@id='tblApprovabieItemList']//tbody[@id='tbdNoTenderItems']//a");
 
     //Mail
+    //Remove the space 
     private By addLinkForMail= By.xpath("//table[@id='tblApprovabieItemList']//tbody[@id='tbdNoMailItems']//a");
 
 
@@ -48,10 +50,13 @@ public class MailApprovalsPage extends Navigator {
     {
         if(organization)
         {
+            //organization
             $(tabOrganiation).click();
         }
 
     }
+    
+    //Common method configuremailapprover and call it in the following 3 methods
 
     /**
      * Function to create Approver for Tenders
@@ -106,6 +111,7 @@ public class MailApprovalsPage extends Navigator {
         }
         addApprover(approverName);
     }
+    //Single mail type does not require a iteration code
     /**
      * Function to Add Single Mail Type
      * @param mailTypes
@@ -126,6 +132,7 @@ public class MailApprovalsPage extends Navigator {
     public void addMultipleMailTypes(List<String> mailTypes)
     {
         $(linkMultipleMailType).click();
+        //foreach loop
         for(int i=0;i<=mailTypes.size()-1;i++) {
             selectMultiMailType(mailTypes.get(i));
             $(addMailTypeButton).click();
@@ -147,6 +154,7 @@ public class MailApprovalsPage extends Navigator {
         $(searchButton).click();
         $(approverCheckBox).click();
         $(addApproverOkButton).click();
+        //No need to include save button click here. It should come as part of add mail types along with the option for sent by
         commonMethods.waitForElement(driver,saveButton);
         $(saveButton).click();
     }
@@ -176,6 +184,7 @@ public class MailApprovalsPage extends Navigator {
      */
     public void acceptOrReject(boolean accept)
     {
+        //Remove the navigation steps 
         getMenuSubmenu("Mail", "Mail Approvals");
         this.driver = commonMethods.switchToFrame(driver, "frameMain");
         if(accept) {
