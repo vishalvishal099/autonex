@@ -9,6 +9,7 @@ public class PreferenceUserTab extends PreferencesPage {
 
 
     public void navigateAndVerifyPage() {
+        commonMethods.waitForElementExplicitly(2000);
         getMenuSubmenu("Setup", "Preferences");
         verifyPageTitle("Edit Preferences");
     }
@@ -31,8 +32,13 @@ public class PreferenceUserTab extends PreferencesPage {
         clickEditButtonForSetting(preferences);
     }
 
-    public void checkNonDefaultSettingsForUser(String preference) {
-        selectNonDefaultSettings(preference);
+    public void checkNonDefaultSettingsForUser(String preference, String flag) {
+        selectNonDefaultSettings(preference, flag);
+    }
+
+    public void clickSave(){
+        $(By.xpath("//div[@class='uiButton-label'][contains(text(),'Save')]"));
+        $(By.xpath("//div[contains(text(),'Close')]"));
     }
 
 }

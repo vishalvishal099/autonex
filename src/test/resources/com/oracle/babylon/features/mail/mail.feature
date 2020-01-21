@@ -24,5 +24,5 @@ Feature: Mail Test
 
   Scenario: Sending sample mail
     When "user1" compose mail with "mail_attributes"
-    When sent mail to "user2"
+    When user sends saved mail to "user2"
     Then verify "user2" has received mail
