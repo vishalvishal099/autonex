@@ -44,11 +44,11 @@ public class AssignUserRolePage extends Navigator {
     }
 
     public void searchUser(String user) {
-        String[] userName = user.split(" ");
+        String[] currencies = user.split(" ");
         switchTo().defaultContent();
         switchTo().frame("frameMain");
-        $(givenName).sendKeys(userName[0]);
-        $(familyName).sendKeys(userName[userName.length - 1]);
+        $(givenName).sendKeys(currencies[0]);
+        $(familyName).sendKeys(currencies[currencies.length - 1]);
         $(search).click();
     }
 

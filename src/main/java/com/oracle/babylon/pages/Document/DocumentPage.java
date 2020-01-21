@@ -141,9 +141,10 @@ public class DocumentPage extends Navigator {
      * @param documentNumber key to be searched
      */
     public void searchDocumentNo(String documentNumber) {
-//        driver = WebDriverRunner.getWebDriver();
-//        commonMethods.waitForElement(driver, searchDocumentByNo);
-        commonMethods.waitForElementExplicitly(3000);
+        commonMethods.waitForElementExplicitly(2000);
+        driver = WebDriverRunner.getWebDriver();
+        commonMethods.switchToFrame(driver, "frameMain");
+        commonMethods.waitForElement(driver, searchDocumentByNo);
         $(searchDocumentByNo).sendKeys(documentNumber);
         $(searchDocumentByNo).pressEnter();
     }

@@ -11,7 +11,6 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminHome;
 import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Project.CreateProjectPage;
-import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 
@@ -75,7 +74,4 @@ public class ProjectSteps {
         });
 
     }
-
-
-
 }
