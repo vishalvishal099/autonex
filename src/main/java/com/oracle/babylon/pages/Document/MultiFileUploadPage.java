@@ -17,6 +17,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class MultiFileUploadPage extends Navigator {
 
     //Initialization of Web Elements
+    //Can we only put the text() as part of the identifier and use contains rather than = operator
     private By multiFileUpload= By.xpath("//div[@class='uiButton-label' and text()='Multi File Upload']");
     private By zipFileUpload=By.xpath("//div[@class='uiButton-label' and text()='Zip File Upload']");
     private By createFileUpload=By.xpath("//div[@class='uiButton-label' and text()='Create Upload Profile']");
@@ -27,7 +28,9 @@ public class MultiFileUploadPage extends Navigator {
     private By selectUploadProfile=By.xpath("//select[@name='documentImportDefaultsId']");
     private By linkViewAndEditProf=By.xpath("//a[text()='View / Edit Profile']");
     //Zipfile upload
+    //Please rename to chooseZipFileUploadBtn
     private By ChooseZipFileUpload=By.xpath("//input[@type='file']");
+    //rename the button to btn
     private By uploadButton=By.xpath("//button[@id='btnUpload']");
     //MultiFile Upload
     private By chooseMultiFileUpload=By.xpath("//div[@id='uploaderHelperMsg']//div[@title='Choose Files to Upload']");
@@ -42,6 +45,7 @@ public class MultiFileUploadPage extends Navigator {
 
         $(createFileUpload).click();
         Faker faker=new Faker();
+        //Store the faker.app().name() in a variable and use it.
         $(profileName).sendKeys(faker.app().name());
         $(profileDescription).sendKeys(faker.app().name());
         $(saveButton).click();
@@ -66,14 +70,18 @@ public class MultiFileUploadPage extends Navigator {
      */
     public void zipFileUpload(String fileLocation,String fileName)
     {
+        //Do we need a try catch block. It will not fail the test case if not handled properly.
         try
         {
+            //Remove the navigation method calls
             getMenuSubmenu("Documents", "Multiple File Upload");
             this.driver = commonMethods.switchToFrame(driver, "frameMain");
             commonMethods.waitForElement(driver,zipFileUpload);
             $(zipFileUpload).click();
+            //Didnt understand the code in send keys. Please be a bit more clear 
             $(ChooseZipFileUpload).sendKeys("+fileLocation+"+"+fileName+");
             $(uploadButton).click();
+            //Use waitExplicitly method
             commonMethods.wait(100);
         }
         catch (InterruptedException e)
