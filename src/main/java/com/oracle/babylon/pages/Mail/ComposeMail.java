@@ -61,6 +61,7 @@ public class ComposeMail extends MailPage {
                 case "Attribute 1":
                     selectMailAttribute("Attribute 1", table.get(tableData));
                     break;
+                    //Attribute1, Attribute 2 should be as part of the data setup
                 case "Attribute 2":
                     selectMailAttribute("Attribute 2", table.get(tableData));
                     break;
@@ -149,6 +150,7 @@ public class ComposeMail extends MailPage {
     public void saveToDraft()
     {
         commonMethods.waitForElementExplicitly(3000);
+        //Rename button to btn
         $(saveToDraftButton).click();
     }
 
