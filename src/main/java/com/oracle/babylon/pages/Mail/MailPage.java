@@ -5,7 +5,6 @@ import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.JavascriptExecutor;
 
 import java.util.stream.Collectors;
 
@@ -28,9 +27,7 @@ public class MailPage extends Navigator {
     private By mailNo = By.xpath("//div[@class='mailHeader-numbers']//div[2]//div[2]");
     private By mailNoFromTable = By.xpath("//td[@class='column_documentNo']");
     private By primaryAttributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
-    private By attributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
-    private By thirdAttributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
-    private By fourthAttributeLeftPane = By.xpath("//div[@id='attributeBidi_PRIMARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
+    private By secondoryAttributePane=By.xpath("//div[@id='attributeBidi_SECONDARY_ATTRIBUTE']//div[@class='uiBidi-left']//select");
 
     private By attributeAddButton = By.xpath("//button[@id='attributeBidi_PRIMARY_ATTRIBUTE_add']");
     private By correspondenceTypeId = By.id("Correspondence_correspondenceTypeID");
@@ -73,7 +70,6 @@ public class MailPage extends Navigator {
      * @param mail_number
      */
     public void searchMailNumber(String mail_number) {
-        commonMethods.switchToFrame(driver, "frameMain");
         $(mailNoTextBox).sendKeys(mail_number);
         $(searchBtn).click();
         commonMethods.waitForElementExplicitly(500);
@@ -125,42 +121,29 @@ public class MailPage extends Navigator {
      * Function to select the field attribute*
      *
      * @param attributeIdentifier key to be searched
-     * @param value               the value that needs to be selected
+     * @param value the value that needs to be selected
      */
     public void selectMailAttribute(String attributeIdentifier, String value) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
         driver = WebDriverRunner.getWebDriver();
         //Selecting attribute from the left panel to the right panel.Click on OK after it is done.
-        String attributelocator = "//tr[td[label[contains(text(),'" + attributeIdentifier + "')]]]/td[@class='contentcell']/div";
-        driver = commonMethods.waitForElement(driver, (By.xpath(attributelocator)));
-        js.executeScript("window.scrollBy(0,-1000)", "");
-        $(By.xpath(attributelocator)).click();
-        String attributeLocator1 = "//div[@id='";
-        String attributeLocator2 = "']//div[@class='uiBidi-left']//select";
-        switch (attributeIdentifier) {
-            case "Attribute 1":
-                String locator1 = attributeLocator1 + "attributeBidi_PRIMARY_ATTRIBUTE" + attributeLocator2;
-                driver = commonMethods.waitForElement(driver, (By.xpath(locator1)));
-                $(By.xpath(locator1 + "//option[contains(text(),'" + value + "')]")).doubleClick();
-                break;
-            case "Attribute 2":
-                String locator2 = attributeLocator1 + "attributeBidi_SECONDARY_ATTRIBUTE" + attributeLocator2;
-                driver = commonMethods.waitForElement(driver, (By.xpath(locator2)));
-                $(By.xpath(locator2 + "//option[contains(text(),'" + value + "')]")).doubleClick();
-                break;
-            case "Attribute 3":
-                String locator3 = attributeLocator1 + "attributeBidi_THIRD_ATTRIBUTE" + attributeLocator2;
-                driver = commonMethods.waitForElement(driver, (By.xpath(locator3)));
-                $(By.xpath(locator3 + "//option[contains(text(),'" + value + "')]")).doubleClick();
-                break;
-            case "Attribute 4":
-                String locator4 = attributeLocator1 + "attributeBidi_FOURTH_ATTRIBUTE" + attributeLocator2;
-                driver = commonMethods.waitForElement(driver, (By.xpath(locator4)));
-                $(By.xpath(locator4 + "//option[contains(text(),'" + value + "')]")).doubleClick();
-                break;
+        $(By.xpath("//tr[td[label[contains(text(),'" + attributeIdentifier + "')]]]/td[@class='contentcell']/div")).click();
+        if(attributeIdentifier.equalsIgnoreCase("Attribute 2"))
+        {
+            driver = commonMethods.waitForElement(driver, (secondoryAttributePane));
+            Select select = new Select(driver.findElement(secondoryAttributePane));
+            driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
+            select.selectByVisibleText(value);
+            driver = commonMethods.waitForElement(driver, attributeAddSecondButton);
+            $(attributeAddSecondButton).click();
         }
-        driver = commonMethods.waitForElement(driver, attributeAddButton);
-        $(attributeAddButton).click();
+        else {
+            driver = commonMethods.waitForElement(driver, (primaryAttributeLeftPane));
+            Select select = new Select(driver.findElement(primaryAttributeLeftPane));
+            driver = commonMethods.waitForElement(driver, By.xpath(".//option[text()='" + value + "']"));
+            select.selectByVisibleText(value);
+            driver = commonMethods.waitForElement(driver, attributeAddButton);
+            $(attributeAddButton).click();
+        }
         driver = commonMethods.waitForElement(driver, By.xpath("//button[@id='attributePanel-commit' and @title='OK']"));
         selectAttributeClickOK();
     }
