@@ -116,6 +116,7 @@ public class MailPage extends Navigator {
     }
 
 
+//Need to find a better way of adding multiple attributes. Probably pass the identifier rather than the string 
 
     /**
      * Function to select the field attribute*
@@ -144,6 +145,7 @@ public class MailPage extends Navigator {
             driver = commonMethods.waitForElement(driver, attributeAddButton);
             $(attributeAddButton).click();
         }
+        //Provide the xpath on the top of the page 
         driver = commonMethods.waitForElement(driver, By.xpath("//button[@id='attributePanel-commit' and @title='OK']"));
         selectAttributeClickOK();
     }
