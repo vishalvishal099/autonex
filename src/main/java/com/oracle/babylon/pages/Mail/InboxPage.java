@@ -3,7 +3,9 @@ package com.oracle.babylon.pages.Mail;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.openqa.selenium.By;
+
 import java.util.stream.Collectors;
+
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -13,7 +15,7 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public class InboxPage extends MailPage {
 
-    public InboxPage(){
+    public InboxPage() {
         this.driver = WebDriverRunner.getWebDriver();
     }
 
@@ -39,13 +41,22 @@ public class InboxPage extends MailPage {
     public void searchMailNumber(String mail_number) {
         commonMethods.switchToFrame(driver, "frameMain");
         $(mailNumberTextBox).sendKeys(mail_number);
-        commonMethods.waitForElementExplicitly(2000);
         $(searchBtn).click();
+        commonMethods.waitForElementExplicitly(2000);
         //Wait for the results to be retrieved
-        By mailNumberSpan = By.xpath("//span[text()='" + mail_number + "']");
-        commonMethods.waitForElement(this.driver, mailNumberSpan, 5000);
-        $(loadingIcon).should(disappear);
+//        By mailNumberSpan = By.xpath("//span[text()='" + mail_number + "']");
+//        commonMethods.waitForElement(this.driver, mailNumberSpan, 5000);
+//        $(loadingIcon).should(disappear);
+    }
 
+    public void openEmail() {
+        $(By.xpath("//tbody[@id='rowPerMailTableBody']//tr[1]//td[4]/a")).click();
+    }
+
+    public void markAsRead() {
+        $(By.xpath("//div[@class='pull-left ng-scope ng-isolate-scope']//button[@class='auiMenuButton auiButton dropdown-toggle']")).click();
+        $(By.xpath("//div[@class='pull-left ng-scope ng-isolate-scope open']//ul[@class='dropdown-menu']//a[contains(text(),'Mark as Read')]")).click();
     }
 
 }
+

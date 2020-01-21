@@ -60,7 +60,7 @@ public class ProjectSettingsPage extends Navigator{
         navigateAndVerifyPage();
         this.driver = WebDriverRunner.getWebDriver();
         commonMethods.switchToFrame(this.driver, "frameMain");
-        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
+        commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
         lockDocFieldsBtn();
     }
 
@@ -70,7 +70,7 @@ public class ProjectSettingsPage extends Navigator{
      */
     public void clickLabelToEdit(String labelToEdit) {
         commonMethods.switchToFrame(this.driver, "frameMain");
-        commonMethods.clickHyperLinkToChange( projectSettingsLabel, "Documents");
+        commonMethods.clickLinkToChange( projectSettingsLabel, "Documents");
         commonMethods.waitForElementExplicitly(configFileReader.getImplicitlyWait()*500);
         commonMethods.switchToFrame(driver, By.xpath("//iframe[@class='settingsIframe']"));
         By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
