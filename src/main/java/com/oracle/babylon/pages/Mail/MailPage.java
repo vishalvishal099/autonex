@@ -138,6 +138,7 @@ public class MailPage extends Navigator {
         String attributeLocator1 = "//div[@id='";
         String attributeLocator2 = "']//div[@class='uiBidi-left']//select";
         switch (attributeIdentifier) {
+            //Write a common code to select the attribute and define the identifier as a parameter to it. It can be called across different cases 
             case "Attribute 1":
                 String locator1 = attributeLocator1 + "attributeBidi_PRIMARY_ATTRIBUTE" + attributeLocator2;
                 driver = commonMethods.waitForElement(driver, (By.xpath(locator1)));
