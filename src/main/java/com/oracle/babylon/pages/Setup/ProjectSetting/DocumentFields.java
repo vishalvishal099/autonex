@@ -66,7 +66,7 @@ public class DocumentFields extends ProjectSettingsPage {
         }
         $(saveButton).click();
     }
-
+//Change all the checkbox to chkBox
     public void setEditableInline(String label, String checkbox) {
         boolean flag = setFlag(checkbox);
         int row = getLabelRow(label);
@@ -90,6 +90,7 @@ public class DocumentFields extends ProjectSettingsPage {
         WebElement editLink = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[6]//a"));
         editLink.click();
         $(saveChanges).click();
+        //Unwanted print statements
         System.out.println("hello");
     }
 
@@ -109,6 +110,7 @@ public class DocumentFields extends ProjectSettingsPage {
         return labelRow - 2;
     }
 
+//No need for flag variable, can directly return the boolean value
     public boolean setFlag(String preference) {
         boolean flag;
         if (preference.equals("yes") || preference.equals("true") || preference.equals("True")) {
