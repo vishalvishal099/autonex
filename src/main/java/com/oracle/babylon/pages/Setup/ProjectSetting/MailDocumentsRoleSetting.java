@@ -148,6 +148,7 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
         By role = By.xpath("//table[@class='blank']//thead//tr//th[" + columnIndex + "]/a");
         By okButton = By.xpath("//button[@id='btnrolePanel_ok']//div[@class='uiButton-label'][contains(text(),'OK')]");
         $(role).click();
+        //Please define the identifiers on top
         WebElement defaultRole = $(By.xpath("//div[@id='rolePanel_body']//table[@class='formTable']//tr[2]/td[2]/input[@class ='checkbox']"));
         if (defaultRole.isSelected()) {
             defaultRole.click();
