@@ -21,7 +21,7 @@ public class MailApprovalsPage extends Navigator {
     private By approverSearchBox = By.xpath("//input[@id='lookupApprovers_query']");
     private By searchBtn = By.xpath("//span[@id='lookupApprovers']//div[@class='bicon ic-search']");
     private By approverCheckBox = By.xpath("//input[@id='approver']");
-    private By createdByCheckBox=By.xpath("//input[@id='orgAuthor']");
+    private By createdByCheckBox = By.xpath("//input[@id='orgAuthor']");
     private By addApproverOkBtn = By.xpath("//div[@class='uiButton-label' and text()='OK']");
     private By saveBtn = By.xpath("//div[@class='uiButton-label' and text()='Save']");
     private By successMsgPanel = By.xpath("//ul[@class='messagePanel']");
@@ -56,13 +56,13 @@ public class MailApprovalsPage extends Navigator {
      * @param mailTypes
      * @param single
      */
-    public void configureMailApprover(String approverName, List<String> mailTypes, String single,String approver) {
+    public void configureMailApprover(String approverName, List<String> mailTypes, String single, String approver) {
         if (single != null) {
             addSingleMailType(mailTypes);
         } else {
             addMultipleMailTypes(mailTypes);
         }
-        addApprover(approverName,approver);
+        addApprover(approverName, approver);
         $(saveBtn).click();
 
     }
@@ -74,9 +74,9 @@ public class MailApprovalsPage extends Navigator {
      * @param single
      * @param mailTypes
      */
-    public void createApproverForTenders(String approverName, List<String> mailTypes, String single,String approver) {
+    public void createApproverForTenders(String approverName, List<String> mailTypes, String single, String approver) {
         $(addLinkForTenders).click();
-        configureMailApprover(approverName, mailTypes, single,approver);
+        configureMailApprover(approverName, mailTypes, single, approver);
     }
 
     /**
@@ -86,9 +86,9 @@ public class MailApprovalsPage extends Navigator {
      * @param mailTypes
      * @param single
      */
-    public void createApproverForMail(String approverName, List<String> mailTypes, String single,String approver) {
+    public void createApproverForMail(String approverName, List<String> mailTypes, String single, String approver) {
         $(addLinkForMail).click();
-        configureMailApprover(approverName, mailTypes, single,approver);
+        configureMailApprover(approverName, mailTypes, single, approver);
     }
 
     /**
@@ -98,9 +98,9 @@ public class MailApprovalsPage extends Navigator {
      * @param single
      * @param mailTypes
      */
-    public void createApproverWithAdd(String approverName, List<String> mailTypes, String single,String approver) {
+    public void createApproverWithAdd(String approverName, List<String> mailTypes, String single, String approver) {
         $(addBtn).click();
-        configureMailApprover(approverName, mailTypes, single,approver);
+        configureMailApprover(approverName, mailTypes, single, approver);
     }
 
     /**
@@ -133,11 +133,11 @@ public class MailApprovalsPage extends Navigator {
      *
      * @param arroverName
      */
-    public void addApprover(String arroverName,String approver) {
+    public void addApprover(String arroverName, String approver) {
         $(approverSearchBox).clear();
         $(approverSearchBox).sendKeys(arroverName);
         $(searchBtn).click();
-        if(approver!=null) {
+        if (approver != null) {
             $(approverCheckBox).click();
         }
         $(createdByCheckBox).click();
