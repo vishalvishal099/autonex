@@ -112,7 +112,9 @@ public class ComposeMail extends MailPage {
         driver.switchTo().defaultContent();
     }
 
+//Replace add recipient by methods in  DirectoryPage 
     public void addRecipient(String group, String name) {
+        //Please ensure all the identifiers are created at the top of the page 
         commonMethods.waitForElement(driver, directory);
         $(directory).click();
         String[] username = name.split("\\s+");
@@ -125,6 +127,7 @@ public class ComposeMail extends MailPage {
         $(By.xpath("//div[contains(text(),'Search')]")).click();
         commonMethods.waitForElement(driver, selectUser);
         $(selectUser).click();
+        //Define 3 identifiers in the top of the page for to, cc and bcc
         String recipientGroup = "//div[@id='searchResultsToolbar']//div[@class='uiButton-label'][contains(text(),'";
         switch (group) {
             case "To":
@@ -212,6 +215,7 @@ public class ComposeMail extends MailPage {
         return mailNumber;
     }
 
+//Identifiers in the top of the page 
     public String userDefinedMailNumber() {
         commonMethods.switchToFrame(driver, "frameMain");
         $(option).click();
