@@ -21,7 +21,6 @@ public class DataStore {
     private static Map<String, Project> projectHashMap = new HashMap<>();
     private static Map<String, String> attributeHashMap = new HashMap<>();
 
-
     /**
      * Function to add the user details in a hash map
      *
@@ -137,7 +136,6 @@ public class DataStore {
     public Map<String, String> getTable(String tableName) {
         return hashDataTable.get(tableName);
     }
-
 
     /**
      * Create a hash map for the Organization data

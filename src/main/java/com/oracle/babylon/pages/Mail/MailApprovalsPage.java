@@ -20,8 +20,8 @@ public class MailApprovalsPage extends Navigator {
     private By addBtn = By.xpath("//button[@id='btnAdd']");
     private By approverSearchBox = By.xpath("//input[@id='lookupApprovers_query']");
     private By searchBtn = By.xpath("//span[@id='lookupApprovers']//div[@class='bicon ic-search']");
-    private By approverCheckBox = By.xpath("//input[@id='approver']");
-    private By createdByCheckBox = By.xpath("//input[@id='orgAuthor']");
+    private By approverSearchchkBox = By.xpath("//input[@id='approver']");
+    private By createdBychkBox = By.xpath("//input[@id='orgAuthor']");
     private By addApproverOkBtn = By.xpath("//div[@class='uiButton-label' and text()='OK']");
     private By saveBtn = By.xpath("//div[@class='uiButton-label' and text()='Save']");
     private By successMsgPanel = By.xpath("//ul[@class='messagePanel']");
@@ -138,15 +138,14 @@ public class MailApprovalsPage extends Navigator {
         $(approverSearchBox).sendKeys(arroverName);
         $(searchBtn).click();
         if (approver != null) {
-            $(approverCheckBox).click();
+            $(approverSearchchkBox).click();
         }
-        $(createdByCheckBox).click();
+        $(createdBychkBox).click();
         $(addApproverOkBtn).click();
     }
 
     /**
      * Function to select Mail Type
-     *
      * @param mailType
      */
     public void selectSingleMailType(String mailType) {
@@ -154,9 +153,9 @@ public class MailApprovalsPage extends Navigator {
         selectMailType.selectByVisibleText(mailType);
     }
 
-
     /**
-     *
+     *Function to Select Multi Mail TYpe
+     * @param mailTYpe
      */
     public void selectMultiMailType(String mailTYpe) {
         Select selectMultiMail = new Select(driver.findElement(By.xpath("//select[@id='bidi_addApprovableItem_AVAIL']")));
@@ -165,14 +164,15 @@ public class MailApprovalsPage extends Navigator {
 
     /**
      * Function to Accept or Reject Mail from Approver
-     *
      * @param accept
      */
     public void acceptOrReject(boolean accept) {
         if (accept) {
             $(acceptBtn).click();
         }
-        $(rejectBtn).click();
+        else {
+            $(rejectBtn).click();
+        }
     }
 
 

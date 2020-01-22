@@ -39,19 +39,19 @@ public class MultiFileUploadPage extends Navigator {
      * Function create upload profile
      */
     public void createUploadProfile() {
-
         $(createFileUpload).click();
         Faker faker = new Faker();
         String profileName = faker.app().name();
         $(profileName).sendKeys(profileName);
-        $(profileDescription).sendKeys(faker.app().name());
+        $(profileDescription).sendKeys(profileName);
         $(saveBtn).click();
         $(backBtn).click();
-
     }
 
     /**
      * Function to View and Edit Profile
+     *
+     * @param profileName
      */
     public void viewAndEditUploadedProfile(String profileName) {
         $(selectUploadProfile).selectOption(profileName);
@@ -72,7 +72,6 @@ public class MultiFileUploadPage extends Navigator {
         String path = fileLocation + "/" + fileName;
         $(chooseZipFileUploadBtn).sendKeys(path);
         $(uploadBtn).click();
-
     }
 
 }
