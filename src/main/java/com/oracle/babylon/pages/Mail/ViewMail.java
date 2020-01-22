@@ -36,11 +36,14 @@ public class ViewMail extends Navigator {
         commonMethods.waitForElementExplicitly(5000);
         $(edit).click();
     }
+    
+    //Identifier at the top of the page
 
     public void sendMail() {
         $(By.xpath("//button[@class='auiButton primary ng-binding ng-scope']"));
     }
 
+//Check if common code can be written for code under switch statements and reused.
     public void verifyPreview(String mailAttribute) {
 //        commonMethods.switchToFrame(driver, "frameMain");
         Map<String, String> table = dataStore.getTable(mailAttribute);
@@ -76,6 +79,7 @@ public class ViewMail extends Navigator {
     }
 
     public void verifyNoError() {
+        //Is try catch block necessary. Method will not stop the test if error is present. It will only print the message.
         try {
             String alertText = driver.switchTo().alert().getText();
             driver.switchTo().alert().accept();
@@ -87,6 +91,8 @@ public class ViewMail extends Navigator {
 
     public void verifyButton(String button) {
         switch (button.toLowerCase()) {
+            //Remove unwanted comments
+            //Identifier should be defined on top
             case "print"://button[contains(text(),'Print')]
                 Assert.assertFalse($(By.xpath("//button[contains(text(),'Print')]")).exists());
         }
