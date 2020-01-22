@@ -66,6 +66,7 @@ public class CreateUserPage extends Navigator {
         $(save).click();
     }
 
+//Use a random password from faker if needed.
     public void createUserWithPassword(Map<String, String> userDetail){
         $(password).sendKeys("1990_ABcd1234");
         $(confirmPassword).sendKeys("1990_ABcd1234");
