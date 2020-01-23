@@ -99,6 +99,7 @@ public class MailSteps {
             page.searchMailNumber(mailNumber);
             assertThat(page.searchResultCount()).isGreaterThan(0);
             assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+
         });
     }
 
