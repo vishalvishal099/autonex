@@ -30,7 +30,7 @@ public class BulkProcessingPage extends Navigator {
 
     private By localOrComputer=By.xpath("//div[@class='uiButton-label' and text()='Local Computer/Network']");
     private By temporaryFiles=By.xpath("//div[@class='uiButton-label' and text()='Temporary Files']");
-    private By AttachFileCancelBtn=By.xpath("//button[@id='btnchooseManifestSource_cancel']");
+    private By attachFileCancelBtn=By.xpath("//button[@id='btnchooseManifestSource_cancel']");
 
 
 
