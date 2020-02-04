@@ -24,7 +24,6 @@ public class NewAccountDetails extends Navigator {
     public void verifyPage(){
         //Added the code directly because page does not have a frame
         commonMethods.waitForElementExplicitly(3000);
-        commonMethods.switchToFrame(driver, "frameMain");
         String headerName = $(header).text();
         Assert.assertTrue(headerName.contains("Welcome to your new account"));
 

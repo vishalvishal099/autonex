@@ -1,14 +1,10 @@
 package com.oracle.babylon.pages.Setup;
 
-import org.openqa.selenium.By;
-
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
 
 public class PreferenceOrganizationTab extends PreferencesPage {
     public void navigateAndVerifyPage() {
         getMenuSubmenu("Setup", "Preferences");
-        switchTo().frame("main");
         $("#organization-tab").click();
 //        verifyPageTitle("Edit Preferences");
     }
@@ -25,13 +21,8 @@ public class PreferenceOrganizationTab extends PreferencesPage {
         clickEditButtonForSetting(preferences);
     }
 
-    public void checkNonDefaultSettingsForOrganization(String preference, String flag) {
-        selectNonDefaultSettings(preference, flag);
-    }
-
-    public void clickSave(){
-        $(By.xpath("//div[contains(text(),'Save')]"));
-        $(By.xpath("//div[contains(text(),'Close')]"));
+    public void checkNonDefaultSettingsForOrganization(String preference) {
+        selectNonDefaultSettings(preference);
     }
 
 }

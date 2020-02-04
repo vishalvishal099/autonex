@@ -38,6 +38,7 @@ public class ComposeMail extends MailPage {
     private By attachBtn = By.xpath("//button[@id='btnMailAttachments']//div[@class='uiButton-label'][contains(text(),'Attach')]");
     private By option = By.xpath("//div[contains(text(),'Options')]");
     private By manualMailNumber = By.xpath("//input[@id='radSpecifyMailNoManually']");
+    private By saveToDraftBtn = By.xpath("//div[contains(text(),'Save To Draft')]");
     private By attachmentContainer = By.xpath("//td[@id='corrAttachmentsContainer']");
     private By mailSubject = By.id("Correspondence_subject");
     private By selectUser = By.xpath("//table[@id='resultTable']//tbody//tr[1]//input[@name='USERS_LIST']");
@@ -230,7 +231,7 @@ public class ComposeMail extends MailPage {
     }
 
     public void saveToDraft() {
-        $(By.xpath("//div[contains(text(),'Save To Draft')]")).click();
+        $(saveToDraftBtn).click();
     }
 
     public void attachDocumentUsingFullSearch(String document) {
@@ -281,5 +282,9 @@ public class ComposeMail extends MailPage {
         commonMethods.waitForElement(driver, docContainer);
         String message = $(docContainer).text();
         Assert.assertTrue(message.contains("This attachment has no associated file"));
+    }
+
+    public void changeMailType(String mailType) {
+        selectMailType(mailType);
     }
 }
