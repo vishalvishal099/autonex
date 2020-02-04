@@ -12,7 +12,7 @@ import java.util.Properties;
 public class ConfigFileReader {
 
     private Properties properties;
-    private String filepath = "src/main/resources/configFile.properties";
+    private String confileFilePath = "src/main/resources/configFile.properties";
 
     /**
      * Load the data from the config file and make it accessible to the Properties variable
@@ -20,7 +20,7 @@ public class ConfigFileReader {
     public ConfigFileReader() {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(filepath));
+            reader = new BufferedReader(new FileReader(confileFilePath));
             properties = new Properties();
             try {
                 properties.load(reader);
@@ -30,7 +30,7 @@ public class ConfigFileReader {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException("Configuration.properties not found at " + filepath);
+            throw new RuntimeException("Configuration.properties not found at " + confileFilePath);
         }
     }
 
@@ -113,6 +113,17 @@ public class ConfigFileReader {
         if (filePath != null) return filePath;
         else throw new RuntimeException("File Path is not specified in the configuration.properties file");
     }
+    public String getDocumentDataJsonFilePath() {
+        String filePath = System.getProperty("user.dir") + properties.getProperty("DOCUMENT_DATA_JSON");
+        if (filePath != null) return filePath;
+        else throw new RuntimeException("File Path is not specified in the configuration.properties file");
+    }
+
+    public String getMailDataJsonFilePath() {
+        String filePath = System.getProperty("user.dir") + properties.getProperty("MAIL_DATA_JSON");
+        if (filePath != null) return filePath;
+        else throw new RuntimeException("File Path is not specified in the configuration.properties file");
+    }
 
     public String getSSOAuthString() {
         String sso_auth_string = properties.getProperty("SSO_Auth_String");
@@ -136,6 +147,12 @@ public class ConfigFileReader {
     public String getJiraIssueUrl(){
         String jira_issue_url = properties.getProperty("JIRA_ISSUE_URL");
         if(jira_issue_url != null) return jira_issue_url;
+        else return null;
+    }
+
+    public String getCountryName(){
+        String country_name = properties.getProperty("COUNTRY_NAME");
+        if(country_name != null) return country_name;
         else return null;
     }
 }

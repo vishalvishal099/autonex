@@ -22,8 +22,8 @@ public class UserTableConverter {
     public void addUser(String name, DataTable dataTable) {
         Map<String, String> hashUser = dataTable.transpose().asMap(String.class, String.class);
         user.setFullName(hashUser.get("Fullname"));
-        user.setUserName(hashUser.get("Username"));
-        user.setProject(hashUser.get("Projects"));
+        user.setUsername(hashUser.get("Username"));
+        user.setProjectName(hashUser.get("Projects"));
         String password = hashUser.containsKey("password") ? hashUser.get("password") : new ConfigFileReader().getPassword();
         user.setPassword(password);
         new DataStore().addUser(name, user);

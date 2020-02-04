@@ -47,13 +47,16 @@ public class Navigator {
     private By registerLink = By.xpath("//a[text()='Register']");
     private By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
     protected By header = By.xpath("//h1");
-    protected String filePath = null;
+    protected String userDataPath = null;
+    protected String documentDataPath = null;
+    protected String mailDataPath = null;
+    private By otherTabsArrow = By.xpath("//div[contains(@title,'Your current screen size is too small to view all modules')]");
 
 
 
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
-        filePath = configFileReader.getUserDataJsonFilePath();
+        userDataPath = configFileReader.getUserDataJsonFilePath();
     }
 
     /**
@@ -81,19 +84,18 @@ public class Navigator {
     public <P> void loginAsUser(P page, String userId, String filePath, Consumer<P> block) {
         //Parse the json to retrieve the essential information and store it in user object
         jsonMapOfMap = dataSetup.loadJsonDataToMap(filePath);
-        char numberChar = userId.charAt(userId.length() - 1);
-        String projectId = "project" + numberChar;
-        projectMap = jsonMapOfMap.get(projectId);
         userMap = jsonMapOfMap.get(userId);
         if (projectMap != null) {
-            user.setProject(projectMap.get("projectname"));
-        }
-        user.setUserName(userMap.get("username"));
+
+        user.setProjectName(userMap.get("project_name1"));
+        user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
-        user.setFullName(userMap.get("fullname"));
+        user.setFullName(userMap.get("full_name"));
 
         loginAsUser(user);
         block.accept(page);
+        }
+
     }
 
     /**
@@ -104,7 +106,7 @@ public class Navigator {
      * @param <P>
      */
     public <P> void loginAsUser(P page, Consumer<P> block) {
-        user.setUserName(configFileReader.getAdminUsername());
+        user.setUsername(configFileReader.getAdminUsername());
         user.setPassword(configFileReader.getPassword());
 
         loginAsUser(user);
@@ -121,9 +123,9 @@ public class Navigator {
         } else {
             openAconexUrl();
         }
-        enterCreds(user.getUserName(), user.getPassword());
+        enterCreds(user.getUsername(), user.getPassword());
         commonMethods.waitForElementExplicitly(3000);
-        selectProject(user.getProject());
+        selectProject(user.getProjectName());
     }
 
     public <P> void on(P page, Consumer<P> block) {
@@ -133,10 +135,8 @@ public class Navigator {
     public void as(String tablename) {
         open(configFileReader.getApplicationUrl());
         user = dataStore.getUser(tablename);
-        enterCreds(user.getUserName(), user.getPassword().toString());
-
+        enterCreds(user.getUsername(), user.getPassword());
     }
-
 
     public void enterCreds(String username, String password) {
         $(usernameTxtBox).setValue(username);
@@ -156,6 +156,9 @@ public class Navigator {
             } else {
                 System.out.println("No projects available to select");
             }
+
+        } else {
+            System.out.println("Creating new Project");
         }
     }
 
@@ -245,5 +248,9 @@ public class Navigator {
         String headerName = $(header).text();
         switchTo().defaultContent();
         return (headerName.contains(pageTitle));
+    }
+
+    public void findOtherTabs() {
+        $(otherTabsArrow).click();
     }
 }

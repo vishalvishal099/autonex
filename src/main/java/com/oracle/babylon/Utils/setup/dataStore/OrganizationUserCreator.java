@@ -7,6 +7,8 @@ import com.oracle.babylon.Utils.setup.dataStore.pojo.Organization;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 
+import java.util.Locale;
+
 /**
  * Class to convert the data tables from the test files to data store tables for a organization
  * Author : susgopal
@@ -14,7 +16,7 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 public class OrganizationUserCreator {
 
     private Organization organization = new Organization();
-    private Faker faker = new Faker();
+    private Faker faker = new Faker(new Locale("en-US"));
     private User user = new User();
 
     private String name = null;
@@ -33,12 +35,7 @@ public class OrganizationUserCreator {
         organization.setCity(address.city());
         organization.setCounty(address.state());
         organization.setPostcode(address.zipCode());
-        if(address.country().equals("Hong Kong")){
-            organization.setCountry(faker.address().country());
-        } else{
-            organization.setCountry(address.country());
-        }
-
+        organization.setCountry(configFileReader.getCountryName());
         organization.setTradingName(companyName.substring(0,3).toUpperCase());
         organization.setOrgAbbreviation(companyName.substring(0,6).toLowerCase());
         organization.setContactEmailAddress(configFileReader.getEmailId());
@@ -57,15 +54,18 @@ public class OrganizationUserCreator {
      * Function to create data and set in the User pojo
      */
     public void addUser(){
-        user.setUserName(faker.name().username());
+        user.setUsername(faker.name().username());
         if(name!=null){
             user.setFullName(name);
         } else{
             user.setFullName(faker.name().firstName() + " " + faker.name().lastName());
         }
-        String password = faker.internet().password().toCharArray() + "8";
+
+        String password = faker.internet().password() + "8";
         user.setPassword(password);
         //Store the values in a data store with the name user
         new DataStore().addUser("user", user);
     }
+
+
 }

@@ -26,7 +26,7 @@ public class ProjectSteps {
     private CreateProjectPage createProjectPage = new CreateProjectPage();
     private ProjectDataCreator projectDataCreator = new ProjectDataCreator();
     private Project project = null;
-    String filepath = configFileReader.getUserDataJsonFilePath();
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
     AdminHome adminHome = new AdminHome();
     AdminSearch adminSearch = new AdminSearch();
     private User user = new User();
@@ -38,12 +38,12 @@ public class ProjectSteps {
     @When("user \"([^\"]*)\" login and create \"([^\"]*)\"")
     public void weLoginAndCreateProject(String userId, String projectId, DataTable dataTable) throws Exception {
         //Retrieve the data from userData.json file
-        Map<String, Map<String,String>> mapOfMap =  dataSetup.loadJsonDataToMap(filepath);
+        Map<String, Map<String,String>> mapOfMap =  dataSetup.loadJsonDataToMap(userDataPath);
         Map<String, String> userMap = mapOfMap.get(userId);
 
         //Get project fields from the project data table
-        user.setFullName(userMap.get("fullname"));
-        user.setUserName(userMap.get("username"));
+        user.setFullName(userMap.get("full_name"));
+        user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
         Map<String, String> projectFeatureDataMap = dataTable.asMaps().get(0);
 
@@ -56,21 +56,21 @@ public class ProjectSteps {
             //Fill up the create project ui
             page.fillUpProjectFields(project);
             //Update the project details in the userData.json
+
         });
-        Map<String, String> projectMap = mapOfMap.get(projectId);
 
         navigator.loginAsUser(adminHome, page -> {
             page.verifyPage();
         });
         navigator.on(adminSearch, page -> {
             page.navigateAndVerifyPage();
-            projectMap.put("projectId", page.returnResultId(project.getProjectName()));
+            user.setProjectId(page.returnResultId(project.getProjectName()));
+            user.setProjectName(project.getProjectName());
+
         });
 
-
-        projectMap.put("projectname", project.getProjectName());
         navigator.on(createProjectPage, page -> {
-            page.enterProjectDetailsToFile(projectId, projectMap, filepath);
+            page.enterProjectDetailsToFile(userId, projectId, user);
         });
 
     }
