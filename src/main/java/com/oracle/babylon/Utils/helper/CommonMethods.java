@@ -53,7 +53,7 @@ public class CommonMethods {
      * @return
      */
     public WebDriver waitForElement(WebDriver driver, By by) {
-        return waitForElement(driver, by, 5);
+        return waitForElement(driver, by, 6);
     }
 
     /**

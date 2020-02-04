@@ -19,35 +19,37 @@ public class DirectoryPage extends Navigator {
     private By familyName = By.xpath("//input[@id='LAST_NAME']");
     private By searchBtn = By.xpath("//button[@id='btnSearch_page']");
     private By organizationName = By.xpath("//input[@id='ORG_NAME']");
-    private By jobTitle = By.xpath("//input[@id='POSITION_NAME']");
-    private By division = By.xpath("//input[@id='DIVISION_NAME']");
+    private By jobTitle = By.xpath("//input[@name='POSITION_NAME']");
+    private By division = By.xpath("//input[@name='DIVISION_NAME']");
     private By userList = By.xpath("//input[@name='USERS_LIST']");
     private By addUserToBtn = By.xpath("//button[@id='btnAddTo_page']");
     private By okBtn = By.xpath("//button[@id='btnOk']");
+    private By selectUser = By.xpath("//table[@id='resultTable']//tbody//tr[1]//input[@name='USERS_LIST']");
 
     /**
      * Method to input all the text boxes present in the directory search page
+     *
      * @param groupNameVar
      * @param familyNameVar
      * @param organizatioNameVar
      * @param jobTitleVar
      * @param divisionVar
      */
-    public void fillFieldsAndSearch(String groupNameVar, String familyNameVar, String organizatioNameVar, String jobTitleVar, String divisionVar){
+    public void fillFieldsAndSearch(String groupNameVar, String familyNameVar, String organizatioNameVar, String jobTitleVar, String divisionVar) {
         //Checking if we need to set each text box value
-        if(groupNameVar!=null){
+        if (groupNameVar != null) {
             $(groupName).sendKeys(groupNameVar);
         }
-        if(familyNameVar!=null){
+        if (familyNameVar != null) {
             $(familyName).sendKeys(familyNameVar);
         }
-        if(organizatioNameVar!=null){
+        if (organizatioNameVar != null) {
             $(organizationName).sendKeys(organizatioNameVar);
         }
-        if(jobTitleVar!=null){
+        if (jobTitleVar != null) {
             $(jobTitle).sendKeys(jobTitleVar);
         }
-        if(divisionVar!=null){
+        if (divisionVar != null) {
             $(division).sendKeys(divisionVar);
         }
         searchBtnClick();
@@ -57,21 +59,21 @@ public class DirectoryPage extends Navigator {
     /**
      * Method to click the search button
      */
-    public void searchBtnClick(){
+    public void searchBtnClick() {
         $(searchBtn).click();
     }
 
     /**
      * Method to click o retrieved row's entry
      */
-    public void selectEntry(){
+    public void selectEntry() {
         $(userList).click();
     }
 
     /**
      * Method to click on the To Recipient button
      */
-    public void clickToBtn(){
+    public void clickToBtn() {
         $(addUserToBtn).click();
     }
 
@@ -103,17 +105,35 @@ public class DirectoryPage extends Navigator {
 
     /**
      * Method to click on the OK Button
-      */
-    public void clickOkBtn(){
+     */
+    public void clickOkBtn() {
         $(okBtn).click();
     }
 
-    public void addRecipient(Map<String, String> map){
+    public void addRecipient(Map<String, String> map) {
         String full_name = map.get("Full_Name");
         String groupName = full_name.split(" ")[0];
         String familyName = full_name.split(" ")[1];
         fillFieldsAndSearch(groupName, familyName, null, null, null);
         selectToRecipient();
         clickOkBtn();
+    }
+
+    public void selectUser() {
+        $(selectUser).click();
+    }
+    public void selectRecipientGroup(String group){
+        String recipientGroup = "//div[@id='searchResultsToolbar']//div[@class='uiButton-label'][contains(text(),'";
+        switch (group) {
+            case "To":
+                $(By.xpath(recipientGroup + "To')]")).click();
+                break;
+            case "Cc":
+                $(By.xpath(recipientGroup + "Cc')]")).click();
+                break;
+            case "Bcc":
+                $(By.xpath(recipientGroup + "Bcc')]")).click();
+                break;
+        }
     }
 }
