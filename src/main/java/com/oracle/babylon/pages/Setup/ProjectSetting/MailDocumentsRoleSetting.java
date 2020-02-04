@@ -148,6 +148,7 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
         String columnIndex = Integer.toString(roleColumnIndex(roleName));
         By role = By.xpath("//table[@class='blank']//thead//tr//th[" + columnIndex + "]/a");
         $(role).click();
+        //Please define the identifiers on top
         WebElement defaultRole = $(By.xpath("//div[@id='rolePanel_body']//table[@class='formTable']//tr[2]/td[2]/input[@class ='checkbox']"));
         if (defaultRole.isSelected()) {
             defaultRole.click();

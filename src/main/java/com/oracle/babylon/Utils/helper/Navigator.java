@@ -50,6 +50,7 @@ public class Navigator {
     protected String filePath = null;
 
 
+
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
         filePath = configFileReader.getUserDataJsonFilePath();
@@ -133,6 +134,7 @@ public class Navigator {
         open(configFileReader.getApplicationUrl());
         user = dataStore.getUser(tablename);
         enterCreds(user.getUserName(), user.getPassword().toString());
+
     }
 
 
