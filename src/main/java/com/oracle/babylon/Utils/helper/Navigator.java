@@ -32,6 +32,8 @@ public class Navigator {
     protected Map<String, String> projectMap = null;
     protected Map<String, String> userMap = null;
     protected Map<String, Map<String, String>> jsonMapOfMap = null;
+
+
     private By avatar = By.xpath("//span[@class='nav-userAvatar']");
     private By usernameTxtBox = By.id("userName");
     private By passwordTxtBox = By.id("password");
@@ -46,6 +48,8 @@ public class Navigator {
     private By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
     protected By header = By.xpath("//h1");
     protected String filePath = null;
+
+
 
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
@@ -65,6 +69,7 @@ public class Navigator {
         loginAsUser(user);
         block.accept(page);
     }
+
     /**
      * Method to login using the details from userData.json. We convert json data to user object and use it.
      *
@@ -80,7 +85,9 @@ public class Navigator {
         String projectId = "project" + numberChar;
         projectMap = jsonMapOfMap.get(projectId);
         userMap = jsonMapOfMap.get(userId);
-        user.setProject(projectMap.get("projectname"));
+        if (projectMap != null) {
+            user.setProject(projectMap.get("projectname"));
+        }
         user.setUserName(userMap.get("username"));
         user.setPassword(userMap.get("password"));
         user.setFullName(userMap.get("fullname"));
@@ -104,11 +111,12 @@ public class Navigator {
         block.accept(page);
     }
 
+
     public <P> void loginAsUser(User user) {
         switchTo().defaultContent();
         if ($(avatar).isDisplayed()) {
             logout();
-            commonMethods.waitForElementExplicitly(2000);
+            commonMethods.waitForElementExplicitly(4000);
             openAconexUrl();
         } else {
             openAconexUrl();
@@ -129,6 +137,7 @@ public class Navigator {
 
     }
 
+
     public void enterCreds(String username, String password) {
         $(usernameTxtBox).setValue(username);
         $(passwordTxtBox).setValue(password);
@@ -138,13 +147,15 @@ public class Navigator {
 
     public void selectProject(String projectName) {
         commonMethods.waitForElementExplicitly(2000);
-        if ($(projectChangerSelect).isDisplayed()) {
-            if ($(projectChangerSelect).text() == (projectName)) {
-            } else
-                $(projectChangerSelect).click();
-            $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
-        } else {
-            System.out.println("No projects available to select");
+        if (projectName != null) {
+            if ($(projectChangerSelect).isDisplayed()) {
+                if ($(projectChangerSelect).text() == (projectName)) {
+                } else
+                    $(projectChangerSelect).click();
+                $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
+            } else {
+                System.out.println("No projects available to select");
+            }
         }
     }
 
@@ -175,6 +186,7 @@ public class Navigator {
     public void verifyLoginFailed() {
         $(loginFailureMessage).shouldHave(text("Your login name or password is incorrect. Check that caps lock is not on."));
     }
+
 
     /**
      * Function to logout from the server.
