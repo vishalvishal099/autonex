@@ -33,7 +33,7 @@ public class MailSteps {
     private ViewMail viewMail = new ViewMail();
     static String mailNumber;
     static String draftMailNumber;
-    String filePath = configFileReader.getUserDataJsonFilePath();
+    String userDataFile = configFileReader.getUserDataJsonFilePath();
 
     /**
      * code to search the mail in the inbox
@@ -111,9 +111,10 @@ public class MailSteps {
 
     @When("Login for user \"([^\"]*)\" and add a mail attribute \"([^\"]*)\"")
     public void loginAndAddAMailAttribute(String userId, final String attributeNumber) {
-        String projectKey = "project" + userId.charAt(userId.length() - 1);
-        Map<String, String> map = dataSetup.loadJsonDataToMap(filePath).get(projectKey);
-        navigator.loginAsUser(editPreferencesPage, userId, filePath, page -> {
+
+        String projectKey = "project" + userId.charAt(userId.length()-1);
+       Map<String, String> map = dataSetup.loadJsonDataToMap(userDataFile).get(projectKey);
+        navigator.loginAsUser(editPreferencesPage, userId, userDataFile, page -> {
             page.navigateAndVerifyPage();
             String attributeValue = page.createNewMailAttribute(attributeNumber, map.get("projectname"));
             new DataStore().storeAttributeInfo(attributeNumber, attributeValue);

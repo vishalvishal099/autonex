@@ -17,16 +17,19 @@ public class CommonSteps {
     private AdminTools adminTools = new AdminTools();
     private DataStore dataStore = new DataStore();
     Navigator navigator = new Navigator();
-    String filepath = configFileReader.getUserDataJsonFilePath();
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
+    String mailDataPath = configFileReader.getMailDataJsonFilePath();
+    String docDataPath = configFileReader.getDocumentDataJsonFilePath();
 
-    @When("Login and set the web services api checkbox for project \"([^\"]*)\"")
-    public void enableWebServicesAPI(String projectIdentifier)  {
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filepath);
+    @When("Login and set the web services api checkbox for user {string} and project {string}")
+    public void enableWebServicesAPI(String userid, String projectIdentifier)  {
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
         navigator.loginAsUser(adminTools, page -> {
 
             //Project ID Info
-            Map<String, String> projectMap = mapOfMap.get(projectIdentifier);
-            String projectId = projectMap.get("projectId");
+            Map<String, String> userMap = mapOfMap.get(userid);
+            String projectIdKey = "project_id" + projectIdentifier.charAt(projectIdentifier.length()-1);
+            String projectId = userMap.get(projectIdKey);
             page.navigateAndVerifyPage();
             page.enableWebServicesAPI(projectId);
         });
@@ -42,11 +45,11 @@ public class CommonSteps {
         Map<String, String> attributeMap = dataStore.getAttributeHashMap();
         String[] attributeList = null;
         if(superkey.equals("Document")){
-            attributeList = new String[]{"docattribute", attributeNumber.toLowerCase()};
+            attributeList = new String[]{attributeNumber.toLowerCase()};
+            dataSetup.convertMapAndWrite(attributeList, attributeMap, docDataPath);
         } else{
-            attributeList = new String[]{"mailattribute", attributeNumber.toLowerCase()};
+          /**  attributeList = new String[]{"mailattribute", attributeNumber.toLowerCase()};
+            dataSetup.convertMapAndWrite(attributeList, attributeMap.get(attributeNumber), mailDataPath);*/
         }
-        dataSetup.writeIntoJson(attributeList, attributeMap.get(attributeNumber), filepath);
-
     }
 }

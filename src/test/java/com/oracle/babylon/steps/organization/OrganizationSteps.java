@@ -36,13 +36,13 @@ public class OrganizationSteps {
     private DataSetup dataSetup = new DataSetup();
     private NewAccountDetails newAccountDetails = new NewAccountDetails();
     private User user = null;
-    String filepath = configFileReader.getUserDataJsonFilePath();
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * Code which contains a sequence of steps to create a organization
      */
-    @When("user {string} tries to create {string}")
-    public void user_tries_to_create_organization(String userId, String organizationId) {
+    @When("user {string} tries to create organization")
+    public void user_tries_to_create_organization(String userId) {
 
         //Register a organization
         navigator.on(orgUserObj, page -> {
@@ -54,14 +54,14 @@ public class OrganizationSteps {
         navigator.on(registerOrganizationPage, page ->{
             page.verifyPage();
             page.fillOrganizationDetails();
-            user = page.enterOrgUserDetailsToFile(userId,organizationId);
+            user = page.enterOrgUserDetailsToFile(userId);
         });
         navigator.loginAsUser(adminHome, page -> {
             page.verifyPage();
         });
         navigator.on(adminSearch, page -> {
             page.navigateAndVerifyPage();
-            page.clickSearchResults(user.getUserName(), user.getFullName());
+            page.clickSearchResults(user.getUsername(), user.getFullName());
         });
         navigator.on(userInformation, page -> {
             page.verifyPage();
@@ -76,7 +76,7 @@ public class OrganizationSteps {
      */
     @Then("user {string} is able to login to application")
     public void userIsAbleToLoginToApplication(String userId) {
-        navigator.loginAsUser(newAccountDetails, userId, filepath, page -> {
+        navigator.loginAsUser(newAccountDetails, userId, userDataPath, page -> {
             page.verifyPage();
         });
 

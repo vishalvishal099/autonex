@@ -40,7 +40,6 @@ public class PreferencesSteps {
         navigator.on(defaultTab, page -> {
             page.selectSettingForDefault("Select default language", language);
             page.checkDefaultSettingsForDefault("Select default language");
-            page.clickSave();
         });
     }
 
@@ -50,7 +49,6 @@ public class PreferencesSteps {
         navigator.loginAsUser(userTab,user, page -> {
             page.navigateAndVerifyPage();
             page.selectNonDefaultSettings(setting,flag);
-            page.clickSave();
         });
     }
 }

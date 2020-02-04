@@ -3,7 +3,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @create_org
   @data_setup
   Scenario: Create a organization and store information into UserData.json
-    When user "user1" tries to create "organization1"
+    When user "user1" tries to create organization
     Then user "user1" is able to login to application
 
   @fill_acnt_details
@@ -24,7 +24,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @enable_webservices_api
   @data_setup
   Scenario: Login to the admin and enable the web services api checkbox
-    When Login and set the web services api checkbox for project "project1"
+    When Login and set the web services api checkbox for user "user1" and project "project1"
     Then verify if feature changes save is successful
 
   @lock_fields_documents
@@ -42,7 +42,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @upload_document
   @data_setup
   Scenario: Uploading a document through Registration
-    Given upload document for user "user1" with data "uploadDoc_data" and write it in userData.json
+    Given upload document for user "user1" for project "project1" with data "uploadDoc_data" and write it in userData.json
       | Revision | HasFile | Comments             |
       | A        | false   | Uploading a document |
     When search document for user "user1"

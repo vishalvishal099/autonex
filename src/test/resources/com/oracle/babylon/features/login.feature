@@ -21,6 +21,6 @@ Feature: Login Test
     Then user should not logged into aconex
 
 
-  Scenario: JIRA Details
-     Given "ACONEXQA-568", retrieve details
+  #Scenario: JIRA Details
+    # Given "ACONEXQA-568", retrieve details
 

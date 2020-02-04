@@ -5,7 +5,6 @@ import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
-import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Document.DocumentRegisterPage;
@@ -41,7 +40,7 @@ public class DocumentSteps {
     MultipleFileUpload multipleFileUpload = new MultipleFileUpload();
 
     String documentNumber = null;
-    String filePath = configFileReader.getUserDataJsonFilePath();
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
 
 
 
@@ -52,13 +51,15 @@ public class DocumentSteps {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Given("upload document for user {string} with data {string} and write it in userData.json")
-    public void uploadDocumentWithData(String userId, String documentTableName, DataTable dataTable){
-        Map<String, String> projectMap = dataSetup.loadJsonDataToMap(filePath).get("project1");
-        String projectId = projectMap.get("projectId");
+    @Given("upload document for user {string} for project {string} with data {string} and write it in userData.json")
+    public void uploadDocumentWithData(String userId, String projectIdentifier, String documentTableName, DataTable dataTable){
+        Map<String, String> userMap = dataSetup.loadJsonDataToMap(userDataPath).get(userId);
+        String projectId = "project_id" + projectIdentifier.charAt(projectIdentifier.length()-1);
+        projectId = userMap.get(projectId);
         this.documentNumber = documentRegisterPage.uploadDocumentAPI(userId, documentTableName, dataTable, projectId);
         String[] attributeList = new String[]{"document1", "docno"};
-        dataSetup.writeIntoJson(attributeList, documentNumber, filePath);
+
+    //    dataSetup.convertMapAndWrite(attributeList, documentNumber, userDataPath);
     }
 
     /**
@@ -68,10 +69,10 @@ public class DocumentSteps {
     public void searchDocumentForUser(String userId) {
 
         //Retrieve document data from data store
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filePath);
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
         Map<String, String> docMap = mapOfMap.get("document1");
 
-        navigator.loginAsUser(documentRegisterPage, userId, filePath, page -> {
+        navigator.loginAsUser(documentRegisterPage, userId, userDataPath, page -> {
             page.navigateToDocumentRegisterAndVerify();
             page.searchDocumentNo( docMap.get("docno"));
         });
@@ -87,14 +88,14 @@ public class DocumentSteps {
         List<Map<String, String>> tableData = documentRegisterPage.returnTableData(driver);
         //We are searching a single document is present
         Assert.assertEquals(tableSize, 1);
-        this.documentNumber = dataSetup.loadJsonDataToMap(filePath).get("document1").get("docno");
+        this.documentNumber = dataSetup.loadJsonDataToMap(userDataPath).get("document1").get("docno");
         Assert.assertEquals(tableData.get(0).get("Document No"), documentNumber);
 
     }
 
     @When("Login and lock the documents fields for user \"([^\"]*)\"")
     public void weLoginAndLockTheDocumentsFields(String userId) {
-        navigator.loginAsUser(projectSettingsPage, userId, filePath, page -> {
+        navigator.loginAsUser(projectSettingsPage, userId, userDataPath, page -> {
             page.lockFieldsInDocuments();
 
         });
@@ -110,8 +111,9 @@ public class DocumentSteps {
 
     @When("Login for user \"([^\"]*)\" and add a document attribute \"([^\"]*)\"")
     public void addAttribute(String userId, final String attributeNumber)  {
-        navigator.loginAsUser(projectSettingsPage, userId, filePath, page -> {
+        navigator.loginAsUser(projectSettingsPage, userId, userDataPath, page -> {
             page.navigateAndVerifyPage();
+
             page.clickLabelToEdit(attributeNumber);
             String attributeValue = page.createNewDocumentAttribute();
             new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
@@ -136,7 +138,7 @@ public class DocumentSteps {
        // multipleFileUpload.returnRequiredDate("yesterday");
        // multipleFileUpload.returnFileNames("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
 
-        navigator.loginAsUser(multipleFileUpload, "user1" , filePath, page -> {
+        navigator.loginAsUser(multipleFileUpload, "user1" , userDataPath, page -> {
 
            navigator.getMenuSubmenu("Documents", "Multiple File Upload");
            page.clickMultiFileUploadBtn("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");

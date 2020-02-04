@@ -178,7 +178,7 @@ public class DocumentPage extends Navigator {
      * @return basic auth string
      */
     public String basicAuthCredentialsProvider(String userId) {
-        jsonMapOfMap = dataSetup.loadJsonDataToMap(filePath);
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
         userMap = jsonMapOfMap.get(userId);
         //Generating the basic auth for the api
         return apiRequest.basicAuthGenerator(userMap.get("username"), userMap.get("password"));

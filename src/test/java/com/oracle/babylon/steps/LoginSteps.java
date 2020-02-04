@@ -37,7 +37,8 @@ public class LoginSteps {
     @Given("\"([^\"]*)\", retrieve details")
     public void retrieveDetails(String jiraId) throws IOException {
         String issueId = jiraOperations.getJiraId(jiraId);
-        int executionId = jiraOperations.returnLatestExecutionId(issueId, "19.9.100");
+        int executionId = jiraOperations.returnLatestExecutionId(issueId, "20.1.100");
+       // jiraOperations.returnExecutionStatusId(issueId);
        // System.out.println(jiraOperations.updateLatestExecutionStatus(executionId, 1).getBody().asString());
 
     }
@@ -46,10 +47,10 @@ public class LoginSteps {
     public void viewsTheHomePage(){
         DataSetup dataSetup = new DataSetup();
         ConfigFileReader configFileReader = new ConfigFileReader();
-        String filePath = configFileReader.getUserDataJsonFilePath();
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filePath);
+        String userDataPath = configFileReader.getUserDataJsonFilePath();
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
         Map<String, String> userMap = mapOfMap.get("user1");
-        String fullname = userMap.get("fullname");
+        String fullname = userMap.get("full_name");
             navigator.verifyUserPresent(fullname);
     }
 
