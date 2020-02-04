@@ -1,5 +1,6 @@
 package com.oracle.babylon.pages.Setup.ProjectSetting;
 
+import com.oracle.babylon.pages.Setup.ProjectSettingsPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
