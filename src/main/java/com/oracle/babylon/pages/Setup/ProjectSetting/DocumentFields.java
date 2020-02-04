@@ -29,54 +29,43 @@ public class DocumentFields extends ProjectSettingsPage {
         $(lockFieldsLabel).click();
     }
 
-    public void copyFromProject() { $(By.xpath("//div[contains(text(),'Copy From Project')]")).click(); }
-
-    public void preview() { $(By.xpath("//div[contains(text(),'Preview')]")).click(); }
-
-
-    public void useField(String label, String checkbox) {
-        boolean flag = Boolean.parseBoolean(checkbox.toLowerCase());
-        int row = getLabelRow(label);
-        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[2]//input[@type='checkbox']"));
-        if (flag) {
-            if (!chkBox.isSelected()) {
-                chkBox.click();
-            }
-        } else if (!flag) {
-            if (chkBox.isSelected()) {
-                chkBox.click();
-            }
-        }
-        $(saveButton).click();
+    public void copyFromProject() {
+        $(By.xpath("//div[contains(text(),'Copy From Project')]")).click();
     }
 
-    public void setMandatory(String label, String checkbox) {
-        boolean flag = Boolean.parseBoolean(checkbox.toLowerCase());
-        int row = getLabelRow(label);
-        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[3]//input[@type='checkbox']"));
-        if (flag) {
-            if (!chkBox.isSelected()) {
-                chkBox.click();
-            }
-        } else if (!flag) {
-            if (chkBox.isSelected()) {
-                chkBox.click();
-            }
-        }
-        $(saveButton).click();
+    public void preview() {
+        $(By.xpath("//div[contains(text(),'Preview')]")).click();
     }
 
-    public void setEditableInline(String label, String checkBox) {
-        boolean flag = Boolean.parseBoolean(checkBox.toLowerCase());
+
+    public void useField(String label, String flag) {
         int row = getLabelRow(label);
-        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[7]//input[@type='checkbox']"));
+        WebElement useFieldChkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[2]//input[@type='checkbox']"));
+        setLabel(label, flag, useFieldChkBox);
+    }
+
+    public void setMandatory(String label, String flag) {
+        int row = getLabelRow(label);
+        WebElement setMandatoryChkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[3]//input[@type='checkbox']"));
+        setLabel(label, flag, setMandatoryChkBox);
+    }
+
+    public void setEditableInline(String label, String flag) {
+        int row = getLabelRow(label);
+        WebElement setEditableChkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[7]//input[@type='checkbox']"));
+        setLabel(label, flag, setEditableChkBox);
+    }
+
+
+    public void setLabel(String label, String flagStr, WebElement element) {
+        boolean flag = Boolean.parseBoolean(flagStr.toLowerCase());
         if (flag) {
-            if (!chkBox.isSelected()) {
-                chkBox.click();
+            if (!element.isSelected()) {
+                element.click();
             }
-        } else if (!flag) {
-            if (chkBox.isSelected()) {
-                chkBox.click();
+        } else {
+            if (element.isSelected()) {
+                element.click();
             }
         }
         $(saveButton).click();
