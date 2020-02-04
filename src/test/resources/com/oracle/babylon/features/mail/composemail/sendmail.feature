@@ -33,7 +33,7 @@ Feature: Send Mail
       | Mail Body   | Send Mail feature testing |
 
     Given Vertical Table "mail_attributes3"
-      | To          | Mark Perkins,Blair Hocking      |
+      | To          | Mark Perkins,Lewis Miller       |
       | Cc          | Ebru Ozcan,Nicki Curtain        |
       | Bcc         | Gretchen Pitcher,Pardeep Haresh |
       | Mail Type   | Internal Memorandum             |
@@ -51,20 +51,27 @@ Feature: Send Mail
       | Attachment  | ACONEXQA-2106       |
       | File Type   | png                 |
 
+    Given Vertical Table "mail_attributes5"
+      | Mail Type   | Transmittal               |
+      | Subject     | Basic Mail Test           |
+      | Attachment  | ACONEXQA-2106             |
+      | Attribute 1 | Administration            |
+      | Attribute 2 | Innovation                |
+      | Mail Body   | Send Mail feature testing |
+
 
     #ACONEXQA-2105
   Scenario: Attaching document in simple mail
+    Given "user1" set "See full search window for attaching documents from register" setting "false"
     Given "user1" have a mail with "mail_attributes1" in drafts
-    Then user edits the email from draft and attaches "ACONEXQA-2106" document
-    When user sends saved mail to "user2"
+    Then user edits the email from draft and attaches "ACONEXQA-2106" document and sends saved mail to "user2"
     Then verify "user2" has received mail
 
     #ACONEXQA-2106 and #ACONEXQA-2117
   Scenario: Attaching document in transmittal,
   Recipient can view the document properties from the received transmittal
     Given "user1" have a mail with "mail_attributes2" in drafts
-    Then user edits the email from draft and attaches "ACONEXQA-2106" document
-    When user sends saved mail to "user2"
+    Then user edits the email from draft and attaches "ACONEXQA-2106" document and sends saved mail to "user2"
     Then verify "user2" has received mail
     And verify document details on inbox page for "ACONEXQA-2106"
 
@@ -72,16 +79,14 @@ Feature: Send Mail
   Scenario: Document Search for basic mail should always open in full screen, when preference is set
     Given "user1" set "See full search window for attaching documents from register" setting "true"
     Given "user1" have a mail with "mail_attributes1" in drafts
-    Then user edits the email from draft and attaches "ACONEXQA-2106" document from full search
-    When user sends saved mail to "user2"
+    Then user edits the email from draft and attaches "ACONEXQA-2106" document from full search and sends to "user2"
     Then "user1" set "See full search window for attaching documents from register" setting "false"
 
     #ACONEXQA-2108
   Scenario: Document Search for transmittal should always open in full screen, when preference is set
     Given "user1" set "See full search window for attaching documents from register" setting "true"
     Given "user1" have a mail with "mail_attributes2" in drafts
-    Then user edits the email from draft and attaches "ACONEXQA-2106" document from full search
-    When user sends saved mail to "user2"
+    Then user edits the email from draft and attaches "ACONEXQA-2106" document from full search and sends to "user2"
     Then "user1" set "See full search window for attaching documents from register" setting "false"
 
 
@@ -91,11 +96,8 @@ Feature: Send Mail
     Given "user1" have a mail with "mail_attributes3" in drafts
     When user edits the mail and removes "Ebru Ozcan" from "Cc"
     And user removes "Gretchen Pitcher" from "Bcc"
-    Then user attaches "ACONEXQA-2106" in the mail
-    And user sends the mail
-    Then verify "user3" has not received mail
-    And verify "user4" has not received mail
-    Then verify "user2" has received mail
+    Then user attaches "ACONEXQA-2106" in the mail and sends mail
+    Then verify "user3,user4" has not received mail and "user2" has
 
     #ACONEXQA-2110
   Scenario: Verify Previewing a blank mail, saves it to drafts
@@ -114,18 +116,25 @@ Feature: Send Mail
   Verify validation message displays in New Mail on attaching a doc without file,
   Verify the Print button on Preview Mail
     Given "user1" have a mail with "mail_attributes1" in drafts
-    Then user edits the email from draft and attaches "DocWithoutFile" document
-    And user verify validation message for not file in document
-    And user verify no error message on preview
+    Then user edits the email attaches "DocWithoutFile" document & verify message and no error message on preview
     Then user verify "print" button on preview page
 
     #ACONEXQA-2118
   Scenario: User can mark the mail as Unread from the received transmittal mail
     Given "user1" have a mail with "mail_attributes2" in drafts
-    Then user edits the email from draft and attaches "ACONEXQA-2106" document
-    When user sends saved mail to "user2"
+    Then user edits the email from draft and attaches "ACONEXQA-2106" document and sends saved mail to "user2"
     Then verify "user2" has received mail
     And user mark mail as unread
+
+    #ACONEXQA-2119
+  Scenario: Start a workflow from the transmittal received with documents having associated files
+    Given "user1" creates a mail with "mail_attributes5" and sends it to "Mark Perkins"
+#    Then verify "user2" has received mail with "mail_attribute5"
+#    Given "user1" have a mail with "mail_attributes5" in drafts
+#    Then user edits the email from draft and attaches "ACONEXQA-2106" document and sends saved mail to "user2"
+#    Then verify "user2" has received mail with "mail_attribute5"
+
+
 
 
 

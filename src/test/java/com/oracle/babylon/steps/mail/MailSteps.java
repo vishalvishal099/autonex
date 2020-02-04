@@ -181,20 +181,26 @@ public class MailSteps {
         });
     }
 
-    @Then("user attaches {string} in the mail")
+    @Then("user attaches {string} in the mail and sends mail")
     public void userAttachesInTheMail(String document) {
         navigator.on(composeMail, page -> {
             page.attachDocument(document);
+        });
+        navigator.on(composeMail, page -> {
+            mailNumber = page.send();
         });
     }
 
     @Then("verify {string} has not received mail")
     public void verifyHasNotReceivedMail(String user) {
-        navigator.loginAsUser(inboxPage, user, page -> {
-            page.navigateAndVerifyPage();
-            page.searchMailNumber(mailNumber);
-            assertThat(page.searchResultCount()).isEqualTo(0);
-        });
+        String[] namesMailNotReceived = user.split(",");
+        for (String name : namesMailNotReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isEqualTo(0);
+            });
+        }
     }
 
     @Given("{string} previews a blank mail")
@@ -205,6 +211,7 @@ public class MailSteps {
             page.previewMail();
         });
     }
+
     @Then("mail will be present in the draft")
     public void mailWillBePresentInTheDraft() {
         navigator.on(draft, page -> {
@@ -243,5 +250,96 @@ public class MailSteps {
         navigator.on(inboxPage, InboxPage::openEmail);
         navigator.on(viewMail, ViewMail::markAsUnread);
     }
+
+    @Then("user edits the email from draft and attaches {string} document and sends saved mail to {string}")
+    public void userEditsTheEmailFromDraftAndAttachesDocumentAnSendsSavedMailTo(String document, String user) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+//            page.verifyValidationMessage();
+            page.fillTo(user);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("user edits the email attaches {string} document & verify message and no error message on preview")
+    public void userEditsTheEmailAttachesDocumentVerifyMessageAndNoErrorMessageOnPreview(String document) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+//            page.verifyValidationMessage();
+        });
+        navigator.on(composeMail, ComposeMail::verifyValidationMessage);
+        navigator.on(composeMail, ComposeMail::previewMail);
+        navigator.on(viewMail, ViewMail::verifyNoError);
+    }
+
+    @Then("user edits the email from draft and attaches {string} document from full search and sends to {string}")
+    public void userEditsTheEmailFromDraftAndAttachesDocumentFromFullSearchAndSendsTo(String document, String user) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocumentUsingFullSearch(document);
+        });
+        navigator.on(composeMail, page -> {
+            page.fillTo(user);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("verify {string} has not received mail and {string} has")
+    public void verifyHasNotReceivedMailAndHas(String falseUser, String trueUser) {
+        String[] namesMailNotReceived = falseUser.split(",");
+        for (String name : namesMailNotReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isEqualTo(0);
+            });
+        }
+        String[] namesMailReceived = trueUser.split(",");
+        for (String name : namesMailReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isGreaterThan(0);
+                assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+            });
+        }
+    }
+
+    @Given("{string} creates a mail with {string} and sends it to {string}")
+    public void createsAMailWithAndSendsItTo(String sender, String mailAttributes, String reciever) {
+        navigator.loginAsUser(composeMail, sender, page -> {
+            page.navigateAndVerifyPage();
+            page.composeMail(sender, mailAttributes);
+            page.fillTo(reciever);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("verify {string} has received mail with {string}")
+    public void verifyHasReceivedMailWith(String reciever, String mailAttributes) {
+        navigator.loginAsUser(inboxPage, reciever, page -> {
+            page.navigateAndVerifyPage();
+            page.searchMailNumber(mailNumber);
+            assertThat(page.searchResultCount()).isGreaterThan(0);
+            assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+            page.verifyMailDetails(mailAttributes);
+        });
+    }
+
+
 }
 

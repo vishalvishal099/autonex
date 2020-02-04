@@ -18,15 +18,16 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
     private By cancelRole = By.xpath("//button[@id='btnrolePanel_cancel']//div[@class='uiButton-label'][contains(text(),'Cancel')]");
     private By defaultRole = By.xpath("//input[@id='ROLE_IS_DEFAULT']");
     private By roleName = By.xpath("//input[@id='ROLE_NAME']");
-    private By corrTypeAddButton = By.xpath("//button[@id='btnSELECTED_CORR_TYPES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
-    private By docTypeAddButton = By.xpath("//button[@id='btnSELECTED_DOC_TYPES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
-    private By docStatusAddButton = By.xpath("//button[@id='btnSELECTED_DOC_STATUSES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
-    private By okButton = By.xpath("//button[@id='btnrolePanel_ok']//div[@class='uiButton-label'][contains(text(),'OK')]");
+    private By corrTypeAddBtn = By.xpath("//button[@id='btnSELECTED_CORR_TYPES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
+    private By docTypeAddBtn = By.xpath("//button[@id='btnSELECTED_DOC_TYPES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
+    private By docStatusAddBtn = By.xpath("//button[@id='btnSELECTED_DOC_STATUSES_ADD']//div[@class='uiButton-label'][contains(text(),'>>')]");
+    private By okBtn = By.xpath("//button[@id='btnrolePanel_ok']//div[@class='uiButton-label'][contains(text(),'OK')]");
     private By copyFromProject = By.xpath("//div[@class='uiButton-label'][contains(text(),'Copy From Project')]");
     private By selectProject = By.xpath("//select[@id='FROM_PROJECT_ID']");
     private By confirmCopyFromProject = By.xpath("//button[@id='btncopyFromProjectPanel_ok']//div[@class='uiButton-label'][contains(text(),'OK')]");
     private By resultTable = By.xpath("//table[@class='blank']");
-    private By saveButton = By.xpath("//td[@class='toolbar clearFloats']//button[@id='btnSave']");
+    private By saveBtn = By.xpath("//td[@class='toolbar clearFloats']//button[@id='btnSave']");
+    private By deleteRoleBtn = By.xpath("//div[contains(text(),'Delete Role')]");
 
 
     public void navigateAndVerifyPage() {
@@ -76,15 +77,15 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
         switch (tab) {
             case "Mail Types":
                 $(By.xpath("//div[@id='CORR_TYPESDiv']" + commonPath + type + "']")).click();
-                $(corrTypeAddButton).click();
+                $(corrTypeAddBtn).click();
                 break;
             case "Doc Types":
                 $(By.xpath("//div[@id='DOC_TYPESDiv']" + commonPath + type + "']")).click();
-                $(docTypeAddButton).click();
+                $(docTypeAddBtn).click();
                 break;
             case "Doc Statuses":
                 $(By.xpath("//div[@id='DOC_STATUSESDiv']" + commonPath + type + "']")).click();
-                $(docStatusAddButton).click();
+                $(docStatusAddBtn).click();
                 break;
         }
     }
@@ -128,7 +129,7 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
                     break;
             }
         }
-        $(okButton).click();
+        $(okBtn).click();
     }
 
     public void verifyNewRoleName(String name) {
@@ -146,16 +147,15 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
     public void deleteRole(String roleName) {
         String columnIndex = Integer.toString(roleColumnIndex(roleName));
         By role = By.xpath("//table[@class='blank']//thead//tr//th[" + columnIndex + "]/a");
-        By okButton = By.xpath("//button[@id='btnrolePanel_ok']//div[@class='uiButton-label'][contains(text(),'OK')]");
         $(role).click();
         WebElement defaultRole = $(By.xpath("//div[@id='rolePanel_body']//table[@class='formTable']//tr[2]/td[2]/input[@class ='checkbox']"));
         if (defaultRole.isSelected()) {
             defaultRole.click();
-            $(okButton).click();
+            $(okBtn).click();
             commonMethods.waitForElementExplicitly(2000);
             $(role).click();
         }
-        $(By.xpath("//div[contains(text(),'Delete Role')]")).click();
+        $(deleteRoleBtn).click();
     }
 
     public void deselectAllOrganisation(String roleName) {
@@ -170,7 +170,7 @@ public class MailDocumentsRoleSetting extends ProjectSettingsPage {
                 orgAssociation.click();
             }
         }
-        $(saveButton).click();
+        $(saveBtn).click();
     }
 
     public int roleColumnIndex(String roleName) {

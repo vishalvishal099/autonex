@@ -34,51 +34,48 @@ public class DocumentFields extends ProjectSettingsPage {
 
 
     public void useField(String label, String checkbox) {
-        boolean flag = setFlag(checkbox);
+        boolean flag = Boolean.parseBoolean(checkbox.toLowerCase());
         int row = getLabelRow(label);
+        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[2]//input[@type='checkbox']"));
         if (flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[2]//input[@type='checkbox']"));
-            if (!checkBox.isSelected()) {
-                checkBox.click();
+            if (!chkBox.isSelected()) {
+                chkBox.click();
             }
         } else if (!flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[2]//input[@type='checkbox']"));
-            if (checkBox.isSelected()) {
-                checkBox.click();
+            if (chkBox.isSelected()) {
+                chkBox.click();
             }
         }
         $(saveButton).click();
     }
 
     public void setMandatory(String label, String checkbox) {
-        boolean flag = setFlag(checkbox);
+        boolean flag = Boolean.parseBoolean(checkbox.toLowerCase());
         int row = getLabelRow(label);
+        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[3]//input[@type='checkbox']"));
         if (flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[3]//input[@type='checkbox']"));
-            if (!checkBox.isSelected()) {
-                checkBox.click();
+            if (!chkBox.isSelected()) {
+                chkBox.click();
             }
         } else if (!flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[3]//input[@type='checkbox']"));
-            if (checkBox.isSelected()) {
-                checkBox.click();
+            if (chkBox.isSelected()) {
+                chkBox.click();
             }
         }
         $(saveButton).click();
     }
 
-    public void setEditableInline(String label, String checkbox) {
-        boolean flag = setFlag(checkbox);
+    public void setEditableInline(String label, String checkBox) {
+        boolean flag = Boolean.parseBoolean(checkBox.toLowerCase());
         int row = getLabelRow(label);
+        WebElement chkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[7]//input[@type='checkbox']"));
         if (flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[7]//input[@type='checkbox']"));
-            if (!checkBox.isSelected()) {
-                checkBox.click();
+            if (!chkBox.isSelected()) {
+                chkBox.click();
             }
         } else if (!flag) {
-            WebElement checkBox = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[7]//input[@type='checkbox']"));
-            if (checkBox.isSelected()) {
-                checkBox.click();
+            if (chkBox.isSelected()) {
+                chkBox.click();
             }
         }
         $(saveButton).click();
@@ -90,7 +87,6 @@ public class DocumentFields extends ProjectSettingsPage {
         WebElement editLink = $(By.xpath("//table[@class='dataTable']//tr[" + row + "]//td[6]//a"));
         editLink.click();
         $(saveChanges).click();
-        System.out.println("hello");
     }
 
 
@@ -107,16 +103,6 @@ public class DocumentFields extends ProjectSettingsPage {
             }
         }
         return labelRow - 2;
-    }
-
-    public boolean setFlag(String preference) {
-        boolean flag;
-        if (preference.equals("yes") || preference.equals("true") || preference.equals("True")) {
-            flag = true;
-        } else {
-            flag = false;
-        }
-        return flag;
     }
 }
 

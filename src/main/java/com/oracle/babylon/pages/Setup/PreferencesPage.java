@@ -6,12 +6,12 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
+import static com.codeborne.selenide.Selenide.*;
 
 public class PreferencesPage extends Navigator {
     protected By prefTable = By.xpath("//table[@class='indented dataTable preferences-table']");
     protected By saveButton = By.xpath("//div[contains(text(),'Save')]");
+    protected By closeBtn = By.xpath("//div[contains(text(),'Close')]");
 
 
     public void selectDefaultSettings(String preference) {
@@ -51,6 +51,7 @@ public class PreferencesPage extends Navigator {
     }
 
     public void selectNonDefaultSettings(String preference, String flag) {
+        commonMethods.waitForElementExplicitly(2000);
         int prefRow = getPrefRow(preference);
         int defaultsettingCol = 3;
         int settingColumn = 2;
@@ -75,13 +76,27 @@ public class PreferencesPage extends Navigator {
                 }
             }
         } else {
-            if (settingCheckbox.isSelected()) {
-                settingCheckbox.click();
-                $(saveButton).click();
+            if (defaultSettingcheckBox.isSelected()) {
+                defaultSettingcheckBox.click();
+                if (settingCheckbox.isSelected()) {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                } else {
+                    $(saveButton).click();
+                }
             } else {
-                $(saveButton).click();
+                if (settingCheckbox.isSelected()) {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                } else {
+                    $(saveButton).click();
+                }
             }
         }
+        commonMethods.waitForElement(driver, closeBtn);
+        $(closeBtn).click();
+        driver.navigate().refresh();
+
     }
 
     public int getPrefRow(String prefName) {

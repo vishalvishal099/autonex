@@ -84,7 +84,9 @@ public class Navigator {
         String projectId = "project" + numberChar;
         projectMap = jsonMapOfMap.get(projectId);
         userMap = jsonMapOfMap.get(userId);
-        user.setProject(projectMap.get("projectname"));
+        if (projectMap != null) {
+            user.setProject(projectMap.get("projectname"));
+        }
         user.setUserName(userMap.get("username"));
         user.setPassword(userMap.get("password"));
         user.setFullName(userMap.get("fullname"));
@@ -113,7 +115,7 @@ public class Navigator {
         switchTo().defaultContent();
         if ($(avatar).isDisplayed()) {
             logout();
-            commonMethods.waitForElementExplicitly(2000);
+            commonMethods.waitForElementExplicitly(4000);
             openAconexUrl();
         } else {
             openAconexUrl();
@@ -143,13 +145,15 @@ public class Navigator {
 
     public void selectProject(String projectName) {
         commonMethods.waitForElementExplicitly(2000);
-        if($(projectChangerSelect).isDisplayed()) {
-            if ($(projectChangerSelect).text() == (projectName)) {
-            } else
-                $(projectChangerSelect).click();
-            $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
-        } else {
-            System.out.println("No projects available to select");
+        if (projectName != null) {
+            if ($(projectChangerSelect).isDisplayed()) {
+                if ($(projectChangerSelect).text() == (projectName)) {
+                } else
+                    $(projectChangerSelect).click();
+                $(By.xpath("//div[@class='projectChanger-listItem']//span[text()='" + projectName + "']")).click();
+            } else {
+                System.out.println("No projects available to select");
+            }
         }
     }
 
@@ -211,28 +215,30 @@ public class Navigator {
         $(attributeClickOk).click();
     }
 
-    public Map<String, String> returnProjectMap(){
+    public Map<String, String> returnProjectMap() {
         return projectMap;
     }
 
     /**
      * Method to verify the element is displayed
+     *
      * @param by
      * @return
      */
-    public boolean verifyPageTitle(By by){
+    public boolean verifyPageTitle(By by) {
         commonMethods.switchToFrame(driver, "frameMain");
-        Boolean isDisplayed =  $(by).isDisplayed();
+        Boolean isDisplayed = $(by).isDisplayed();
         switchTo().defaultContent();
         return isDisplayed;
     }
 
     /**
      * Method to verify the text of the element
+     *
      * @param pageTitle
      * @return
      */
-    public boolean verifyPageTitle(String pageTitle){
+    public boolean verifyPageTitle(String pageTitle) {
         commonMethods.switchToFrame(driver, "frameMain");
         String headerName = $(header).text();
         switchTo().defaultContent();

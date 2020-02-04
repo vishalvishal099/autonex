@@ -17,6 +17,13 @@ public class ViewMail extends Navigator {
     private By mailNumber = By.xpath("//div[@data-automation-id='mailHeader-number-value']");
     private By mailType = By.xpath("//div[@data-automation-id='mailHeader-type-value']//span");
     private By edit = By.xpath("//button[contains(text(),'Edit')]");
+    private By printBtn = By.xpath("//button[contains(text(),'Print')]");
+    private By documentDetail = By.xpath("//mail-document-properties-grid[@class='ng-isolate-scope']//tbody//tr[1]");
+    private By actionBtn = By.xpath("//aui-menu-button[@class='ng-scope ng-isolate-scope']//button[@class='auiMenuButton auiButton ng-binding'][contains(text(),'Actions')]");
+    private By attachmentSection = By.xpath("//table[@class='auiTable ng-scope']//tbody");
+    private By mailTypeValue = By.xpath("//div[@class='mailHeader-value']");
+    private By mailSubject = By.xpath("//div[@class='mailHeader-subject']");
+    private By recipient = By.xpath("//li[@class='mailRecipients-firstRecipient']");
 
     public String retrieveMailNumber() {
         commonMethods.switchToFrame(driver, "frameMain");
@@ -50,24 +57,24 @@ public class ViewMail extends Navigator {
                 case "To":
                     String[] namesListForTo = table.get(tableData).split(",");
                     for (String name : namesListForTo) {
-                        String toUser = $(By.xpath("//li[@class='mailRecipients-firstRecipient']")).text();
+                        String toUser = $(recipient).text();
                         Assert.assertTrue(toUser.contains(name));
                     }
                     break;
                 case "Subject":
-                    String subject = $(By.xpath("//div[@class='mailHeader-subject']")).text();
+                    String subject = $(mailSubject).text();
                     Assert.assertTrue(subject.contains(table.get(tableData)));
                     break;
                 case "Mail Type":
-                    String mailType = $(By.xpath("//div[@class='mailHeader-value']")).text();
+                    String mailType = $(mailTypeValue).text();
                     Assert.assertTrue(mailType.contains(table.get(tableData)));
                     break;
                 case "Attachment":
-                    String attachment = $(By.xpath("//table[@class='auiTable ng-scope']//tbody")).text();
+                    String attachment = $(attachmentSection).text();
                     Assert.assertTrue(attachment.contains(table.get(tableData)));
                     break;
                 case "File Type":
-                    String attachmentType = $(By.xpath("//table[@class='auiTable ng-scope']//tbody")).text();
+                    String attachmentType = $(attachmentSection).text();
                     Assert.assertTrue(attachmentType.contains(table.get(tableData)));
                     break;
             }
@@ -79,16 +86,18 @@ public class ViewMail extends Navigator {
         try {
             String alertText = driver.switchTo().alert().getText();
             driver.switchTo().alert().accept();
+            System.out.println("Error Present Present");
+            System.exit(1);
             //any other stuff
         } catch (Exception e) {
-            System.out.println("No Error Message" + e.getMessage());
+            System.out.println("Error Not Present Present");
         }
     }
 
     public void verifyButton(String button) {
         switch (button.toLowerCase()) {
-            case "print"://button[contains(text(),'Print')]
-                Assert.assertFalse($(By.xpath("//button[contains(text(),'Print')]")).exists());
+            case "print":
+                Assert.assertFalse($(printBtn).exists());
         }
     }
 
@@ -96,14 +105,14 @@ public class ViewMail extends Navigator {
         commonMethods.waitForElementExplicitly(3000);
         $(By.xpath("//table[@class='auiTable']//tbody//tr[1]/td[1]/input")).click();
         $(By.xpath("//button[contains(text(),'View File Properties')]")).click();
-        commonMethods.waitForElement(driver, By.xpath("//mail-document-properties-grid[@class='ng-isolate-scope']//tbody//tr[1]"));
-        String docDetail = $(By.xpath("//mail-document-properties-grid[@class='ng-isolate-scope']//tbody//tr[1]")).text();
+        commonMethods.waitForElement(driver, documentDetail);
+        String docDetail = $(documentDetail).text();
         Assert.assertTrue(docDetail.contains(document));
 
     }
 
     public void markAsUnread(){
-        $(By.xpath("//aui-menu-button[@class='ng-scope ng-isolate-scope']//button[@class='auiMenuButton auiButton ng-binding'][contains(text(),'Actions')]")).click();
+        $(actionBtn).click();
         $(By.xpath("//a[@class='ng-binding ng-scope']")).click();
     }
 

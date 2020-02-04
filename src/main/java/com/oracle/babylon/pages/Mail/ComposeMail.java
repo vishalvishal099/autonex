@@ -4,8 +4,10 @@ import com.codeborne.selenide.WebDriverRunner;
 import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
+import com.oracle.babylon.pages.Directory.DirectoryPage;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import com.oracle.babylon.pages.Document.DocumentPage;
 
@@ -30,6 +32,7 @@ public class ComposeMail extends MailPage {
     }
 
     private DocumentPage documentPage = new DocumentPage();
+    private DirectoryPage directoryPage = new DirectoryPage();
     //Initializing the Web Elements
     private By mailNumberField = By.xpath("//div[@class='mailHeader-numbers']//div[2]//div[2]");
     private By to_mailId = By.xpath("//input[@name='SPEED_ADDRESS_TO']");
@@ -43,6 +46,7 @@ public class ComposeMail extends MailPage {
     private By selectUser = By.xpath("//table[@id='resultTable']//tbody//tr[1]//input[@name='USERS_LIST']");
     private By directory = By.xpath("//body/div[@id='page']/form[@id='form1']/div[@id='main']/div[@id='mockdoc']/div[@class='box']/table[@id='heroSection']/tbody//tr[1]//button[1]//div[1]//div[1]");
     private By docContainer = By.xpath("//td[@id='corrAttachmentsContainer']");
+    private By saveToDraftBtn = By.xpath("//div[contains(text(),'Save To Draft')]");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -66,22 +70,10 @@ public class ComposeMail extends MailPage {
         for (String tableData : table.keySet()) {
             switch (tableData) {
                 case "To":
-                    String[] namesListForTo = table.get(tableData).split(",");
-                    for (String name : namesListForTo) {
-                        addRecipient(tableData, name);
-                    }
-                    break;
                 case "Cc":
-                    String[] namesListForCc = table.get(tableData).split(",");
-                    for (String name : namesListForCc) {
-                        addRecipient(tableData, name);
-                    }
-                    break;
                 case "Bcc":
-                    String[] namesListForBCC = table.get(tableData).split(",");
-                    for (String name : namesListForBCC) {
-                        addRecipient(tableData, name);
-                    }
+                    String[] namesListForGroup = table.get(tableData).split(",");
+                    addUserToMailingList(namesListForGroup, tableData);
                     break;
                 case "Mail Type":
                     selectMailType(table.get(tableData));
@@ -90,16 +82,10 @@ public class ComposeMail extends MailPage {
                     fillInSubject(table.get(tableData));
                     break;
                 case "Attribute 1":
-                    selectMailAttribute("Attribute 1", table.get(tableData));
-                    break;
                 case "Attribute 2":
-                    selectMailAttribute("Attribute 2", table.get(tableData));
-                    break;
                 case "Attribute 3":
-                    selectMailAttribute("Attribute 3", table.get(tableData));
-                    break;
                 case "Attribute 4":
-                    selectMailAttribute("Attribute 4", table.get(tableData));
+                    selectMailAttribute(tableData, table.get(tableData));
                     break;
                 case "Mail Body":
                     setMailBody(table.get(tableData));
@@ -112,33 +98,22 @@ public class ComposeMail extends MailPage {
         driver.switchTo().defaultContent();
     }
 
-    public void addRecipient(String group, String name) {
-        commonMethods.waitForElement(driver, directory);
-        $(directory).click();
-        String[] username = name.split("\\s+");
-        $(By.cssSelector("#FIRST_NAME")).clear();
-        commonMethods.waitForElementExplicitly(1000);
-        $(By.cssSelector("#FIRST_NAME")).sendKeys(username[0]);
-        $(By.cssSelector("#LAST_NAME")).clear();
-        commonMethods.waitForElementExplicitly(1000);
-        $(By.cssSelector("#LAST_NAME")).sendKeys(username[1]);
-        $(By.xpath("//div[contains(text(),'Search')]")).click();
-        commonMethods.waitForElement(driver, selectUser);
-        $(selectUser).click();
-        String recipientGroup = "//div[@id='searchResultsToolbar']//div[@class='uiButton-label'][contains(text(),'";
-        switch (group) {
-            case "To":
-                $(By.xpath(recipientGroup + "To')]")).click();
-                break;
-            case "Cc":
-                $(By.xpath(recipientGroup + "Cc')]")).click();
-                break;
-            case "Bcc":
-                $(By.xpath(recipientGroup + "Bcc')]")).click();
-                break;
+    public void addUserToMailingList(String[] namesListForGroup, String group){JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        String currentFrame = (String) jsExecutor.executeScript("return self.name");
+        if (!currentFrame.equalsIgnoreCase("main")) {
+            commonMethods.switchToFrame(driver, "frameMain");
         }
-        commonMethods.waitForElementExplicitly(1000);
-        $(By.xpath("//div[contains(text(),'OK')]")).click();
+        for (String name : namesListForGroup) {
+            commonMethods.waitForElement(driver, directory);
+            ((JavascriptExecutor) driver).executeScript("window.scrollTo(document.body.scrollHeight, 0)");
+            $(directory).click();
+            String[] username = name.split("\\s+");
+            directoryPage.fillFieldsAndSearch(username[0],username[1],null,null,null);
+            commonMethods.waitForElementExplicitly(1000);
+            directoryPage.selectUser();
+            directoryPage.selectRecipientGroup(group);
+            directoryPage.clickOkBtn();
+        }
     }
 
 
@@ -178,23 +153,8 @@ public class ComposeMail extends MailPage {
      * @param userTo string of users that we want to send the mail to
      */
     public void fillTo(String userTo) {
-        user = dataStore.getUser(userTo);
-        userTo = user.getFullName();
-//        this.driver = commonMethods.switchToFrame(driver, "frameMain");
-        /** $(attachBtn).click();
-         driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
-         driver.switchTo().frame("attachFiles-frame");
-         WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
-         WebElement child = element.findElement(By.xpath(".//input"));
-         System.out.println(child.getAttribute("title"));
-         child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
-         // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
-         System.out.println("Printing test");
-         */
-        $(to_mailId).setValue(userTo);
-        $(to_mailId).pressEnter();
-        this.driver = commonMethods.waitForElement(driver, to_mailId);
-        $(to_mailId).click();
+        String[] namesListForGroup = userTo.split(",");
+        addUserToMailingList(namesListForGroup, "To");
     }
 
 
@@ -205,6 +165,11 @@ public class ComposeMail extends MailPage {
      */
     public String send() {
         commonMethods.waitForElementExplicitly(3000);
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        String currentFrame = (String) jsExecutor.executeScript("return self.name");
+        if (!currentFrame.equalsIgnoreCase("main")) {
+            driver.switchTo().defaultContent();
+        }
         $(sendBtn).click();
         $(loadingIcon).should(disappear);
         commonMethods.waitForElementExplicitly(5000);
@@ -230,7 +195,9 @@ public class ComposeMail extends MailPage {
     }
 
     public void saveToDraft() {
-        $(By.xpath("//div[contains(text(),'Save To Draft')]")).click();
+        commonMethods.waitForElementExplicitly(3000);
+        $(saveToDraftBtn).click();
+
     }
 
     public void attachDocumentUsingFullSearch(String document) {
@@ -246,10 +213,15 @@ public class ComposeMail extends MailPage {
     }
 
     public void attachDocument(String documentDetail) {
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        String currentFrame = (String) jsExecutor.executeScript("return self.name");
+        if (!currentFrame.equalsIgnoreCase("main")) {
+            driver.switchTo().defaultContent();
+        }
         commonMethods.waitForElement(driver, attachBtn);
         $(attachBtn).click();
         $(By.xpath("//a[contains(text(),'Document')]")).click();
-        commonMethods.waitForElementExplicitly(2000);
+        commonMethods.waitForElementExplicitly(3000);
         $(By.xpath("//div[contains(text(),'Open Full Search Page')]")).click();
         documentPage.searchDocumentNo(documentDetail);
         $(By.xpath("//div[@id='searchResultsWrapper']//td[1]//input[@name='selectedIdsInPage']")).click();
@@ -259,15 +231,21 @@ public class ComposeMail extends MailPage {
     }
 
     public void removeUserFromMailingList(String group, String user) {
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        String currentFrame = (String) jsExecutor.executeScript("return self.name");
+        if (!currentFrame.equalsIgnoreCase("main")) {
+            commonMethods.switchToFrame(driver, "frameMain");
+        }
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(document.body.scrollHeight, 0)");
         switch (group.toLowerCase()) {
             case "to":
                 $(By.xpath("//div[@id='recipientsTO']//tr[contains(., '" + user + "')]//td[3]/div")).click();
                 break;
             case "cc":
-                $(By.xpath("//div[@id='recipientsCC']//tr[contains(., '" + user + " ')]//td[3]/div")).click();
+                $(By.xpath("//div[@id='recipientsCC']//tr[contains(., '" + user + "')]//td[3]/div")).click();
                 break;
             case "bcc":
-                $(By.xpath("//div[@id='recipientsBCC']//tr[contains(., '" + user + " ')]//td[3]/div")).click();
+                $(By.xpath("//div[@id='recipientsBCC']//tr[contains(., '" + user + "')]//td[3]/div")).click();
                 break;
         }
         commonMethods.waitForElementExplicitly(2000);
