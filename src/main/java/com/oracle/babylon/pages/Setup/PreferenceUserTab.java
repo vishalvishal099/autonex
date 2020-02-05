@@ -31,8 +31,8 @@ public class PreferenceUserTab extends PreferencesPage {
         clickEditButtonForSetting(preferences);
     }
 
-    public void checkNonDefaultSettingsForUser(String preference) {
-        selectNonDefaultSettings(preference);
+    public void checkNonDefaultSettingsForUser(String preference, String flag) {
+        selectNonDefaultSettings(preference, flag);
     }
 
 }
