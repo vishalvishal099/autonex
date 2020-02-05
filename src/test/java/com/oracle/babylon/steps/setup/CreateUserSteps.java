@@ -18,6 +18,7 @@ import com.oracle.babylon.Utils.setup.dataStore.pojo.Project;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import cucumber.api.java.en.Given;
 
+import java.util.Hashtable;
 import java.util.Map;
 
 public class CreateUserSteps extends Navigator {
@@ -29,41 +30,44 @@ public class CreateUserSteps extends Navigator {
     private PreferenceOrganizationTab preferenceOrganizationTab = new PreferenceOrganizationTab();
     String filepath = configFileReader.getUserDataJsonFilePath();
     private User user = new User();
-    private CreateUserPage createUserPage = new  CreateUserPage();
+    private CreateUserPage createUserPage = new CreateUserPage();
     static Map<String, String> userDetail;
 
     @Given("{string} creates a {string} in same org with {string}")
-    public void muserCreatesAUserInSameOrgWith(String userId, String newUser ,String project) {
+    public void muserCreatesAUserInSameOrgWith(String userId, String newUser, String project) {
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filepath);
         Map<String, String> userMap = mapOfMap.get(userId);
-        Map<String, String> projectMap = mapOfMap.get(project);
-
+        char projectId = project.charAt(project.length() - 1);
         //Get project fields from the project data table
         user.setFullName(userMap.get("fullname"));
-        user.setUserName(userMap.get("username"));
+        user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
-        user.setProject(projectMap.get("projectname"));
+        user.setProjectName(userMap.get("project_name" + projectId));
+        String projectToAdded = userMap.get("project_name" + projectId);
         navigator.loginAsUser(user);
 
         navigator.on(preferenceOrganizationTab, page -> {
             page.navigateAndVerifyPage();
-            page.checkNonDefaultSettingsForOrganization("Send email notification to new users","false");
+            page.checkNonDefaultSettingsForOrganization("Send email notification to new users", "false");
 
         });
         navigator.on(createUserPage, page -> {
             page.navigateAndVerifyPage();
             userDetail = page.newUserDefaultDetail();
-            page.createUserWithPassword(userDetail);
+//            page.createUserWithPassword(userDetail);
+            page.createUserWithProjectAndPassword(userDetail, projectToAdded);
         });
-        String fullName = userDetail.get("firstname")+" "+userDetail.get("lastname");
-        String[] keys = {"username", "password", "fullname"};
-        String[] userKeyList = {newUser, keys[0]};
-        dataSetup.writeIntoJson(userKeyList, userDetail.get("loginName"), filePath);
-        userKeyList = new String[]{newUser, keys[1]};
-        dataSetup.writeIntoJson(userKeyList, "1990_ABcd1234", filePath);
-        userKeyList = new String[]{newUser, keys[2]};
-        dataSetup.writeIntoJson(userKeyList, fullName, filePath);
-
-
+        String fullName = userDetail.get("firstname") + " " + userDetail.get("lastname");
+        Map<String, Map<String, String>> newUserMapOfMap = new Hashtable<>();
+        String[] keys = {"username", "password", "full_name", "project_name" + projectId, "project_id" + projectId, "org_name"};
+        Map<String, String> valueMap = new Hashtable<>();
+        valueMap.put(keys[0], userDetail.get("loginName"));
+        valueMap.put(keys[1], "1990_ABcd1234");
+        valueMap.put(keys[2], fullName);
+        valueMap.put(keys[3], userMap.get("project_name" + projectId));
+        valueMap.put(keys[4], userMap.get("project_id" + projectId));
+        valueMap.put(keys[5], userMap.get("org_name"));
+        newUserMapOfMap.put(newUser, valueMap);
+        dataSetup.convertMapOfMapAndWrite(newUser, newUserMapOfMap, userDataPath);
     }
 }
