@@ -1,63 +1,63 @@
 Feature: Send Mail
 
-  Background: Test data
+#  Background: Test data
+#
+#    Given User Data "user1"
+#      | Fullname  | Username | Projects     | Organization    |
+#      | Eric Gibb | egibb    | Breeze Tower | Apex Mechanical |
+#
+#    Given User Data "user2"
+#      | Fullname     | Username | Projects     | Organization   |
+#      | Mark Perkins | mperkins | Breeze Tower | Rand Resources |
+#
+#    Given User Data "user3"
+#      | Fullname   | Username | Projects     | Organization |
+#      | Ebru Ozcan | eozcan   | Breeze Tower | Arkitera     |
+#
+#    Given User Data "user4"
+#      | Fullname         | Username | Projects     | Organization             |
+#      | Gretchen Pitcher | gpitcher | Breeze Tower | Ashton Design & Drafting |
 
-    Given User Data "user1"
-      | Fullname  | Username | Projects     | Organization    |
-      | Eric Gibb | egibb    | Breeze Tower | Apex Mechanical |
-
-    Given User Data "user2"
-      | Fullname     | Username | Projects     | Organization   |
-      | Mark Perkins | mperkins | Breeze Tower | Rand Resources |
-
-    Given User Data "user3"
-      | Fullname   | Username | Projects     | Organization |
-      | Ebru Ozcan | eozcan   | Breeze Tower | Arkitera     |
-
-    Given User Data "user4"
-      | Fullname         | Username | Projects     | Organization             |
-      | Gretchen Pitcher | gpitcher | Breeze Tower | Ashton Design & Drafting |
-
-    Given Vertical Table "mail_attributes1"
-      | Mail Type   | Internal Memorandum       |
-      | Subject     | Basic Mail Test           |
-      | Attribute 1 | Administration            |
-      | Attribute 2 | Innovation                |
-      | Mail Body   | Send Mail feature testing |
-
-    Given Vertical Table "mail_attributes2"
-      | Mail Type   | Transmittal               |
-      | Subject     | Basic Mail Test           |
-      | Attribute 1 | Administration            |
-      | Attribute 2 | Innovation                |
-      | Mail Body   | Send Mail feature testing |
-
-    Given Vertical Table "mail_attributes3"
-      | To          | Mark Perkins,Lewis Miller       |
-      | Cc          | Ebru Ozcan,Nicki Curtain        |
-      | Bcc         | Gretchen Pitcher,Pardeep Haresh |
-      | Mail Type   | Internal Memorandum             |
-      | Subject     | Basic Mail Test                 |
-      | Attribute 1 | Administration                  |
-      | Attribute 2 | Innovation                      |
-      | Mail Body   | Send Mail feature testing       |
-
-    Given Vertical Table "mail_attributes4"
-      | Mail Type   | Internal Memorandum |
-      | To          | Mark Perkins        |
-      | Subject     | Basic Mail Test     |
-      | Attribute 1 | Administration      |
-      | Attribute 2 | Innovation          |
-      | Attachment  | ACONEXQA-2106       |
-      | File Type   | png                 |
-
-    Given Vertical Table "mail_attributes5"
-      | Mail Type   | Transmittal               |
-      | Subject     | Basic Mail Test           |
-      | Attachment  | ACONEXQA-2106             |
-      | Attribute 1 | Administration            |
-      | Attribute 2 | Innovation                |
-      | Mail Body   | Send Mail feature testing |
+#    Given Vertical Table "mail_attributes1"
+#      | Mail Type   | Internal Memorandum       |
+#      | Subject     | Basic Mail Test           |
+#      | Attribute 1 | Administration            |
+#      | Attribute 2 | Innovation                |
+#      | Mail Body   | Send Mail feature testing |
+#
+#    Given Vertical Table "mail_attributes2"
+#      | Mail Type   | Transmittal               |
+#      | Subject     | Basic Mail Test           |
+#      | Attribute 1 | Administration            |
+#      | Attribute 2 | Innovation                |
+#      | Mail Body   | Send Mail feature testing |
+#
+#    Given Vertical Table "mail_attributes3"
+#      | To          | Mark Perkins,Lewis Miller       |
+#      | Cc          | Ebru Ozcan,Nicki Curtain        |
+#      | Bcc         | Gretchen Pitcher,Pardeep Haresh |
+#      | Mail Type   | Internal Memorandum             |
+#      | Subject     | Basic Mail Test                 |
+#      | Attribute 1 | Administration                  |
+#      | Attribute 2 | Innovation                      |
+#      | Mail Body   | Send Mail feature testing       |
+#
+#    Given Vertical Table "mail_attributes4"
+#      | Mail Type   | Internal Memorandum |
+#      | To          | Mark Perkins        |
+#      | Subject     | Basic Mail Test     |
+#      | Attribute 1 | Administration      |
+#      | Attribute 2 | Innovation          |
+#      | Attachment  | ACONEXQA-2106       |
+#      | File Type   | png                 |
+#
+#    Given Vertical Table "mail_attributes5"
+#      | Mail Type   | Transmittal               |
+#      | Subject     | Basic Mail Test           |
+#      | Attachment  | ACONEXQA-2106             |
+#      | Attribute 1 | Administration            |
+#      | Attribute 2 | Innovation                |
+#      | Mail Body   | Send Mail feature testing |
 
 
     #ACONEXQA-2105

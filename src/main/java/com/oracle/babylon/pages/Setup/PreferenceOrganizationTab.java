@@ -28,5 +28,4 @@ public class PreferenceOrganizationTab extends PreferencesPage {
     public void checkNonDefaultSettingsForOrganization(String preference, String flag) {
         selectNonDefaultSettings(preference, flag);
     }
-
 }

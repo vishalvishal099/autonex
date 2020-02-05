@@ -76,10 +76,11 @@ public class RegisterOrganizationPage extends Navigator {
         $(loginNameTxtBox).sendKeys(userInfo.getUsername());
         $(passwordTxtBox).sendKeys(userInfo.getPassword().toString());
         $(confirmPasswordTxtBox).sendKeys(userInfo.getPassword().toString());
+        commonMethods.waitForElementExplicitly(1000);
         $(acceptTermsChkBox).click();
         commonMethods.waitForElementExplicitly(3000);
         $(registerBtn).click();
-        commonMethods.waitForElementExplicitly(3000);
+        commonMethods.waitForElementExplicitly(5000);
         commonMethods.waitForElement(this.driver, thankYouMessage);
         $(thankYouMessage).isDisplayed();
     }
@@ -93,7 +94,7 @@ public class RegisterOrganizationPage extends Navigator {
     public User enterOrgUserDetailsToFile(String userId) {
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
-        String[] keys = {"username", "password", "full_name","org_name1"};
+        String[] keys = {"username", "password", "full_name","org_name"};
         Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
         Map<String, String> valueMap = new Hashtable<>();
         valueMap.put(keys[0], userInfo.getUsername());
@@ -101,11 +102,7 @@ public class RegisterOrganizationPage extends Navigator {
         valueMap.put(keys[2], userInfo.getFullName());
         valueMap.put(keys[3], organization.getOrganizationName());
         mapOfMap.put(userId, valueMap);
-
         dataSetup.convertMapOfMapAndWrite(userId, mapOfMap, userDataPath);
         return userInfo;
-
     }
-
-
 }

@@ -3,7 +3,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @create_org
   @data_setup
   Scenario: Create a organization and store information into UserData.json
-    When user "user1" tries to create organization
+    When user "user1" tries to create org
     Then user "user1" is able to login to application
 
   @fill_acnt_details
