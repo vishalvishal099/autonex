@@ -37,13 +37,13 @@ public class CreateUserSteps extends Navigator {
     public void muserCreatesAUserInSameOrgWith(String userId, String newUser, String project) {
         Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(filepath);
         Map<String, String> userMap = mapOfMap.get(userId);
-        char projectId = project.charAt(project.length() - 1);
+        char projectIndex = project.charAt(project.length() - 1);
         //Get project fields from the project data table
         user.setFullName(userMap.get("fullname"));
         user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
-        user.setProjectName(userMap.get("project_name" + projectId));
-        String projectToAdded = userMap.get("project_name" + projectId);
+        user.setProjectName(userMap.get("project_name" + projectIndex));
+        String projectToBeAdded = userMap.get("project_name" + projectIndex);
         navigator.loginAsUser(user);
 
         navigator.on(preferenceOrganizationTab, page -> {
@@ -55,17 +55,17 @@ public class CreateUserSteps extends Navigator {
             page.navigateAndVerifyPage();
             userDetail = page.newUserDefaultDetail();
 //            page.createUserWithPassword(userDetail);
-            page.createUserWithProjectAndPassword(userDetail, projectToAdded);
+            page.createUserWithProjectAndPassword(userDetail, projectToBeAdded);
         });
         String fullName = userDetail.get("firstname") + " " + userDetail.get("lastname");
         Map<String, Map<String, String>> newUserMapOfMap = new Hashtable<>();
-        String[] keys = {"username", "password", "full_name", "project_name" + projectId, "project_id" + projectId, "org_name"};
+        String[] keys = {"username", "password", "full_name", "project_name" + projectIndex, "project_id" + projectIndex, "org_name"};
         Map<String, String> valueMap = new Hashtable<>();
         valueMap.put(keys[0], userDetail.get("loginName"));
         valueMap.put(keys[1], "1990_ABcd1234");
         valueMap.put(keys[2], fullName);
-        valueMap.put(keys[3], userMap.get("project_name" + projectId));
-        valueMap.put(keys[4], userMap.get("project_id" + projectId));
+        valueMap.put(keys[3], userMap.get("project_name" + projectIndex));
+        valueMap.put(keys[4], userMap.get("project_id" + projectIndex));
         valueMap.put(keys[5], userMap.get("org_name"));
         newUserMapOfMap.put(newUser, valueMap);
         dataSetup.convertMapOfMapAndWrite(newUser, newUserMapOfMap, userDataPath);

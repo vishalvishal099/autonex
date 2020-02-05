@@ -1,4 +1,10 @@
 {
-  "doc_num1": "",
-  "attribute1": ""
+  "document1": {
+    "doc_num": "",
+    "attribute1": "",
+    "revision": "",
+    "status": "",
+    "discipline": "",
+    "title": ""
+  }
 }

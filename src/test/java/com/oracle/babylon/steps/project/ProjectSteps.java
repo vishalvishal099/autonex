@@ -59,9 +59,7 @@ public class ProjectSteps {
 
         });
 
-        navigator.loginAsUser(adminHome, page -> {
-            page.verifyPage();
-        });
+        navigator.loginAsUser(adminHome, AdminHome::verifyPage);
         navigator.on(adminSearch, page -> {
             page.navigateAndVerifyPage();
             user.setProjectId(page.returnResultId(project.getProjectName()));

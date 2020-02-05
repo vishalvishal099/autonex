@@ -48,8 +48,9 @@ public class Navigator {
     private By attributeClickOk = By.xpath("//button[@id='attributePanel-commit' and @title='OK']");
     protected By header = By.xpath("//h1");
     protected String userDataPath = null;
-    protected String documentDataPath = null;
     protected String mailDataPath = null;
+    protected String docDataPath = null;
+    String userFilePath = configFileReader.getUserDataJsonFilePath();
     private By otherTabsArrow = By.xpath("//div[contains(@title,'Your current screen size is too small to view all modules')]");
 
 
@@ -57,6 +58,9 @@ public class Navigator {
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
         userDataPath = configFileReader.getUserDataJsonFilePath();
+        mailDataPath = configFileReader.getMailDataJsonFilePath();
+        docDataPath = configFileReader.getDocumentDataJsonFilePath();
+
     }
 
     /**
@@ -69,6 +73,7 @@ public class Navigator {
      */
     public <P> void loginAsUser(P page, String username, Consumer<P> block) {
         user = dataStore.getUser(username);
+
         loginAsUser(user);
         block.accept(page);
     }
@@ -84,18 +89,19 @@ public class Navigator {
     public <P> void loginAsUser(P page, String userId, String filePath, Consumer<P> block) {
         //Parse the json to retrieve the essential information and store it in user object
         jsonMapOfMap = dataSetup.loadJsonDataToMap(filePath);
+        char numberChar = userId.charAt(userId.length() - 1);
+        String projectId = "project" + numberChar;
+        projectMap = jsonMapOfMap.get(projectId);
         userMap = jsonMapOfMap.get(userId);
         if (projectMap != null) {
-
-        user.setProjectName(userMap.get("project_name1"));
+            user.setProjectName(projectMap.get("projectname"));
+        }
         user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
-        user.setFullName(userMap.get("full_name"));
+        user.setFullName(userMap.get("fullname"));
 
         loginAsUser(user);
         block.accept(page);
-        }
-
     }
 
     /**
@@ -137,6 +143,7 @@ public class Navigator {
         user = dataStore.getUser(tablename);
         enterCreds(user.getUsername(), user.getPassword());
     }
+
 
     public void enterCreds(String username, String password) {
         $(usernameTxtBox).setValue(username);
