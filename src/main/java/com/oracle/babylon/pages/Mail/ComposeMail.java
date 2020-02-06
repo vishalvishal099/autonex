@@ -44,6 +44,8 @@ public class ComposeMail extends MailPage {
     private By selectUser = By.xpath("//table[@id='resultTable']//tbody//tr[1]//input[@name='USERS_LIST']");
     private By directory = By.xpath("//body/div[@id='page']/form[@id='form1']/div[@id='main']/div[@id='mockdoc']/div[@class='box']/table[@id='heroSection']/tbody//tr[1]//button[1]//div[1]//div[1]");
     private By docContainer = By.xpath("//td[@id='corrAttachmentsContainer']");
+    private By global = By.xpath("//li[@id='ACONEX_list']");
+    String userFilePath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -69,19 +71,25 @@ public class ComposeMail extends MailPage {
                 case "To":
                     String[] namesListForTo = table.get(tableData).split(",");
                     for (String name : namesListForTo) {
-                        addRecipient(tableData, name);
+                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+                        userMap = jsonMapOfMap.get(name);
+                        addRecipient(tableData, userMap.get("full_name"));
                     }
                     break;
                 case "Cc":
                     String[] namesListForCc = table.get(tableData).split(",");
                     for (String name : namesListForCc) {
-                        addRecipient(tableData, name);
+                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+                        userMap = jsonMapOfMap.get(name);
+                        addRecipient(tableData, userMap.get("full_name"));
                     }
                     break;
                 case "Bcc":
                     String[] namesListForBCC = table.get(tableData).split(",");
                     for (String name : namesListForBCC) {
-                        addRecipient(tableData, name);
+                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+                        userMap = jsonMapOfMap.get(name);
+                        addRecipient(tableData, userMap.get("full_name"));
                     }
                     break;
                 case "Mail Type":
@@ -108,14 +116,19 @@ public class ComposeMail extends MailPage {
                 case "Attachment":
                     attachDocument(table.get(tableData));
                     break;
+                case "Reason for Issue":
+                    selectReasonForIssue(table.get(tableData));
+                    break;
             }
         }
         driver.switchTo().defaultContent();
     }
 
+
     public void addRecipient(String group, String name) {
         commonMethods.waitForElement(driver, directory);
         $(directory).click();
+        $(global).click();
         String[] username = name.split("\\s+");
         $(By.cssSelector("#FIRST_NAME")).clear();
         commonMethods.waitForElementExplicitly(1000);
@@ -179,23 +192,7 @@ public class ComposeMail extends MailPage {
      * @param userTo string of users that we want to send the mail to
      */
     public void fillTo(String userTo) {
-        user = dataStore.getUser(userTo);
-        userTo = user.getFullName();
-//        this.driver = commonMethods.switchToFrame(driver, "frameMain");
-        /** $(attachBtn).click();
-         driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
-         driver.switchTo().frame("attachFiles-frame");
-         WebElement  element = driver.findElement(By.xpath("//div[contains(text(),'Choose Files')]"));
-         WebElement child = element.findElement(By.xpath(".//input"));
-         System.out.println(child.getAttribute("title"));
-         child.sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties");
-         // driver.findElement(By.xpath("//div[text()='Choose Files']//input")).sendKeys("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\configFile.properties \n C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources\\userData.json");
-         System.out.println("Printing test");
-         */
-        $(to_mailId).setValue(userTo);
-        $(to_mailId).pressEnter();
-        this.driver = commonMethods.waitForElement(driver, to_mailId);
-        $(to_mailId).click();
+
     }
 
 
@@ -260,15 +257,18 @@ public class ComposeMail extends MailPage {
     }
 
     public void removeUserFromMailingList(String group, String user) {
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+        userMap = jsonMapOfMap.get(user);
+        String userToRemove = userMap.get("full_name");
         switch (group.toLowerCase()) {
             case "to":
-                $(By.xpath("//div[@id='recipientsTO']//tr[contains(., '" + user + "')]//td[3]/div")).click();
+                $(By.xpath("//div[@id='recipientsTO']//tr[contains(., '" + userToRemove + "')]//td[3]/div")).click();
                 break;
             case "cc":
-                $(By.xpath("//div[@id='recipientsCC']//tr[contains(., '" + user + " ')]//td[3]/div")).click();
+                $(By.xpath("//div[@id='recipientsCC']//tr[contains(., '" + userToRemove + " ')]//td[3]/div")).click();
                 break;
             case "bcc":
-                $(By.xpath("//div[@id='recipientsBCC']//tr[contains(., '" + user + " ')]//td[3]/div")).click();
+                $(By.xpath("//div[@id='recipientsBCC']//tr[contains(., '" + userToRemove + " ')]//td[3]/div")).click();
                 break;
         }
         commonMethods.waitForElementExplicitly(2000);

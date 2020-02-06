@@ -55,6 +55,7 @@ public class Navigator {
 
 
 
+
     public Navigator() {
         driver = WebDriverRunner.getWebDriver();
         userDataPath = configFileReader.getUserDataJsonFilePath();
@@ -99,6 +100,24 @@ public class Navigator {
         user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
         user.setFullName(userMap.get("fullname"));
+
+        loginAsUser(user);
+        block.accept(page);
+    }
+
+    public <P> void loginBro(P page, String userId,String project, Consumer<P> block) {
+        //Parse the json to retrieve the essential information and store it in user object
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+        char numberChar = project.charAt(project.length() - 1);
+        String projectName = "project_name" + numberChar;
+//        projectMap = jsonMapOfMap.get(projectId);
+        userMap = jsonMapOfMap.get(userId);
+        if (userMap.get(projectName) != null) {
+            user.setProjectName(userMap.get(projectName));
+        }
+        user.setUsername(userMap.get("username"));
+        user.setPassword(userMap.get("password"));
+        user.setFullName(userMap.get("full_name"));
 
         loginAsUser(user);
         block.accept(page);

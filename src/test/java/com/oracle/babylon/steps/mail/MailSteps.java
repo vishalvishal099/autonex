@@ -34,6 +34,9 @@ public class MailSteps {
     static String mailNumber;
     static String draftMailNumber;
     String userDataFile = configFileReader.getUserDataJsonFilePath();
+    protected Map<String, Map<String, String>> jsonMapOfMap = null;
+    protected Map<String, String> userMap = null;
+    String userFilePath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * code to search the mail in the inbox
@@ -98,9 +101,9 @@ public class MailSteps {
      * @param user2
      * @throws Throwable
      */
-    @Then("^verify \"([^\"]*)\" has received mail$")
-    public void verifyHasReceivedMail(String user2) {
-        navigator.loginAsUser(inboxPage, user2, page -> {
+    @Then("^verify \"([^\"]*)\" with \"([^\"]*)\" has received mail$")
+    public void verifyHasReceivedMail(String user2, String project) {
+        navigator.loginBro(inboxPage, user2, project, page -> {
             page.navigateAndVerifyPage();
             page.searchMailNumber(mailNumber);
             assertThat(page.searchResultCount()).isGreaterThan(0);
@@ -112,8 +115,8 @@ public class MailSteps {
     @When("Login for user \"([^\"]*)\" and add a mail attribute \"([^\"]*)\"")
     public void loginAndAddAMailAttribute(String userId, final String attributeNumber) {
 
-        String projectKey = "project" + userId.charAt(userId.length()-1);
-       Map<String, String> map = dataSetup.loadJsonDataToMap(userDataFile).get(projectKey);
+        String projectKey = "project" + userId.charAt(userId.length() - 1);
+        Map<String, String> map = dataSetup.loadJsonDataToMap(userDataFile).get(projectKey);
         navigator.loginAsUser(editPreferencesPage, userId, userDataFile, page -> {
             page.navigateAndVerifyPage();
             String attributeValue = page.createNewMailAttribute(attributeNumber, map.get("projectname"));
@@ -122,9 +125,9 @@ public class MailSteps {
 
     }
 
-    @Given("{string} have a mail with {string} in drafts")
-    public void haveAMailWithInDrafts(String user, String mailAttributes) {
-        navigator.loginAsUser(composeMail, user, page -> {
+    @Given("{string} with {string} have a mail with {string} in drafts")
+    public void haveAMailWithInDrafts(String user, String project, String mailAttributes) {
+        navigator.loginBro(composeMail, user, project, page -> {
             page.navigateAndVerifyPage();
             page.composeMail(user, mailAttributes);
             draftMailNumber = page.userDefinedMailNumber();
@@ -205,9 +208,9 @@ public class MailSteps {
         }
     }
 
-    @Given("{string} previews a blank mail")
-    public void previewsABlankMail(String user) {
-        navigator.loginAsUser(composeMail, user, page -> {
+    @Given("{string} with {string} previews a blank mail")
+    public void previewsABlankMail(String user, String project) {
+        navigator.loginBro(composeMail, user, project, page -> {
             page.navigateAndVerifyPage();
             draftMailNumber = page.userDefinedMailNumber();
             page.previewMail();
@@ -222,9 +225,9 @@ public class MailSteps {
         });
     }
 
-    @Given("{string} previews mail with {string}")
-    public void previewsMailWith(String user, String mailAttribute) {
-        navigator.loginAsUser(composeMail, user, page -> {
+    @Given("{string} with {string} previews mail with {string}")
+    public void previewsMailWith(String user,String project, String mailAttribute) {
+        navigator.loginBro(composeMail, user,project, page -> {
             page.navigateAndVerifyPage();
             page.composeMail(user, mailAttribute);
             draftMailNumber = page.userDefinedMailNumber();
@@ -262,8 +265,10 @@ public class MailSteps {
         navigator.on(viewMail, ViewMail::editMail);
         navigator.on(composeMail, page -> {
             page.attachDocument(document);
-//            page.verifyValidationMessage();
-            page.fillTo(user);
+            jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+            userMap = jsonMapOfMap.get(user);
+            userMap.get("full_name");
+            page.addRecipient("To", userMap.get("full_name"));
             mailNumber = page.send();
         });
     }
@@ -295,16 +300,19 @@ public class MailSteps {
             page.attachDocumentUsingFullSearch(document);
         });
         navigator.on(composeMail, page -> {
-            page.fillTo(user);
+            jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+            userMap = jsonMapOfMap.get(user);
+            userMap.get("full_name");
+            page.addRecipient("To", userMap.get("full_name"));
             mailNumber = page.send();
         });
     }
 
-    @Then("verify {string} has not received mail and {string} has")
-    public void verifyHasNotReceivedMailAndHas(String falseUser, String trueUser) {
+    @Then("verify {string} has not received mail and {string} has for {string}")
+    public void verifyHasNotReceivedMailAndHas(String falseUser, String trueUser, String project) {
         String[] namesMailNotReceived = falseUser.split(",");
         for (String name : namesMailNotReceived) {
-            navigator.loginAsUser(inboxPage, name, page -> {
+            navigator.loginBro(inboxPage, name,project, page -> {
                 page.navigateAndVerifyPage();
                 page.searchMailNumber(mailNumber);
                 assertThat(page.searchResultCount()).isEqualTo(0);
@@ -312,7 +320,7 @@ public class MailSteps {
         }
         String[] namesMailReceived = trueUser.split(",");
         for (String name : namesMailReceived) {
-            navigator.loginAsUser(inboxPage, name, page -> {
+            navigator.loginBro(inboxPage, name,project, page -> {
                 page.navigateAndVerifyPage();
                 page.searchMailNumber(mailNumber);
                 assertThat(page.searchResultCount()).isGreaterThan(0);
@@ -341,7 +349,5 @@ public class MailSteps {
             page.verifyMailDetails(mailAttributes);
         });
     }
-
-
 }
 
