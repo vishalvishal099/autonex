@@ -68,11 +68,11 @@ public class CreateProjectPage extends Navigator{
     /**
      * Store the details of a project in the json data file for future references
      */
-    public void enterProjectDetailsToFile(String userId, String projectIdentifier, User user){
+    public void enterProjectDetailsToFile(String userId, String projectNumber, User user){
         Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
-        char projectNumber = projectIdentifier.charAt(projectIdentifier.length()-1);
-        String projectId = "project_id" + projectNumber;
-        String projectName = "project_name" + projectNumber;
+        int number = Integer.parseInt(projectNumber.substring(projectNumber.length()-1));
+        String projectId = "project_id" + number;
+        String projectName = "project_name" + number;
         String[] keys = {projectId, projectName};
         Map<String, String> valueMap = new Hashtable<>();
         valueMap.put(keys[0], user.getProjectId());

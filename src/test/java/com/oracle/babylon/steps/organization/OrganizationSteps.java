@@ -73,7 +73,7 @@ public class OrganizationSteps {
      */
     @Then("user {string} is able to login to application")
     public void userIsAbleToLoginToApplication(String userId) {
-        navigator.loginAsUser(newAccountDetails, userId, userFilePath, NewAccountDetails::verifyPage);
+        navigator.loginAsUser(newAccountDetails, userId, null, NewAccountDetails::verifyPage);
 
     }
 

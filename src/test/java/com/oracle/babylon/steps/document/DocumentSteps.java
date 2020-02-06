@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +40,9 @@ public class DocumentSteps {
     AdminSearch adminSearch = new AdminSearch();
     MultipleFileUpload multipleFileUpload = new MultipleFileUpload();
 
-    String documentNumber = null;
+    String documentId = null;
     String userDataPath = configFileReader.getUserDataJsonFilePath();
+    String docDataPath = configFileReader.getDocumentDataJsonFilePath();
 
 
 
@@ -51,51 +53,58 @@ public class DocumentSteps {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Given("upload document for user {string} for project {string} with data {string} and write it in userData.json")
-    public void uploadDocumentWithData(String userId, String projectIdentifier, String documentTableName, DataTable dataTable){
+    @Given("upload document for user {string} for project {string} with data {string} and write to {string}")
+    public void uploadDocumentWithData(String userId, String projectIdentifier, String documentTableName,String documentNumber, DataTable dataTable){
         Map<String, String> userMap = dataSetup.loadJsonDataToMap(userDataPath).get(userId);
-        String projectId = "project_id" + projectIdentifier.charAt(projectIdentifier.length()-1);
+        String number = projectIdentifier.substring(projectIdentifier.length()-1);
+        String projectId = "project_id" + number;
         projectId = userMap.get(projectId);
-        this.documentNumber = documentRegisterPage.uploadDocumentAPI(userId, documentTableName, dataTable, projectId);
-        String[] attributeList = new String[]{"document1", "docno"};
-
-    //    dataSetup.convertMapAndWrite(attributeList, documentNumber, userDataPath);
+        this.documentId = documentRegisterPage.uploadDocumentAPI(userId, documentTableName, dataTable, projectId);
+        Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
+        Map<String, String> mapToReplace = new Hashtable<>();
+        String key = "doc_num" + number;
+        mapToReplace.put(key, documentId);
+        mapOfMap.put(documentNumber, mapToReplace);
+        dataSetup.convertMapOfMapAndWrite(documentNumber, mapOfMap, configFileReader.getDocumentDataJsonFilePath());
     }
 
     /**
      * Code to search the document in the Document Register in Aconex
      */
-    @When("search document for user \"([^\"]*)\"")
-    public void searchDocumentForUser(String userId) {
+    @When("search document {string} for user {string} and project {string}")
+    public void searchDocumentForUser(String documentNumber, String userNumber, String projectNumber) {
 
         //Retrieve document data from data store
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
-        Map<String, String> docMap = mapOfMap.get("document1");
-
-        navigator.loginAsUser(documentRegisterPage, userId, userDataPath, page -> {
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(docDataPath);
+        Map<String, String> docMap = mapOfMap.get(documentNumber);
+        String number = documentNumber.substring(documentNumber.length()-1);
+        navigator.loginAsUser(documentRegisterPage, userNumber, projectNumber, page -> {
             page.navigateToDocumentRegisterAndVerify();
-            page.searchDocumentNo( docMap.get("docno"));
+            page.searchDocumentNo( docMap.get("doc_num"+ number));
         });
     }
 
     /**
      * code to verify if the document is present in the server
      */
-    @Then("verify if document is present")
-    public void verifyIfDocumentIsPresent() {
+    @Then("verify if document {string} is present")
+    public void verifyIfDocumentIsPresent(String documentNumber) {
         driver = WebDriverRunner.getWebDriver();
+        commonMethods.waitForElementExplicitly(2000);
         int tableSize = documentRegisterPage.getTableSize();
         List<Map<String, String>> tableData = documentRegisterPage.returnTableData(driver);
         //We are searching a single document is present
         Assert.assertEquals(tableSize, 1);
-        this.documentNumber = dataSetup.loadJsonDataToMap(userDataPath).get("document1").get("docno");
-        Assert.assertEquals(tableData.get(0).get("Document No"), documentNumber);
+        String number = documentNumber.substring(documentNumber.length()-1);
+        this.documentId = dataSetup.loadJsonDataToMap(docDataPath).get(documentNumber).get("doc_num" + number);
+        Assert.assertEquals(tableData.get(0).get("Document No"), documentId);
 
     }
 
-    @When("Login and lock the documents fields for user \"([^\"]*)\"")
-    public void weLoginAndLockTheDocumentsFields(String userId) {
-        navigator.loginAsUser(projectSettingsPage, userId, userDataPath, page -> {
+    @When("Login and lock the documents fields for user {string} and project {string}")
+    public void weLoginAndLockTheDocumentsFields(String userId, String projectId) {
+
+        navigator.loginAsUser(projectSettingsPage, userId, projectId, page -> {
             page.lockFieldsInDocuments();
 
         });
@@ -103,20 +112,20 @@ public class DocumentSteps {
 
     @Then("verify if lock fields is disabled")
     public void verifyIfLockFieldsIsDisabled() {
-
+        commonMethods.waitForElementExplicitly(3000);
         if (projectSettingsPage.isLockFieldsBtnEnabled()) {
             Assert.fail("The lock fields button should be disabled");
         }
     }
 
-    @When("Login for user \"([^\"]*)\" and add a document attribute \"([^\"]*)\"")
-    public void addAttribute(String userId, final String attributeNumber)  {
-        navigator.loginAsUser(projectSettingsPage, userId, userDataPath, page -> {
+    @When("Login for user {string} and project {string}, add a document attribute {string}")
+    public void addAttribute(String userId, String projectId, final String attributeNumber)  {
+        navigator.loginAsUser(projectSettingsPage, userId, projectId, page -> {
             page.navigateAndVerifyPage();
-
+            page.navigateToDocFields();
             page.clickLabelToEdit(attributeNumber);
             String attributeValue = page.createNewDocumentAttribute();
-            new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
+            new DataStore().storeAttributeInfo(attributeNumber.toLowerCase(), attributeValue);
         });
     }
 
@@ -124,7 +133,7 @@ public class DocumentSteps {
     @When("Login for user \"([^\"]*)\" and create a mail of type transmittal, send to user")
     public void loginAndCreateATransmittal(String userId, DataTable dataTable) {
 
-        searchDocumentForUser(userId);
+       // searchDocumentForUser(userId);
         navigator.on(documentRegisterPage, page ->{
             page.selectDocAndNavigateToTransmittal();
         });
