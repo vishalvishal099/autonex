@@ -22,6 +22,12 @@ public class InboxPage extends MailPage {
     private By searchBtn = By.xpath("//button[@title='Search']");
     private By loadingIcon = By.cssSelector(".loading_progress");
     private By pageTitle = By.xpath("//h1//span[text()='Search Mail']");
+    private By myMailOnlyChkbox = By.xpath("//span[contains(text(),'My mail only')]//././../input");
+    private By recipientTypeTo = By.xpath("//span[text()='To']//././..//input");
+    private By recipientTypeCc = By.xpath("//span[text()='Cc']//././..//input");
+    private By recipientTypeAny = By.xpath("//span[text()='Any']//././..//input");
+    private By loggedInUserName = By.xpath("//span[@class='nav-userDetails']");
+    private By recipientName = By.xpath("//table[@id='resultTable']//tbody//tr[1]//td[8]//span");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -48,4 +54,41 @@ public class InboxPage extends MailPage {
 
     }
 
+    public String getUserName()
+    {
+        return driver.findElement(loggedInUserName).getText();
+
+    }
+
+    public String getRecipientName()
+    {
+        commonMethods.switchToFrame(driver,"frameMain");
+        return $(recipientName).getText();
+
+
+    }
+
+    public void verifyToAndCcAndAny(String user, String option)
+    {
+        commonMethods.switchToFrame(driver,"frameMain");
+        $(myMailOnlyChkbox).click();
+        if(option.equals("cc"))
+        {
+            $(recipientTypeCc).click();
+
+        }
+        else if(option.equals("to"))
+        {
+            $(recipientTypeTo).click();
+
+        }
+        else if(option.equals("any"))
+        {
+            $(recipientTypeAny).click();
+        }
+
+        driver.switchTo().defaultContent();
+    }
 }
+
+

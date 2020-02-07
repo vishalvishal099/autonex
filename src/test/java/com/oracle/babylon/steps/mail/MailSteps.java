@@ -7,6 +7,7 @@ import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Mail.ComposeMail;
 import com.oracle.babylon.pages.Mail.InboxPage;
 import com.oracle.babylon.pages.Setup.EditPreferencesPage;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -28,6 +29,7 @@ public class MailSteps {
     private EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
     static String mailNumber;
     String filePath = configFileReader.getUserDataJsonFilePath();
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * code to search the mail in the inbox
@@ -113,5 +115,55 @@ public class MailSteps {
             new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
         });
 
+    }
+
+    @And("sends mail to user {string} in tolist and user {string} in cclist")
+    public void sendsMailToInTolistAndInCclist(String userId1, String userId2) {
+
+        Map<String, String> userMap2 = dataSetup.loadJsonDataToMap(userDataPath).get(userId2);
+        String fullname1 = userMap2.get("full_name");
+        Map<String, String> userMap1 = dataSetup.loadJsonDataToMap(userDataPath).get(userId1);
+        String fullname = userMap1.get("full_name");
+        navigator.on(composeMail, page -> {
+            //page.fillTo(userId1);
+            page.fillTo(fullname);
+            page.fillCc(fullname1);
+            mailNumber = page.send();
+        });
+    }
+
+
+    @Then("verify user {string} for {string} option and user {string} for {string} option")
+    public void verifyUserForOptionAndUserForOption(String userId1, String to, String userId2, String cc) {
+        navigator.loginAsUser(inboxPage,userId1,userDataPath,page-> {
+            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId1,to);
+            page.searchMailNumber(mailNumber);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
+        });
+
+        navigator.loginAsUser(inboxPage,userId2,userDataPath,page-> {
+            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId2,cc);
+            page.searchMailNumber(mailNumber);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
+        });
+    }
+
+    @And("verify user {string} and {string} for {string} option")
+    public void verifyUserAndForOption(String userId1, String userId2, String any) {
+        navigator.loginAsUser(inboxPage,userId1,userDataPath,page-> {
+            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId1,any);
+            page.searchMailNumber(mailNumber);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
+        });
+
+        navigator.loginAsUser(inboxPage,userId2,userDataPath,page-> {
+            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId2,any);
+            page.searchMailNumber(mailNumber);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
+        });
     }
 }

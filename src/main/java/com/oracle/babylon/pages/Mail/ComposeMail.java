@@ -19,7 +19,12 @@ import static com.codeborne.selenide.Selenide.switchTo;
 /**
  * Function that contains the methods related to Compose Mail
  * Author : vsinghsi
+ *
+ *
  */
+
+
+
 public class ComposeMail extends MailPage {
 
     //Initializing the objects and assigning references to it
@@ -44,6 +49,7 @@ public class ComposeMail extends MailPage {
     private By selectUser = By.xpath("//table[@id='resultTable']//tbody//tr[1]//input[@name='USERS_LIST']");
     private By directory = By.xpath("//body/div[@id='page']/form[@id='form1']/div[@id='main']/div[@id='mockdoc']/div[@class='box']/table[@id='heroSection']/tbody//tr[1]//button[1]//div[1]//div[1]");
     private By docContainer = By.xpath("//td[@id='corrAttachmentsContainer']");
+    private By cc_mailId = By.xpath("//input[@name='SPEED_ADDRESS_CC']");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -179,8 +185,8 @@ public class ComposeMail extends MailPage {
      * @param userTo string of users that we want to send the mail to
      */
     public void fillTo(String userTo) {
-        user = dataStore.getUser(userTo);
-        userTo = user.getFullName();
+        //user = dataStore.getUser(userTo);
+        //userTo = user.getFullName();
 //        this.driver = commonMethods.switchToFrame(driver, "frameMain");
         /** $(attachBtn).click();
          driver.findElement(By.xpath("//ul[@id='MAIL_ATTACHMENTS']//li//a[text()='Local File']")).click();
@@ -197,6 +203,16 @@ public class ComposeMail extends MailPage {
         this.driver = commonMethods.waitForElement(driver, to_mailId);
         $(to_mailId).click();
     }
+
+    public void fillCc(String userTo) {
+        //user = dataStore.getUser(userTo);
+        //userTo = user.getFullName();
+        $(cc_mailId).setValue(userTo);
+        $(cc_mailId).pressEnter();
+        this.driver = commonMethods.waitForElement(driver, cc_mailId);
+        $(cc_mailId).click();
+    }
+
 
 
     /**
