@@ -9,6 +9,7 @@ import io.restassured.http.Method;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -89,6 +90,23 @@ public class JIRAOperations {
         return -1;
     }
 
+    public Map<String, Integer> returnExecutionStatusId(String issueId){
+
+        response = getTestExecResults(issueId);
+        extractor = response.jsonPath();
+        Map<String, Integer> finalMap = new LinkedHashMap<>();
+        Map<String, Object> tempMap ;
+        LinkedHashMap linkedHashMap = extractor.get("status");
+        for (Object key: linkedHashMap.keySet()) {
+            tempMap = (LinkedHashMap)linkedHashMap.get(key);
+            int statusCode = Integer.parseInt(tempMap.get("id").toString());
+            finalMap.put(tempMap.get("name").toString(), statusCode);
+
+
+
+        }
+        return finalMap;
+    }
     /**
      * Updates the result of the test execution
      * @param executionid

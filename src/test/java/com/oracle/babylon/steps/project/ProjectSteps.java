@@ -36,7 +36,7 @@ public class ProjectSteps {
      * @throws Exception
      */
     @When("user \"([^\"]*)\" login and create \"([^\"]*)\"")
-    public void weLoginAndCreateProject(String userId, String projectId, DataTable dataTable) throws Exception {
+    public void weLoginAndCreateProject(String userId, String projectNumber, DataTable dataTable) throws Exception {
         //Retrieve the data from userData.json file
         Map<String, Map<String,String>> mapOfMap =  dataSetup.loadJsonDataToMap(userDataPath);
         Map<String, String> userMap = mapOfMap.get(userId);
@@ -68,7 +68,7 @@ public class ProjectSteps {
         });
 
         navigator.on(createProjectPage, page -> {
-            page.enterProjectDetailsToFile(userId, projectId, user);
+            page.enterProjectDetailsToFile(userId, projectNumber, user);
         });
 
     }

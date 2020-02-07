@@ -60,7 +60,6 @@ public class Navigator {
         userDataPath = configFileReader.getUserDataJsonFilePath();
         mailDataPath = configFileReader.getMailDataJsonFilePath();
         docDataPath = configFileReader.getDocumentDataJsonFilePath();
-
     }
 
     /**
@@ -86,15 +85,14 @@ public class Navigator {
      * @param block
      * @param <P>
      */
-    public <P> void loginAsUser(P page, String userId, String filePath, Consumer<P> block) {
+    public <P> void loginAsUser(P page, String userId, String projectNumber, Consumer<P> block) {
         //Parse the json to retrieve the essential information and store it in user object
-        jsonMapOfMap = dataSetup.loadJsonDataToMap(filePath);
-        char numberChar = userId.charAt(userId.length() - 1);
-        String projectId = "project" + numberChar;
-        projectMap = jsonMapOfMap.get(projectId);
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
+
         userMap = jsonMapOfMap.get(userId);
-        if (projectMap != null) {
-            user.setProjectName(projectMap.get("projectname"));
+        String projectName = userMap.get("project_name" + projectNumber.substring(projectNumber.length()-1));
+        if(projectName != null){
+            user.setProjectName(projectName);
         }
         user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
@@ -165,7 +163,7 @@ public class Navigator {
             }
 
         } else {
-            System.out.println("Creating new Project");
+            System.out.println("No Projects Exist in the Organization / Creating new Project");
         }
     }
 
