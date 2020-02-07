@@ -6,18 +6,20 @@ import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
-import com.oracle.babylon.pages.Document.DocumentPage;
+import com.oracle.babylon.pages.Admin.AdminSearch;
 import com.oracle.babylon.pages.Document.DocumentRegisterPage;
+import com.oracle.babylon.pages.Document.MultipleFileUpload;
 import com.oracle.babylon.pages.Document.TransmittalPage;
 import com.oracle.babylon.pages.Setup.ProjectSettingsPage;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.json.simple.parser.ParseException;
+import io.cucumber.datatable.DataTable;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -29,15 +31,19 @@ public class DocumentSteps {
 
     private ConfigFileReader configFileReader = new ConfigFileReader();
     private DataSetup dataSetup = new DataSetup();
-    private DocumentPage documentPage = new DocumentPage();
+    private DocumentRegisterPage documentRegisterPage = new DocumentRegisterPage();
     private Navigator navigator = new Navigator();
     private CommonMethods commonMethods = new CommonMethods();
     private WebDriver driver = null;
     private ProjectSettingsPage projectSettingsPage = new ProjectSettingsPage();
-    private DocumentRegisterPage documentRegisterPage = new DocumentRegisterPage();
     private TransmittalPage transmittalPage = new TransmittalPage();
+    AdminSearch adminSearch = new AdminSearch();
+    MultipleFileUpload multipleFileUpload = new MultipleFileUpload();
 
-    String documentNumber = null;
+    String documentId = null;
+    String userDataPath = configFileReader.getUserDataJsonFilePath();
+    String docDataPath = configFileReader.getDocumentDataJsonFilePath();
+
 
 
     /**
@@ -47,100 +53,107 @@ public class DocumentSteps {
      * @throws IOException
      * @throws InterruptedException
      */
-    @Given("upload document with data \"([^\"]*)\" and write it in userData.json")
-    public void uploadDocumentWithData(String documentTableName) throws InterruptedException, ParseException, IOException {
-        this.documentNumber = documentPage.uploadDocumentAPI(documentTableName);
-        String[] attributeList = new String[]{"document", "docno"};
-        dataSetup.writeIntoJson(attributeList, documentNumber, configFileReader.returnUserDataJsonFilePath());
+    @Given("upload document for user {string} for project {string} with data {string} and write to {string}")
+    public void uploadDocumentWithData(String userId, String projectIdentifier, String documentTableName,String documentNumber, DataTable dataTable){
+        Map<String, String> userMap = dataSetup.loadJsonDataToMap(userDataPath).get(userId);
+        String number = projectIdentifier.substring(projectIdentifier.length()-1);
+        String projectId = "project_id" + number;
+        projectId = userMap.get(projectId);
+        this.documentId = documentRegisterPage.uploadDocumentAPI(userId, documentTableName, dataTable, projectId);
+        Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
+        Map<String, String> mapToReplace = new Hashtable<>();
+        String key = "doc_num" + number;
+        mapToReplace.put(key, documentId);
+        mapOfMap.put(documentNumber, mapToReplace);
+        dataSetup.convertMapOfMapAndWrite(documentNumber, mapOfMap, configFileReader.getDocumentDataJsonFilePath());
     }
 
     /**
      * Code to search the document in the Document Register in Aconex
      */
-    @When("search document for user")
-    public void searchDocumentForUser() throws IOException, ParseException {
+    @When("search document {string} for user {string} and project {string}")
+    public void searchDocumentForUser(String documentNumber, String userNumber, String projectNumber) {
 
         //Retrieve document data from data store
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> projectMap = mapOfMap.get("project");
-        Map<String, String> userMap = mapOfMap.get("user");
-        Map<String, String> docMap = mapOfMap.get("document");
-
-        //Login to the server using the credentials, switching to the required project
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectMap.get("projectname"));
-        driver = WebDriverRunner.getWebDriver();
-        navigator.getMenuSubmenu( "Documents", "Document Register");
-        documentPage.searchDocumentNo(driver, docMap.get("docno"));
+        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(docDataPath);
+        Map<String, String> docMap = mapOfMap.get(documentNumber);
+        String number = documentNumber.substring(documentNumber.length()-1);
+        navigator.loginAsUser(documentRegisterPage, userNumber, projectNumber, page -> {
+            page.navigateToDocumentRegisterAndVerify();
+            page.searchDocumentNo( docMap.get("doc_num"+ number));
+        });
     }
 
     /**
      * code to verify if the document is present in the server
      */
-    @Then("verify if document is present")
-    public void verifyIfDocumentIsPresent() {
+    @Then("verify if document {string} is present")
+    public void verifyIfDocumentIsPresent(String documentNumber) {
         driver = WebDriverRunner.getWebDriver();
-        int tableSize = documentPage.getTableSize();
-        List<Map<String, String>> tableData = documentPage.returnTableData(driver);
+        commonMethods.waitForElementExplicitly(2000);
+        int tableSize = documentRegisterPage.getTableSize();
+        List<Map<String, String>> tableData = documentRegisterPage.returnTableData(driver);
         //We are searching a single document is present
-        Assert.assertEquals(tableSize, "1");
-        Assert.assertEquals(tableData.get(0).get("DocumentNo"), documentNumber);
+        Assert.assertEquals(tableSize, 1);
+        String number = documentNumber.substring(documentNumber.length()-1);
+        this.documentId = dataSetup.loadJsonDataToMap(docDataPath).get(documentNumber).get("doc_num" + number);
+        Assert.assertEquals(tableData.get(0).get("Document No"), documentId);
 
     }
 
-    @When("Login and lock the documents fields")
-    public void weLoginAndLockTheDocumentsFields() throws IOException, ParseException {
+    @When("Login and lock the documents fields for user {string} and project {string}")
+    public void weLoginAndLockTheDocumentsFields(String userId, String projectId) {
 
-        //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
+        navigator.loginAsUser(projectSettingsPage, userId, projectId, page -> {
+            page.lockFieldsInDocuments();
 
-        //Project info
-        Map<String, String> projectMap = mapOfMap.get("project");
-
-        //Locking in the field labels
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectMap.get("projectname"));
-
-        projectSettingsPage.lockFieldsInDocuments();
+        });
     }
 
     @Then("verify if lock fields is disabled")
     public void verifyIfLockFieldsIsDisabled() {
+        commonMethods.waitForElementExplicitly(3000);
         if (projectSettingsPage.isLockFieldsBtnEnabled()) {
             Assert.fail("The lock fields button should be disabled");
         }
     }
 
-    @When("Login and add a document attribute \"([^\"]*)\"")
-    public void addAttribute(String attributeNumber) throws IOException, ParseException {
-        //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
-        //Project info
-        Map<String, String> projectMap = mapOfMap.get("project");
-
-        //Locking in the field labels
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectMap.get("projectname"));
-        //Creating attributes
-        projectSettingsPage.clickLabelToEdit(attributeNumber);
-        String attributeValue = projectSettingsPage.createNewDocumentAttribute();
-        new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
+    @When("Login for user {string} and project {string}, add a document attribute {string}")
+    public void addAttribute(String userId, String projectId, final String attributeNumber)  {
+        navigator.loginAsUser(projectSettingsPage, userId, projectId, page -> {
+            page.navigateAndVerifyPage();
+            page.navigateToDocFields();
+            page.clickLabelToEdit(attributeNumber);
+            String attributeValue = page.createNewDocumentAttribute();
+            new DataStore().storeAttributeInfo(attributeNumber.toLowerCase(), attributeValue);
+        });
     }
 
 
-    @When("Login and create a transmittal")
-    public void loginAndCreateATransmittal() throws IOException, ParseException {
-        //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
-        //Project info
-        Map<String, String> projectMap = mapOfMap.get("project");
-        String projectName = projectMap.get("projectname");
-        //Locking in the field labels
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectName);
-        searchDocumentForUser();
-        documentRegisterPage.selectDocAndNavigateToTransmittal();
-        transmittalPage.createBasicTransmittal();
+    @When("Login for user \"([^\"]*)\" and create a mail of type transmittal, send to user")
+    public void loginAndCreateATransmittal(String userId, DataTable dataTable) {
+
+       // searchDocumentForUser(userId);
+        navigator.on(documentRegisterPage, page ->{
+            page.selectDocAndNavigateToTransmittal();
+        });
+        transmittalPage.createBasicTransmittal(dataTable);
 
 
+    }
+
+    @Given("upload Multiple files")
+    public void uploadMultipleFiles() {
+       // multipleFileUpload.returnRequiredDate("yesterday");
+       // multipleFileUpload.returnFileNames("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
+
+        navigator.loginAsUser(multipleFileUpload, "user1" , userDataPath, page -> {
+
+           navigator.getMenuSubmenu("Documents", "Multiple File Upload");
+           page.clickMultiFileUploadBtn("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
+
+
+
+        });
     }
 }

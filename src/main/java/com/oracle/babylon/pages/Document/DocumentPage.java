@@ -3,73 +3,106 @@ package com.oracle.babylon.pages.Document;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
+import com.oracle.babylon.Utils.helper.SchemaHelperPage;
+import com.oracle.babylon.Utils.setup.dataStore.DocumentTableConverter;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Document;
-import org.apache.http.HttpResponse;
-import org.json.simple.parser.ParseException;
+import io.cucumber.datatable.DataTable;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import io.restassured.http.Method;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
+import static io.restassured.config.EncoderConfig.encoderConfig;
 
 /**
- * Class file that contains functions related to the operations for Documents
+ * Class file that contains methods related to the operations for Documents
  * Author : susgopal
  */
-public class DocumentPage extends Navigator{
+public class DocumentPage extends Navigator {
 
     //Initialization of web elements
-    private By searchDocumentQuery = By.id("searchQuery");
-    private By resultTable = By.id("resultTable");
+    private By searchDocumentQuery = By.xpath("//input[@id='searchQuery']");
+    private By resultTable = By.xpath("//table[@id='resultTable']");
     private By resultTableRow = By.xpath("//table[@id='resultTable']//tbody//tr");
-    private By searchDocumentByNo = By.id("docno");
+    private By searchDocumentByNo = By.xpath("//input[@id='docno']");
 
     private By editPreferencesLabel = By.xpath("//h1[text()='Edit Preferences']");
 
     /**
      * Funtion for the Upload Document API, please refer the Aconex API documentation for more details
      *
+     * @param userId            user for which basic credentials are to be created
      * @param documentTableName identifier for the document table
      * @return the document number that has been uploaded
      * @throws IOException
      * @throws InterruptedException
      */
-    public String uploadDocumentAPI(String documentTableName) throws IOException, InterruptedException, ParseException {
+    public String uploadDocumentAPI(String userId, String documentTableName, DataTable dataTable, String projectId) {
         //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
+        new DocumentTableConverter().createDocumentData(documentTableName, dataTable);
+        String basicAuth = basicAuthCredentialsProvider(userId);
 
-        //Project Info
-        Map<String, String> projectMap = mapOfMap.get("project");
-        String projectName = projectMap.get("projectname");
-        String projectId = searchProjectWrapper(projectName);
-
-        //Generating the basic auth for the api
-        Map<String, String> userMap = mapOfMap.get("user");
-        String basicAuth = apiRequest.basicAuthGenerator(userMap.get("username"), userMap.get("password"));
-
-        //Creating the request body template
-        Map<String, String> attributeMap = mapOfMap.get("attribute");
         Document document = dataStore.getDocument(documentTableName);
-        document.setAttribute1(attributeMap.get("attribute1"));
+
+        document = setMandatoryFields(document, userId, projectId);
+        //Creating the request body template
         StringBuilder documentRequestBody = new StringBuilder(CommonMethods.convertMaptoJsonString(document));
 
         //Updating the request body according to the required template
         documentRequestBody.insert(0, "{ \"document\":");
         documentRequestBody.append("}");
+        //String requestBodyXML = "\n\n" + commonMethods.convertJsonStringToXMLString(documentRequestBody.toString()) + "\n";
         String requestBodyXML = "--myboundary\n\n" + commonMethods.convertJsonStringToXMLString(documentRequestBody.toString()) + "\n--myboundary";
         requestBodyXML = capitalizeXMLTags(requestBodyXML, "<");
         requestBodyXML = capitalizeXMLTags(requestBodyXML, "</");
 
+        //Creating the headers
+        Header authHeader = new Header("Authorization", basicAuth);
+        Header contentTypeHeader = new Header("Content-Type", "multipart/mixed");
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(authHeader);
+        headersList.add(contentTypeHeader);
+
         //Forming the url
         String url = configFileReader.getApplicationUrl() + "api/projects/" + projectId + "/register";
+        RequestSpecification httpRequest = RestAssured.given().config(RestAssured.config().encoderConfig(encoderConfig().encodeContentTypeAs("multipart/mixed", ContentType.TEXT)));
+
+        apiRequest.execRequest(httpRequest, Method.POST, url, headersList, requestBodyXML);
         //executing the api request
-        HttpResponse response = apiRequest.postRequest(url, basicAuth, "multipart/mixed", requestBodyXML);
+        //HttpResponse response = apiRequest.postRequest(url, basicAuth, "multipart/mixed", requestBodyXML);
         //return the document number
         return document.getDocumentNumber();
     }
+
+
+    /**
+     * Method to retrieve the document schema through a api call
+     *
+     * @param userId
+     * @param projectId
+     * @return
+     */
+    public Response getDocumentSchema(String userId, String projectId) {
+        String basicAuth = basicAuthCredentialsProvider(userId);
+        String url = configFileReader.getApplicationUrl() + "api/projects/" + projectId + "/register/schema";
+        Header header = new Header("Authorization", basicAuth);
+        List<Header> headersList = new ArrayList<>();
+        headersList.add(header);
+        Response response = apiRequest.execRequest(Method.GET, url, headersList, null);
+        //HttpResponse response = apiRequest.getRequest(url, basicAuth);
+        return response;
+    }
+
 
     /**
      * The tags have to capitalized to meet the format for the API request body
@@ -105,11 +138,13 @@ public class DocumentPage extends Navigator{
     /**
      * Search the document by using the document number
      *
-     * @param driver
      * @param documentNumber key to be searched
      */
-    public void searchDocumentNo(WebDriver driver, String documentNumber) {
-        commonMethods.waitForElement(driver, searchDocumentByNo, 2);
+    public void searchDocumentNo(String documentNumber) {
+        commonMethods.waitForElementExplicitly(2000);
+        driver = WebDriverRunner.getWebDriver();
+        commonMethods.switchToFrame(driver, "frameMain");
+        commonMethods.waitForElement(driver, searchDocumentByNo);
         $(searchDocumentByNo).sendKeys(documentNumber);
         $(searchDocumentByNo).pressEnter();
     }
@@ -120,6 +155,8 @@ public class DocumentPage extends Navigator{
      * @return
      */
     public int getTableSize() {
+
+        $(resultTable).scrollTo();
         return Integer.parseInt($(resultTable).findElement(By.xpath("//tbody//input[@name='totalDocsInPage']")).getAttribute("value"));
     }
 
@@ -135,22 +172,56 @@ public class DocumentPage extends Navigator{
     }
 
     /**
-     * Function to parse the json file to retrieve fields to search for the project id from admin tool
-     * @param projectName name of the project
-     * @return project id of the project
-     * @throws InterruptedException
+     * Generate the basic auth credentials for api requests
+     *
+     * @param userId userId to retireve the password and generate the auth credentials
+     * @return basic auth string
      */
-    public String searchProjectWrapper(String projectName) throws InterruptedException {
-
-        //Retrieve the project id for a particular project
-        driver = WebDriverRunner.getWebDriver();
-
-        String projectId =  commonMethods.searchProject(driver, projectName);
-        driver.switchTo().defaultContent();
-        return projectId;
+    public String basicAuthCredentialsProvider(String userId) {
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userDataPath);
+        userMap = jsonMapOfMap.get(userId);
+        //Generating the basic auth for the api
+        return apiRequest.basicAuthGenerator(userMap.get("username"), userMap.get("password"));
     }
 
+    /**
+     * Method to set the mandatory fields for Document API by retieving it from Document Schema
+     *
+     * @param document  document fields object
+     * @param userId    generate auth credentials
+     * @param projectId projectid to retieve the schema
+     * @return
+     */
+    public Document setMandatoryFields(Document document, String userId, String projectId) {
+        //Basic Mandatory fields for Document are Document Status ID, Document Type ID, Attribute 1 and Discipline
+        //API response for Document Schema
+        Response documentSchemaResponse = getDocumentSchema(userId, projectId);
+        List<String> mandatoryList;
+        //Return the response body from the HTTP Response
+        String responseString = documentSchemaResponse.body().asString();
+        SchemaHelperPage schemaHelper = new SchemaHelperPage();
+        //Check if the document fields are not set in Document object. If not set, then retrieve from Document Schema response body and set it.
+        if (document.getDiscipline() == null) {
+            mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Discipline", "Value");
+            document.setDiscipline(mandatoryList.get(0));
+        }
 
+        if (document.getAttribute1() == null) {
+            mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "Attribute1", "Value");
+            document.setAttribute1(mandatoryList.get(0));
+        }
+
+        if (document.getDocumentStatusId() == 0) {
+            mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentStatusId", "Id");
+            document.setDocumentStatusId(Integer.parseInt(mandatoryList.get(0)));
+        }
+
+        if (document.getDocumentTypeId() == 0) {
+            mandatoryList = schemaHelper.retrieveValuesFromSchema(responseString, "DocumentTypeId", "Id");
+            document.setDocumentTypeId(Integer.parseInt(mandatoryList.get(0)));
+        }
+        return document;
+    }
 
 
 }

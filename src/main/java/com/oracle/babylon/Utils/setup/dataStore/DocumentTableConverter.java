@@ -31,16 +31,11 @@ public class DocumentTableConverter {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.0Z'");
         //Assigning values to Document Object
         document.setDocumentNumber(fakeData.getDocumentNumber());
-        document.setAttribute1(documentHashMap.get("Attribute1"));
-        document.setDocumentTypeId(Integer.parseInt(documentHashMap.get("Document_type_id")));
         document.setComments("Test comments for " + companyName + " document");
-        document.setDocumentStatusId(Integer.parseInt(documentHashMap.get("Document_Status_Id")));
         document.setHasFile(Boolean.getBoolean(documentHashMap.get("HasFile")));
-        document.setDiscipline(documentHashMap.get("Discipline"));
         document.setRevision(documentHashMap.get("Revision"));
         document.setTitle(companyName + " Doc");
         document.setRevisionDate(dateFormat.format(date));
-        document.setPrintSize("A4");
         new DataStore().uploadDocument(name, document);
     }
 }

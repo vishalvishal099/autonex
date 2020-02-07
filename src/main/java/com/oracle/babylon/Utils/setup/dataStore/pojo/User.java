@@ -7,9 +7,10 @@ package com.oracle.babylon.Utils.setup.dataStore.pojo;
 public class User {
 
     private String fullName;
-    private String userName;
+    private String username;
     private String password;
-    private String project;
+    private String projectName;
+    private String projectId;
 
     public String getFullName() {
         return fullName;
@@ -19,29 +20,35 @@ public class User {
         this.fullName = fullName;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public String getProject() {
-        return project;
+    public String getProjectName() {
+        return projectName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setProject(String project) {
-        this.project = project;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
+    public String getProjectId() {
+        return projectId;
+    }
 
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 }

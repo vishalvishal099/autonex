@@ -15,7 +15,7 @@ import java.net.URL;
 
 /**
  * Class to handle the operations related to the driver
- * Author : vsinghsi, susgopal
+ * Author : vsingsi, susgopal
  */
 public class DriverFactory {
     //Initialization of objects and assigning references to the object.
@@ -87,7 +87,7 @@ public class DriverFactory {
             driverPath = driverPath + "win64/geckodriver.exe";
             return setPropertyAndInitFirefoxDriver(driverPath);
         } else if (os.contains("Windows") && configFileReader.getBrowser().toLowerCase().equals("ie")) {
-            driverPath = driverPath + "win64/geckodriver.exe";
+            driverPath = driverPath + "win32/IEDriverServer.exe";
             return setPropertyAndInitIEDriver(driverPath);
         } else if (os.contains("Mac") && configFileReader.getBrowser().toLowerCase().equals("chrome")) {
             driverPath = driverPath + "mac64/chromedriver";
@@ -108,7 +108,7 @@ public class DriverFactory {
         WebDriver chromeDriver = null;
         System.setProperty("webdriver.chrome.driver", path);
         //Setting the proxy for the driver by getting the configuration from configFile.properties
-        if (configFileReader.getProxySetStatus()) {
+        if (configFileReader.getHttpProxySetStatus()) {
             DesiredCapabilities desiredCapabilities = DesiredCapabilities.chrome();
             desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
             chromeDriver = new ChromeDriver(desiredCapabilities);
@@ -124,11 +124,11 @@ public class DriverFactory {
      * @param path
      * @return browser reference
      */
-    private WebDriver setPropertyAndInitFirefoxDriver(String path) {
+    public WebDriver setPropertyAndInitFirefoxDriver(String path) {
         //For latest version of firefox we need to configure the gecko driver
         System.setProperty("webdriver.gecko.driver", path);
         WebDriver firefoxDriver = null;
-        if (configFileReader.getProxySetStatus()) {
+        if (configFileReader.getHttpProxySetStatus()) {
             DesiredCapabilities desiredCapabilities = DesiredCapabilities.firefox();
             desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
             firefoxDriver = new FirefoxDriver(desiredCapabilities);
@@ -148,7 +148,7 @@ public class DriverFactory {
     private WebDriver setPropertyAndInitIEDriver(String path) {
         System.setProperty("webdriver.ie.driver", path);
         WebDriver ieDriver= null;
-        if(configFileReader.getProxySetStatus()){
+        if(configFileReader.getHttpProxySetStatus()){
             DesiredCapabilities desiredCapabilities = DesiredCapabilities.internetExplorer();
             desiredCapabilities.setCapability(CapabilityType.PROXY,setUpProxy());
             ieDriver = new InternetExplorerDriver(desiredCapabilities);

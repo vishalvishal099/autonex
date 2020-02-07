@@ -17,7 +17,6 @@ public class Document {
     private String revisionDate;
     private String project;
     private String username;
-    private String printSize;
 
 
     public String getDocumentNumber() {
@@ -114,13 +113,5 @@ public class Document {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPrintSize() {
-        return printSize;
-    }
-
-    public void setPrintSize(String printSize) {
-        this.printSize = printSize;
     }
 }

@@ -20,10 +20,12 @@ public class DataStore {
     private static Map<String, Organization> organizationHashMap = new HashMap<>();
     private static Map<String, Project> projectHashMap = new HashMap<>();
     private static Map<String, String> attributeHashMap = new HashMap<>();
+
     /**
      * Function to add the user details in a hash map
+     *
      * @param username name of the table
-     * @param user user information pojo
+     * @param user     user information pojo
      */
     public void addUser(String username, User user) {
         if (userHashMap.containsKey(username)) {
@@ -34,6 +36,7 @@ public class DataStore {
 
     /**
      * Function to return a hash map of the user details
+     *
      * @param username name of the table in data store
      * @return
      */
@@ -43,10 +46,11 @@ public class DataStore {
 
     /**
      * Function to create a hash map of the ticket details
-     * @param name name of the table in data store
-     * @ticket ticket details pojo
-     * @return hash map containing ticket details
+     *
+     * @param name   name of the table in data store
      * @param ticket
+     * @return hash map containing ticket details
+     * @ticket ticket details pojo
      */
     public void addTicket(String name, Ticket ticket) {
         if (ticketHashMap.containsKey(ticket)) {
@@ -57,6 +61,7 @@ public class DataStore {
 
     /**
      * Function that returns the ticket details in hash map
+     *
      * @param name name of the table in the data store
      * @return
      */
@@ -66,7 +71,8 @@ public class DataStore {
 
     /**
      * Function to create a hash map of the document details
-     * @param name name of the table
+     *
+     * @param name     name of the table
      * @param document document pojo
      */
     public void setDocumentInfo(String name, Document document) {
@@ -78,6 +84,7 @@ public class DataStore {
 
     /**
      * Returns the Document details in a  hash map
+     *
      * @param name name of the table in the data store
      * @return
      */
@@ -87,7 +94,8 @@ public class DataStore {
 
     /**
      * Function to create a hash map of document details
-     * @param name name of the data table
+     *
+     * @param name     name of the data table
      * @param document pojo of the fields of the document
      */
     public void uploadDocument(String name, Document document) {
@@ -99,6 +107,7 @@ public class DataStore {
 
     /**
      * Function to return the Document details in a hash map
+     *
      * @param name of the table in the data store
      * @return
      */
@@ -108,7 +117,8 @@ public class DataStore {
 
     /**
      * Function to create a hash map from a data table
-     * @param name name of the data table
+     *
+     * @param name      name of the data table
      * @param dataTable the contents of the data table
      */
     public void setTable(String name, DataTable dataTable) {
@@ -129,11 +139,12 @@ public class DataStore {
 
     /**
      * Create a hash map for the Organization data
-     * @param name key value in the data store
+     *
+     * @param name         key value in the data store
      * @param organization Pojo of the organization that contains the values
      */
-    public void storeOrganizationInfo(String name, Organization organization){
-        if(organizationHashMap.containsKey(name)){
+    public void storeOrganizationInfo(String name, Organization organization) {
+        if (organizationHashMap.containsKey(name)) {
             organizationHashMap.remove(name);
         }
         organizationHashMap.put(name, organization);
@@ -141,47 +152,55 @@ public class DataStore {
 
     /**
      * Function to return the Organization details in a hash map
+     *
      * @param name name of the table in data store
      * @return
      */
-    public Organization getOrganizationInfo(String name){
+    public Organization getOrganizationInfo(String name) {
         return organizationHashMap.get(name);
     }
 
     /**
      * Function to create a Project hash map
-     * @param name name of the data table
+     *
+     * @param name    name of the data table
      * @param project pojo of the Project that contains values
      */
-    public void storeProjectInfo(String name, Project project){
-        if(projectHashMap.containsKey(name)){
+    public Map<String, Project> storeProjectInfo(String name, Project project) {
+        if (projectHashMap.containsKey(name)) {
             projectHashMap.remove(name);
         }
         projectHashMap.put(name, project);
+        return projectHashMap;
     }
 
     /**
      * Function to return the project details in a hash map
+     *
      * @param name
      * @return
      */
-    public Project getProjectInfo(String name){
+    public Project getProjectInfo(String name) {
         return projectHashMap.get(name);
     }
 
     /**
      * Function to store the attribute value in a data store
+     *
      * @param key
      * @param attributeValue
      */
-    public void storeAttributeInfo(String key, String attributeValue){
-        attributeHashMap.put(key,attributeValue);
+    public void storeAttributeInfo(String key, String attributeValue) {
+        if (key.contains(" ")) {
+            key = key.replace(" ", "");
+        }
+        attributeHashMap.put(key, attributeValue);
     }
 
     /**
      *
      */
-    public Map<String, String> getAttributeHashMap(){
+    public Map<String, String> getAttributeHashMap() {
         return attributeHashMap;
     }
 

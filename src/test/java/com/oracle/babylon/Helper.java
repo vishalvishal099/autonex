@@ -3,13 +3,10 @@ package com.oracle.babylon;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.CommonMethods;
-import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.Utils.helper.DriverFactory;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
@@ -18,7 +15,8 @@ import java.net.MalformedURLException;
 
 public class Helper {
 
-    DriverFactory driverFactory = new DriverFactory();
+
+
 
     /**
      * Function to launch the browser
@@ -26,6 +24,9 @@ public class Helper {
      */
     @Before
     public void driverSetup() throws MalformedURLException{
+      //  ZephyrStatusSingleton.getInstance("ACONEXQA-568");
+
+        DriverFactory driverFactory = new DriverFactory();
         WebDriver driver = driverFactory.getDriver();
         WebDriverRunner.setWebDriver(driver);
     }
@@ -37,6 +38,7 @@ public class Helper {
      */
     @After
     public void tearDown(Scenario scenario)  throws IOException {
+        System.out.println("Test status--->" + scenario.getStatus());
         WebDriver driver = WebDriverRunner.getWebDriver();
         if (scenario.isFailed()) {
             scenario.embed(CommonMethods.takeSnapshot(driver),"image/png");

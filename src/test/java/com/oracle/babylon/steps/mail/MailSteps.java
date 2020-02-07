@@ -1,21 +1,19 @@
 package com.oracle.babylon.steps.mail;
 
-import com.oracle.babylon.Utils.helper.CommonMethods;
+import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Mail.ComposeMail;
+import com.oracle.babylon.pages.Mail.DraftPage;
 import com.oracle.babylon.pages.Mail.InboxPage;
-import com.oracle.babylon.Utils.helper.Navigator;
+import com.oracle.babylon.pages.Mail.ViewMail;
 import com.oracle.babylon.pages.Setup.EditPreferencesPage;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.json.simple.parser.ParseException;
-import org.junit.Assert;
-import org.openqa.selenium.WebDriver;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,9 +27,13 @@ public class MailSteps {
     private Navigator navigator = new Navigator();
     private ComposeMail composeMail = new ComposeMail();
     private DataSetup dataSetup = new DataSetup();
+    private DraftPage draft = new DraftPage();
     private ConfigFileReader configFileReader = new ConfigFileReader();
     private EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
+    private ViewMail viewMail = new ViewMail();
     static String mailNumber;
+    static String draftMailNumber;
+    String userDataFile = configFileReader.getUserDataJsonFilePath();
 
     /**
      * code to search the mail in the inbox
@@ -42,8 +44,9 @@ public class MailSteps {
     @When("^\"([^\"]*)\" search mail \"([^\"]*)\" in inbox$")
     public void searchMailInInbox(String user, String mailNumber) {
         navigator.loginAsUser(inboxPage, user, page -> {
-            page.selectMenuSubMenu();
+            page.navigateAndVerifyPage();
             page.searchMailNumber(mailNumber);
+
         });
     }
 
@@ -54,7 +57,7 @@ public class MailSteps {
      * @throws Throwable
      */
     @Then("^user should see the mail \"([^\"]*)\" in inbox$")
-    public void userShouldSeeTheMailInInbox(String mailNumber) throws Throwable {
+    public void userShouldSeeTheMailInInbox(String mailNumber) {
         navigator.on(inboxPage, page -> {
             assertThat(page.searchResultCount()).isGreaterThan(0);
             assertThat(page.getMailNumber()).isEqualTo(mailNumber);
@@ -70,7 +73,7 @@ public class MailSteps {
     @Given("^\"([^\"]*)\" compose mail with \"([^\"]*)\"$")
     public void composeMailWith(String user, String data) {
         navigator.loginAsUser(composeMail, user, page -> {
-            page.selectMenuSubMenu();
+            page.navigateAndVerifyPage();
             page.composeMail(user, data);
         });
     }
@@ -81,8 +84,8 @@ public class MailSteps {
      * @param user2
      * @throws Throwable
      */
-    @When("^sent mail to \"([^\"]*)\"$")
-    public void sentMailTo(String user2) throws Throwable {
+    @When("^user sends saved mail to \"([^\"]*)\"$")
+    public void sentMailTo(String user2) {
         navigator.on(composeMail, page -> {
             page.fillTo(user2);
             mailNumber = page.send();
@@ -96,27 +99,249 @@ public class MailSteps {
      * @throws Throwable
      */
     @Then("^verify \"([^\"]*)\" has received mail$")
-    public void verifyHasReceivedMail(String user2) throws Throwable {
+    public void verifyHasReceivedMail(String user2) {
         navigator.loginAsUser(inboxPage, user2, page -> {
-            page.selectMenuSubMenu();
+            page.navigateAndVerifyPage();
             page.searchMailNumber(mailNumber);
             assertThat(page.searchResultCount()).isGreaterThan(0);
             assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+
         });
     }
 
-    @When("Login and add a mail attribute \"([^\"]*)\"")
-    public void loginAndAddAMailAttribute(String attributeNumber) throws IOException, ParseException {
-        //The data is taken from userData.json file and we search for the project in admin tool
-        Map<String, Map<String, String>> mapOfMap = dataSetup.loadJsonDataToMap(configFileReader.returnUserDataJsonFilePath());
-        Map<String, String> userMap = mapOfMap.get("user");
-        //Project info
-        Map<String, String> projectMap = mapOfMap.get("project");
-        String projectName = projectMap.get("projectname");
-        //Locking in the field labels
-        navigator.loginToServer(userMap.get("username"), userMap.get("password"), projectName);
-        editPreferencesPage.navigateEditPreferences();
-        String attributeValue = editPreferencesPage.createNewMailAttribute(attributeNumber, projectName);
-        new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
+    @When("Login for user \"([^\"]*)\" and add a mail attribute \"([^\"]*)\"")
+    public void loginAndAddAMailAttribute(String userId, final String attributeNumber) {
+
+        String projectKey = "project" + userId.charAt(userId.length()-1);
+       Map<String, String> map = dataSetup.loadJsonDataToMap(userDataFile).get(projectKey);
+        navigator.loginAsUser(editPreferencesPage, userId, userDataFile, page -> {
+            page.navigateAndVerifyPage();
+            String attributeValue = page.createNewMailAttribute(attributeNumber, map.get("projectname"));
+            new DataStore().storeAttributeInfo(attributeNumber, attributeValue);
+        });
+
     }
+
+    @Given("{string} have a mail with {string} in drafts")
+    public void haveAMailWithInDrafts(String user, String mailAttributes) {
+        navigator.loginAsUser(composeMail, user, page -> {
+            page.navigateAndVerifyPage();
+            page.composeMail(user, mailAttributes);
+            draftMailNumber = page.userDefinedMailNumber();
+            page.saveToDraft();
+        });
+    }
+
+    @Then("user edits the email from draft and attaches {string} document")
+    public void userEditsTheEmailFromDraftAndAttachesDocument(String document) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+//            page.verifyValidationMessage();
+        });
+    }
+
+    @Then("user edits the email from draft and attaches {string} document from full search")
+    public void userEditsTheEmailFromDraftAndAttachesDocumentFromFullSearch(String document) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocumentUsingFullSearch(document);
+        });
+    }
+
+    @Then("user edits the mail and removes {string} from {string}")
+    public void userEditsTheMailAndRemovesFrom(String user, String group) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.removeUserFromMailingList(group, user);
+        });
+    }
+
+    @Then("user sends the mail")
+    public void userSendsTheMail() {
+        navigator.on(composeMail, page -> {
+            mailNumber = page.send();
+        });
+    }
+
+    @And("user removes {string} from {string}")
+    public void userRemovesFrom(String user, String group) {
+        navigator.on(composeMail, page -> {
+            page.removeUserFromMailingList(group, user);
+        });
+    }
+
+    @Then("user attaches {string} in the mail and sends mail")
+    public void userAttachesInTheMail(String document) {
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+        });
+        navigator.on(composeMail, page -> {
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("verify {string} has not received mail")
+    public void verifyHasNotReceivedMail(String user) {
+        String[] namesMailNotReceived = user.split(",");
+        for (String name : namesMailNotReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isEqualTo(0);
+            });
+        }
+    }
+
+    @Given("{string} previews a blank mail")
+    public void previewsABlankMail(String user) {
+        navigator.loginAsUser(composeMail, user, page -> {
+            page.navigateAndVerifyPage();
+            draftMailNumber = page.userDefinedMailNumber();
+            page.previewMail();
+        });
+    }
+
+    @Then("mail will be present in the draft")
+    public void mailWillBePresentInTheDraft() {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.verifyMailInDraft(draftMailNumber);
+        });
+    }
+
+    @Given("{string} previews mail with {string}")
+    public void previewsMailWith(String user, String mailAttribute) {
+        navigator.loginAsUser(composeMail, user, page -> {
+            page.navigateAndVerifyPage();
+            page.composeMail(user, mailAttribute);
+            draftMailNumber = page.userDefinedMailNumber();
+            page.previewMail();
+        });
+    }
+
+    @And("user verify validation message for not file in document")
+    public void userVerifyValidationMessageForNotFileInDocument() {
+        navigator.on(composeMail, ComposeMail::verifyValidationMessage);
+    }
+
+    @And("verify document details on inbox page for {string}")
+    public void verifyDocumentDetailsOnInboxPageFor(String document) {
+        navigator.on(inboxPage, page -> {
+            page.openEmail();
+        });
+        navigator.on(viewMail, page -> {
+            page.verifyDocumentDetails(document);
+        });
+    }
+
+    @And("user mark mail as unread")
+    public void userMarkMailAsUnread() {
+        navigator.on(inboxPage, InboxPage::openEmail);
+        navigator.on(viewMail, ViewMail::markAsUnread);
+    }
+
+    @Then("user edits the email from draft and attaches {string} document and sends saved mail to {string}")
+    public void userEditsTheEmailFromDraftAndAttachesDocumentAnSendsSavedMailTo(String document, String user) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+//            page.verifyValidationMessage();
+            page.fillTo(user);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("user edits the email attaches {string} document & verify message and no error message on preview")
+    public void userEditsTheEmailAttachesDocumentVerifyMessageAndNoErrorMessageOnPreview(String document) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocument(document);
+//            page.verifyValidationMessage();
+        });
+        navigator.on(composeMail, ComposeMail::verifyValidationMessage);
+        navigator.on(composeMail, ComposeMail::previewMail);
+        navigator.on(viewMail, ViewMail::verifyNoError);
+    }
+
+    @Then("user edits the email from draft and attaches {string} document from full search and sends to {string}")
+    public void userEditsTheEmailFromDraftAndAttachesDocumentFromFullSearchAndSendsTo(String document, String user) {
+        navigator.on(draft, page -> {
+            page.navigateAndVerifyPage();
+            page.selectDraftMail(draftMailNumber);
+        });
+        navigator.on(viewMail, ViewMail::editMail);
+        navigator.on(composeMail, page -> {
+            page.attachDocumentUsingFullSearch(document);
+        });
+        navigator.on(composeMail, page -> {
+            page.fillTo(user);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("verify {string} has not received mail and {string} has")
+    public void verifyHasNotReceivedMailAndHas(String falseUser, String trueUser) {
+        String[] namesMailNotReceived = falseUser.split(",");
+        for (String name : namesMailNotReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isEqualTo(0);
+            });
+        }
+        String[] namesMailReceived = trueUser.split(",");
+        for (String name : namesMailReceived) {
+            navigator.loginAsUser(inboxPage, name, page -> {
+                page.navigateAndVerifyPage();
+                page.searchMailNumber(mailNumber);
+                assertThat(page.searchResultCount()).isGreaterThan(0);
+                assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+            });
+        }
+    }
+
+    @Given("{string} creates a mail with {string} and sends it to {string}")
+    public void createsAMailWithAndSendsItTo(String sender, String mailAttributes, String reciever) {
+        navigator.loginAsUser(composeMail, sender, page -> {
+            page.navigateAndVerifyPage();
+            page.composeMail(sender, mailAttributes);
+            page.fillTo(reciever);
+            mailNumber = page.send();
+        });
+    }
+
+    @Then("verify {string} has received mail with {string}")
+    public void verifyHasReceivedMailWith(String reciever, String mailAttributes) {
+        navigator.loginAsUser(inboxPage, reciever, page -> {
+            page.navigateAndVerifyPage();
+            page.searchMailNumber(mailNumber);
+            assertThat(page.searchResultCount()).isGreaterThan(0);
+            assertThat(page.getMailNumber()).isEqualTo(mailNumber);
+            page.verifyMailDetails(mailAttributes);
+        });
+    }
+
+
 }
+

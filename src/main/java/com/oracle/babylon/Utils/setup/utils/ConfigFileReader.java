@@ -12,7 +12,7 @@ import java.util.Properties;
 public class ConfigFileReader {
 
     private Properties properties;
-    private String filepath = "src/main/resources/configFile.properties";
+    private String confileFilePath = "src/main/resources/configFile.properties";
 
     /**
      * Load the data from the config file and make it accessible to the Properties variable
@@ -20,7 +20,7 @@ public class ConfigFileReader {
     public ConfigFileReader() {
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(filepath));
+            reader = new BufferedReader(new FileReader(confileFilePath));
             properties = new Properties();
             try {
                 properties.load(reader);
@@ -30,11 +30,11 @@ public class ConfigFileReader {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException("Configuration.properties not found at " + filepath);
+            throw new RuntimeException("Configuration.properties not found at " + confileFilePath);
         }
     }
 
-    //Each field in the config file has a respective Getter function
+    //Each field in the config file has a respective Getter method
     public String getDriverPath() {
         String driverPath = properties.getProperty("DriverPath");
         if (driverPath != null) return driverPath;
@@ -53,9 +53,14 @@ public class ConfigFileReader {
         else throw new RuntimeException("implicitlyWait not specified in the CconfigFile.properties file.");
     }
 
-    public boolean getProxySetStatus() {
-        String setProxy = properties.getProperty("PROXY");
-        System.out.println("proxy port 21");
+    public boolean getHttpProxySetStatus() {
+        String setProxy = properties.getProperty("HTTP_PROXY");
+        if (setProxy != null && setProxy.equals("true")) return true;
+        else return false;
+    }
+
+    public boolean getAPIProxySetStatus() {
+        String setProxy = properties.getProperty("API_PROXY");
         if (setProxy != null && setProxy.equals("true")) return true;
         else return false;
     }
@@ -97,35 +102,58 @@ public class ConfigFileReader {
         else throw new RuntimeException("Admin Username is not specified in the configuration.propertied file");
     }
 
-    public String getAdminPassword() {
-        String admin_pwd = properties.getProperty("ADMIN_PASSWORD");
-        if (admin_pwd != null) return admin_pwd;
-        else throw new RuntimeException("Admin Password is not specified in the configuration.propertied file");
-    }
-
     public String getEmailId() {
         String email_id = properties.getProperty("EMAIL");
         if (email_id != null) return email_id;
         else throw new RuntimeException("Email is not specified in the configuration.properties file");
     }
 
-    public String returnUserDataJsonFilePath() {
+    public String getUserDataJsonFilePath() {
         String filePath = System.getProperty("user.dir") + properties.getProperty("USER_DATA_JSON");
         if (filePath != null) return filePath;
         else throw new RuntimeException("File Path is not specified in the configuration.properties file");
     }
+    public String getDocumentDataJsonFilePath() {
+        String filePath = System.getProperty("user.dir") + properties.getProperty("DOCUMENT_DATA_JSON");
+        if (filePath != null) return filePath;
+        else throw new RuntimeException("File Path is not specified in the configuration.properties file");
+    }
 
-    public String returnSSOAuthString() {
+    public String getMailDataJsonFilePath() {
+        String filePath = System.getProperty("user.dir") + properties.getProperty("MAIL_DATA_JSON");
+        if (filePath != null) return filePath;
+        else throw new RuntimeException("File Path is not specified in the configuration.properties file");
+    }
+
+    public String getSSOAuthString() {
         String sso_auth_string = properties.getProperty("SSO_Auth_String");
         if (sso_auth_string != null) return sso_auth_string;
         else throw new RuntimeException("SSO Auth String not specified in the configuration.properties file");
 
     }
 
-    public Boolean returnUseJsonFileFlag() {
+    public Boolean getUseJsonFileFlag() {
         String use_json_file = properties.getProperty("USE_JSON_FILE");
         if (use_json_file.equals("true")) return true;
         else return false;
+    }
+
+    public String getJiraExecutionUrl(){
+        String jira_exec_url = properties.getProperty("ZEPHYR_EXECUTION_URL");
+        if(jira_exec_url != null) return jira_exec_url;
+        else return null;
+    }
+
+    public String getJiraIssueUrl(){
+        String jira_issue_url = properties.getProperty("JIRA_ISSUE_URL");
+        if(jira_issue_url != null) return jira_issue_url;
+        else return null;
+    }
+
+    public String getCountryName(){
+        String country_name = properties.getProperty("COUNTRY_NAME");
+        if(country_name != null) return country_name;
+        else return null;
     }
 }
 
