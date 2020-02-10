@@ -96,7 +96,7 @@ public class Navigator {
         }
         user.setUsername(userMap.get("username"));
         user.setPassword(userMap.get("password"));
-        user.setFullName(userMap.get("fullname"));
+        user.setFullName(userMap.get("full_name"));
 
         loginAsUser(user);
         block.accept(page);
