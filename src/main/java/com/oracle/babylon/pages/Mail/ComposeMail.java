@@ -51,7 +51,7 @@ public class ComposeMail extends MailPage {
     private By attachFile = By.xpath("//div[contains(text(),'Attach File')]");
     private By selectFirstFile = By.xpath("//div[@id='searchResultsWrapper']//td[1]//input[@name='selectedIdsInPage']");
     private By openFullSearch = By.xpath("//div[contains(text(),'Open Full Search Page')]");
-    private By attchDocFromDropDown = By.xpath("//a[contains(text(),'Document')]");
+    private By attachDocFromDropDown = By.xpath("//a[contains(text(),'Document')]");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
