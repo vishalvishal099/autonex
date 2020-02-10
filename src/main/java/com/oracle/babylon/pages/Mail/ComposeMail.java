@@ -46,6 +46,12 @@ public class ComposeMail extends MailPage {
     private By docContainer = By.xpath("//td[@id='corrAttachmentsContainer']");
     private By global = By.xpath("//li[@id='ACONEX_list']");
     String userFilePath = configFileReader.getUserDataJsonFilePath();
+    private By documentNumber = By.xpath("//input[@id='Correspondence_documentNo']");
+    private By okBtn = By.xpath("//button[@id='btnOptionsOk']//div[@class='uiButton-label'][contains(text(),'OK')]");
+    private By attachFile = By.xpath("//div[contains(text(),'Attach File')]");
+    private By selectFirstFile = By.xpath("//div[@id='searchResultsWrapper']//td[1]//input[@name='selectedIdsInPage']");
+    private By openFullSearch = By.xpath("//div[contains(text(),'Open Full Search Page')]");
+    private By attchDocFromDropDown = By.xpath("//a[contains(text(),'Document')]");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -69,27 +75,11 @@ public class ComposeMail extends MailPage {
         for (String tableData : table.keySet()) {
             switch (tableData) {
                 case "To":
+                case "Cc":
+                case "Bcc":
                     String[] namesListForTo = table.get(tableData).split(",");
                     for (String name : namesListForTo) {
-                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
-                        userMap = jsonMapOfMap.get(name);
-                        addRecipient(tableData, userMap.get("full_name"));
-                    }
-                    break;
-                case "Cc":
-                    String[] namesListForCc = table.get(tableData).split(",");
-                    for (String name : namesListForCc) {
-                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
-                        userMap = jsonMapOfMap.get(name);
-                        addRecipient(tableData, userMap.get("full_name"));
-                    }
-                    break;
-                case "Bcc":
-                    String[] namesListForBCC = table.get(tableData).split(",");
-                    for (String name : namesListForBCC) {
-                        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
-                        userMap = jsonMapOfMap.get(name);
-                        addRecipient(tableData, userMap.get("full_name"));
+                        addRecipient(tableData, name);
                     }
                     break;
                 case "Mail Type":
@@ -126,10 +116,13 @@ public class ComposeMail extends MailPage {
 
 
     public void addRecipient(String group, String name) {
+        jsonMapOfMap = dataSetup.loadJsonDataToMap(userFilePath);
+        userMap = jsonMapOfMap.get(name);
+        String user = userMap.get("full_name");
         commonMethods.waitForElement(driver, directory);
         $(directory).click();
         $(global).click();
-        String[] username = name.split("\\s+");
+        String[] username = user.split("\\s+");
         $(By.cssSelector("#FIRST_NAME")).clear();
         commonMethods.waitForElementExplicitly(1000);
         $(By.cssSelector("#FIRST_NAME")).sendKeys(username[0]);
@@ -216,14 +209,14 @@ public class ComposeMail extends MailPage {
         Faker faker = new Faker();
         Map<String, String> userDetail = new HashMap<>();
         String mailNumber = "Mail-" + faker.number().digits(6);
-        WebElement checkBox = driver.findElement(By.xpath("//input[@id='radSpecifyMailNoManually']"));
+        WebElement checkBox = driver.findElement(manualMailNumber);
         if (checkBox.isSelected()) {
-            $(By.xpath("//input[@id='Correspondence_documentNo']")).sendKeys(mailNumber);
+            $(documentNumber).sendKeys(mailNumber);
         } else {
             checkBox.click();
-            $(By.xpath("//input[@id='Correspondence_documentNo']")).sendKeys(mailNumber);
+            $(documentNumber).sendKeys(mailNumber);
         }
-        $(By.xpath("//button[@id='btnOptionsOk']//div[@class='uiButton-label'][contains(text(),'OK')]")).click();
+        $(okBtn).click();
         return mailNumber;
     }
 
@@ -234,11 +227,11 @@ public class ComposeMail extends MailPage {
     public void attachDocumentUsingFullSearch(String document) {
         commonMethods.waitForElement(driver, attachBtn);
         $(attachBtn).click();
-        $(By.xpath("//a[contains(text(),'Document')]")).click();
+        $(attchDocFromDropDown).click();
         commonMethods.waitForElementExplicitly(2000);
         documentPage.searchDocumentNo(document);
-        $(By.xpath("//div[@id='searchResultsWrapper']//td[1]//input[@name='selectedIdsInPage']")).click();
-        $(By.xpath("//div[contains(text(),'Attach File')]")).click();
+        $(selectFirstFile).click();
+        $(attachFile).click();
         commonMethods.waitForElement(driver, attachmentContainer);
 //        Assert.assertTrue($(attachmentContainer).text().contains(document));
     }
@@ -246,12 +239,12 @@ public class ComposeMail extends MailPage {
     public void attachDocument(String documentDetail) {
         commonMethods.waitForElement(driver, attachBtn);
         $(attachBtn).click();
-        $(By.xpath("//a[contains(text(),'Document')]")).click();
+        $(attchDocFromDropDown).click();
         commonMethods.waitForElementExplicitly(2000);
-        $(By.xpath("//div[contains(text(),'Open Full Search Page')]")).click();
+        $(openFullSearch).click();
         documentPage.searchDocumentNo(documentDetail);
-        $(By.xpath("//div[@id='searchResultsWrapper']//td[1]//input[@name='selectedIdsInPage']")).click();
-        $(By.xpath("//div[contains(text(),'Attach File')]")).click();
+        $(selectFirstFile).click();
+        $(attachFile).click();
         commonMethods.waitForElement(driver, attachmentContainer);
 //        Assert.assertTrue($(attachmentContainer).text().contains(documentDetail));
     }
