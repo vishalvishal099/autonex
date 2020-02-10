@@ -51,7 +51,7 @@ public class NewAccountDetails extends Navigator {
             $(jobFunctionDrpDwn).pressEscape();
             $(job_title_txt_box).click();
             $(job_title_txt_box).sendKeys(userDetailsMap.get("Job_Title"));
-            //$(language).selectOptionContainingText(userDetailsMap.get("Language"));
+            $(language).selectOptionContainingText(userDetailsMap.get("Language"));
             if ($(password).exists()) {
                 $(password).sendKeys("[C@17222c118");
                 $(confirmPassword).sendKeys("[C@17222c118");

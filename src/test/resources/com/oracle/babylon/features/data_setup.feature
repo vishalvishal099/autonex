@@ -10,8 +10,8 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @data_setup
   Scenario: Fill up the account details
     When user "user1" needs to fill in the account details fields with data
-      | Title     | Job_Function    | Job_Title  |
-      | Professor | Quality Control | Consultant |
+      | Title     | Job_Function    | Job_Title  | Language                 |
+      | Professor | Quality Control | Consultant | English (United Kingdom) |
     Then views the home page
 
   @create_project
