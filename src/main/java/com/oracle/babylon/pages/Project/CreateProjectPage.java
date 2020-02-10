@@ -3,8 +3,11 @@ package com.oracle.babylon.pages.Project;
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Project;
+import com.oracle.babylon.Utils.setup.dataStore.pojo.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
+
+import java.util.Hashtable;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -65,13 +68,18 @@ public class CreateProjectPage extends Navigator{
     /**
      * Store the details of a project in the json data file for future references
      */
-    public void enterProjectDetailsToFile(String mainKey, Map<String, String> map, String filepath) {
+    public void enterProjectDetailsToFile(String userId, String projectNumber, User user){
+        Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
+        int number = Integer.parseInt(projectNumber.substring(projectNumber.length()-1));
+        String projectId = "project_id" + number;
+        String projectName = "project_name" + number;
+        String[] keys = {projectId, projectName};
+        Map<String, String> valueMap = new Hashtable<>();
+        valueMap.put(keys[0], user.getProjectId());
+        valueMap.put(keys[1], user.getProjectName());
+        mapOfMap.put(userId, valueMap);
+        dataSetup.convertMapOfMapAndWrite(userId, mapOfMap, userDataPath);
 
-        for (String key: map.keySet()) {
-             String[] projectKeysList = { mainKey, key};
-            dataSetup.writeIntoJson(projectKeysList, map.get(key), filepath);
-
-        }
     }
 
 

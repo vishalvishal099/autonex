@@ -2,6 +2,7 @@ package com.oracle.babylon.Utils.setup.dataStore;
 
 import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.setup.dataStore.pojo.Project;
+import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,7 +25,7 @@ public class ProjectDataCreator {
      */
     public void generateProjectData(Map<String, String> projectMap) {
 
-
+        ConfigFileReader configFileReader = new ConfigFileReader();
         String projectName = faker.app().name();
         projectName = projectName.replaceAll("[^a-zA-Z0-9]", "");
         project.setProjectName(projectName);
@@ -36,7 +37,7 @@ public class ProjectDataCreator {
         project.setProjectAddress(faker.address().streetAddress());
         project.setCity(faker.address().city());
         project.setCounty(faker.address().state());
-        project.setCountry(faker.address().country());
+        project.setCountry(configFileReader.getCountryName());
         project.setPostCode(faker.address().zipCode());
         project.setProjectStartDate("01/01/2016");
         project.setEstimatedCompletionDate("01/01/2025");

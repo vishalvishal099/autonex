@@ -3,7 +3,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @create_org
   @data_setup
   Scenario: Create a organization and store information into UserData.json
-    When user "user1" tries to create "organization1"
+    When user "user1" tries to create org
     Then user "user1" is able to login to application
 
   @fill_acnt_details
@@ -24,29 +24,29 @@ Feature: Essential tests which needs to be tested and also involves data setup i
   @enable_webservices_api
   @data_setup
   Scenario: Login to the admin and enable the web services api checkbox
-    When Login and set the web services api checkbox for project "project1"
+    When Login and set the web services api checkbox for user "user1" and project "project1"
     Then verify if feature changes save is successful
 
   @lock_fields_documents
   @data_setup
   Scenario: Login to the server and lock the fields for the document
-    When Login and lock the documents fields for user "user1"
+    When Login and lock the documents fields for user "user1" and project "project1"
     Then verify if lock fields is disabled
 
   @add_doc_attribute
   @data_setup
   Scenario: Add document attribute and write the attribute to userData.json
-    When Login for user "user1" and add a document attribute "Attribute 1"
-    Then Write "Attribute1" for "Document" in userData.json
+    When Login for user "user1" and project "project1", add a document attribute "Attribute 1"
+    Then Write attribute for "document1" in documents file
 
   @upload_document
   @data_setup
   Scenario: Uploading a document through Registration
-    Given upload document for user "user1" with data "uploadDoc_data" and write it in userData.json
-      | Revision | HasFile | Comments             |
-      | A        | false   | Uploading a document |
-    When search document for user "user1"
-    Then verify if document is present
+  #  Given upload document for user "user1" for project "project1" with data "uploadDoc_data" and write to "document1"
+  #    | Revision | HasFile | Comments             |
+   #   | A        | false   | Uploading a document |
+    When search document "document1" for user "user1" and project "project1"
+    Then verify if document "document1" is present
 
   @add_mail_attribute
   @data_setup

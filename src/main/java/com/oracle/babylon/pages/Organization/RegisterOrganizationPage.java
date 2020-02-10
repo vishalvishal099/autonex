@@ -10,6 +10,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -71,13 +73,14 @@ public class RegisterOrganizationPage extends Navigator {
         $(emailIdTxtBox).sendKeys(organization.getContactEmailAddress());
         $(phoneTxtBox).clear();
         $(phoneTxtBox).sendKeys(organization.getContactPhone());
-        $(loginNameTxtBox).sendKeys(userInfo.getUserName());
+        $(loginNameTxtBox).sendKeys(userInfo.getUsername());
         $(passwordTxtBox).sendKeys(userInfo.getPassword().toString());
         $(confirmPasswordTxtBox).sendKeys(userInfo.getPassword().toString());
+        commonMethods.waitForElementExplicitly(1000);
         $(acceptTermsChkBox).click();
         commonMethods.waitForElementExplicitly(3000);
         $(registerBtn).click();
-        commonMethods.waitForElementExplicitly(3000);
+        commonMethods.waitForElementExplicitly(5000);
         commonMethods.waitForElement(this.driver, thankYouMessage);
         $(thankYouMessage).isDisplayed();
     }
@@ -88,22 +91,18 @@ public class RegisterOrganizationPage extends Navigator {
      * @throws IOException
      * @throws ParseException
      */
-    public User enterOrgUserDetailsToFile(String userId, String organizationId) {
+    public User enterOrgUserDetailsToFile(String userId) {
         Organization organization = dataStore.getOrganizationInfo("organization");
         User userInfo = dataStore.getUser("user");
-        String[] keys = {"username", "password", "fullname"};
-        String[] userKeyList = {userId, keys[0]};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getUserName(), filePath);
-        userKeyList = new String[]{userId, keys[1]};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getPassword(), filePath);
-        userKeyList = new String[]{userId, keys[2]};
-        dataSetup.writeIntoJson(userKeyList, userInfo.getFullName(), filePath);
-
-        String[] orgList = {organizationId, "orgname"};
-        dataSetup.writeIntoJson(orgList, organization.getOrganizationName(), filePath);
+        String[] keys = {"username", "password", "full_name","org_name"};
+        Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
+        Map<String, String> valueMap = new Hashtable<>();
+        valueMap.put(keys[0], userInfo.getUsername());
+        valueMap.put(keys[1], userInfo.getPassword());
+        valueMap.put(keys[2], userInfo.getFullName());
+        valueMap.put(keys[3], organization.getOrganizationName());
+        mapOfMap.put(userId, valueMap);
+        dataSetup.convertMapOfMapAndWrite(userId, mapOfMap, userDataPath);
         return userInfo;
-
     }
-
-
 }

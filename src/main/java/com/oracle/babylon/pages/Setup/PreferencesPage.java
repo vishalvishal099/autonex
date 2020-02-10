@@ -6,12 +6,12 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.switchTo;
+import static com.codeborne.selenide.Selenide.*;
 
 public class PreferencesPage extends Navigator {
     protected By prefTable = By.xpath("//table[@class='indented dataTable preferences-table']");
     protected By saveButton = By.xpath("//div[contains(text(),'Save')]");
+    protected By closeBtn = By.xpath("//div[contains(text(),'Close')]");
 
 
     public void selectDefaultSettings(String preference) {
@@ -20,9 +20,7 @@ public class PreferencesPage extends Navigator {
         WebElement checkBox = driver.findElement(prefTable).findElement(By.xpath("//tr[" + prefRow + "]//td[" + defaultSettingfCol + "]//input[@type='checkbox']"));
         if (!checkBox.isSelected()) {
             checkBox.click();
-            $(saveButton).click();
         } else if (checkBox.isSelected()) {
-            $(saveButton).click();
         }
     }
 
@@ -50,24 +48,55 @@ public class PreferencesPage extends Navigator {
     public void selectOption(String option, int row, int column) {
         WebElement selectOptionFromList = driver.findElement(prefTable).findElement(By.xpath("//tr[" + row + "]//td[" + column + "]//select"));
         $(selectOptionFromList).selectOption(option);
-        $(saveButton).click();
     }
 
-    public void selectNonDefaultSettings(String preference) {
+    public void selectNonDefaultSettings(String preference, String flag) {
+        commonMethods.waitForElementExplicitly(2000);
         int prefRow = getPrefRow(preference);
         int defaultsettingCol = 3;
         int settingColumn = 2;
+        boolean setting = Boolean.parseBoolean(flag.toLowerCase());
         WebElement defaultSettingcheckBox = driver.findElement(prefTable).findElement(By.xpath("//tr[" + prefRow + "]//td[" + defaultsettingCol + "]//input[@type='checkbox']"));
         WebElement settingCheckbox = driver.findElement(prefTable).findElement(By.xpath("//tr[" + prefRow + "]//td[" + settingColumn + "]//input[@type='checkbox']"));
-        if (defaultSettingcheckBox.isSelected()) {
-            defaultSettingcheckBox.click();
-            if (settingCheckbox.isSelected()) {
-                $(saveButton).click();
+        if (setting) {
+            if (defaultSettingcheckBox.isSelected()) {
+                defaultSettingcheckBox.click();
+                if (settingCheckbox.isSelected()) {
+                    $(saveButton).click();
+                } else {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                }
             } else {
-                settingCheckbox.click();
-                $(saveButton).click();
+                if (settingCheckbox.isSelected()) {
+                    $(saveButton).click();
+                } else {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                }
+            }
+        } else {
+            if (defaultSettingcheckBox.isSelected()) {
+                defaultSettingcheckBox.click();
+                if (settingCheckbox.isSelected()) {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                } else {
+                    $(saveButton).click();
+                }
+            } else {
+                if (settingCheckbox.isSelected()) {
+                    settingCheckbox.click();
+                    $(saveButton).click();
+                } else {
+                    $(saveButton).click();
+                }
             }
         }
+        commonMethods.waitForElement(driver, closeBtn);
+        $(closeBtn).click();
+        driver.navigate().refresh();
+
     }
 
     public int getPrefRow(String prefName) {

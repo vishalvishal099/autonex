@@ -28,7 +28,7 @@ public class PreferencesSteps {
     private ConfigFileReader configFileReader = new ConfigFileReader();
     private PreferenceDefaultTab defaultTab = new PreferenceDefaultTab();
     private PreferenceUserTab userTab = new PreferenceUserTab();
-    String filePath = configFileReader.getUserDataJsonFilePath();
+    String userFilePath = configFileReader.getUserDataJsonFilePath();
 
     @Given("aconexadmin logs in to default preference page")
     public void logsInToDefaultPreferencePage() {
@@ -40,17 +40,15 @@ public class PreferencesSteps {
         navigator.on(defaultTab, page -> {
             page.selectSettingForDefault("Select default language", language);
             page.checkDefaultSettingsForDefault("Select default language");
-            page.clickSave();
         });
     }
 
 
     @Given("{string} set {string} setting {string}")
     public void setSettingTrue(String user, String setting, String flag) {
-        navigator.loginAsUser(userTab,user, page -> {
+        navigator.loginAsUser(userTab, user, userFilePath, page -> {
             page.navigateAndVerifyPage();
             page.selectNonDefaultSettings(setting,flag);
-            page.clickSave();
         });
     }
 }

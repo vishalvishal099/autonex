@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * Class to convert the organization test cases to java code
- * Author : susgopal
+ * Author : susgopal,kukumavi
  */
 public class OrganizationSteps {
 
@@ -36,14 +36,13 @@ public class OrganizationSteps {
     private DataSetup dataSetup = new DataSetup();
     private NewAccountDetails newAccountDetails = new NewAccountDetails();
     private User user = null;
-    String filepath = configFileReader.getUserDataJsonFilePath();
+    String userFilePath = configFileReader.getUserDataJsonFilePath();
 
     /**
      * Code which contains a sequence of steps to create a organization
      */
-    @When("user {string} tries to create {string}")
-    public void user_tries_to_create_organization(String userId, String organizationId) {
-
+    @When("user {string} tries to create org")
+    public void user_tries_to_create_organization(String userId) {
         //Register a organization
         navigator.on(orgUserObj, page -> {
             page.generateOrgData();
@@ -54,14 +53,12 @@ public class OrganizationSteps {
         navigator.on(registerOrganizationPage, page ->{
             page.verifyPage();
             page.fillOrganizationDetails();
-            user = page.enterOrgUserDetailsToFile(userId,organizationId);
+            user = page.enterOrgUserDetailsToFile(userId);
         });
-        navigator.loginAsUser(adminHome, page -> {
-            page.verifyPage();
-        });
+        navigator.loginAsUser(adminHome, AdminHome::verifyPage);
         navigator.on(adminSearch, page -> {
             page.navigateAndVerifyPage();
-            page.clickSearchResults(user.getUserName(), user.getFullName());
+            page.clickSearchResults(user.getUsername(), user.getFullName());
         });
         navigator.on(userInformation, page -> {
             page.verifyPage();
@@ -76,9 +73,7 @@ public class OrganizationSteps {
      */
     @Then("user {string} is able to login to application")
     public void userIsAbleToLoginToApplication(String userId) {
-        navigator.loginAsUser(newAccountDetails, userId, filepath, page -> {
-            page.verifyPage();
-        });
+        navigator.loginAsUser(newAccountDetails, userId, null, NewAccountDetails::verifyPage);
 
     }
 
@@ -94,7 +89,7 @@ public class OrganizationSteps {
         userIsAbleToLoginToApplication(userId);
         navigator.on(newAccountDetails, page-> {
             page.verifyPage();
-            page.fillUserDetails(userInfoMap);
+            page.fillUserDetails(userInfoMap,userId);
         });
 
     }

@@ -62,19 +62,22 @@ public class ProjectSettingsPage extends Navigator{
     public void lockFieldsInDocuments(){
         this.driver = WebDriverRunner.getWebDriver();
         navigateAndVerifyPage();
-        commonMethods.switchToFrame(this.driver, "frameMain");
-
-        commonMethods.clickLinkToChange( projectSettingsLabel, documentSettings);
-        commonMethods.clickLinkToChange(projectSettingsLabel, documentFields );
+        navigateToDocFields();
         lockDocFieldsBtn();
     }
 
+    public void navigateToDocFields(){
+        commonMethods.switchToFrame(this.driver, "frameMain");
+        commonMethods.clickLinkToChange( projectSettingsLabel, documentSettings);
+        commonMethods.clickLinkToChange(projectSettingsLabel, documentFields );
+    }
     /**
      * Function to click on any link to configure any label
      * @param labelToEdit
      */
     public void clickLabelToEdit(String labelToEdit){
-        By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
+        commonMethods.switchToFrame(driver, By.xpath("//iframe[@id='project-settings-page']"));
+       By editLabelLink = By.xpath("//td[contains(text(),'" + labelToEdit + "')]//..//td[6]//a");
         $(editLabelLink).click();
         $(saveChangesBtn).click();
 
@@ -89,6 +92,7 @@ public class ProjectSettingsPage extends Navigator{
         String attribute = faker.commerce().department();
         $(attributeTextArea).sendKeys(attribute);
         $(addBtn).click();
+        commonMethods.waitForElementExplicitly(2000);
         $(saveBtn).click();
         return attribute;
     }
