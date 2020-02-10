@@ -116,7 +116,8 @@ public class MailSteps {
         });
 
     }
-
+    
+//Please rename step methods to better method names
     @And("sends mail to user {string} in tolist and user {string} in cclist")
     public void sendsMailToInTolistAndInCclist(String userId1, String userId2) {
 
@@ -135,6 +136,7 @@ public class MailSteps {
 
     @Then("verify user {string} for {string} option and user {string} for {string} option")
     public void verifyUserForOptionAndUserForOption(String userId1, String to, String userId2, String cc) {
+        //There has been a change in the loginAsUser method. Please take the latest pull and check. Make the necessary changes
         navigator.loginAsUser(inboxPage,userId1,userDataPath,page-> {
             page.navigateAndVerifyPage();
             page.verifyToAndCcAndAny(userId1,to);
