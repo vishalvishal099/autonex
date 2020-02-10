@@ -44,11 +44,11 @@ public class PreferencesSteps {
     }
 
 
-    @Given("{string} set {string} setting {string}")
-    public void setSettingTrue(String user, String setting, String flag) {
-        navigator.loginAsUser(userTab, user, userFilePath, page -> {
+    @Given("{string} with {string} set {string} setting {string}")
+    public void setSettingTrue(String user, String projectNumber, String setting, String flag) {
+        navigator.loginAsUser(userTab, user, projectNumber, page -> {
             page.navigateAndVerifyPage();
-            page.selectNonDefaultSettings(setting,flag);
+            page.selectNonDefaultSettings(setting, flag);
         });
     }
 }
