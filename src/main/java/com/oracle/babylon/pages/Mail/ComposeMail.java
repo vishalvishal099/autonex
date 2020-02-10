@@ -19,7 +19,12 @@ import static com.codeborne.selenide.Selenide.switchTo;
 /**
  * Function that contains the methods related to Compose Mail
  * Author : vsinghsi
+ *
+ *
  */
+
+
+
 public class ComposeMail extends MailPage {
 
     //Initializing the objects and assigning references to it
@@ -187,6 +192,16 @@ public class ComposeMail extends MailPage {
     public void fillTo(String userTo) {
         addRecipient("To", userTo);
     }
+
+    public void fillCc(String userTo) {
+        //user = dataStore.getUser(userTo);
+        //userTo = user.getFullName();
+        $(cc_mailId).setValue(userTo);
+        $(cc_mailId).pressEnter();
+        this.driver = commonMethods.waitForElement(driver, cc_mailId);
+        $(cc_mailId).click();
+    }
+
 
 
     /**

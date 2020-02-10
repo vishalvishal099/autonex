@@ -5,9 +5,7 @@ import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Mail.ComposeMail;
-import com.oracle.babylon.pages.Mail.DraftPage;
 import com.oracle.babylon.pages.Mail.InboxPage;
-import com.oracle.babylon.pages.Mail.ViewMail;
 import com.oracle.babylon.pages.Setup.EditPreferencesPage;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
@@ -27,10 +25,8 @@ public class MailSteps {
     private Navigator navigator = new Navigator();
     private ComposeMail composeMail = new ComposeMail();
     private DataSetup dataSetup = new DataSetup();
-    private DraftPage draft = new DraftPage();
     private ConfigFileReader configFileReader = new ConfigFileReader();
     private EditPreferencesPage editPreferencesPage = new EditPreferencesPage();
-    private ViewMail viewMail = new ViewMail();
     static String mailNumber;
     static String draftMailNumber;
     String userDataFile = configFileReader.getUserDataJsonFilePath();
@@ -87,7 +83,7 @@ public class MailSteps {
      * @param user2
      * @throws Throwable
      */
-    @When("^user sends saved mail to \"([^\"]*)\"$")
+    @When("^sent mail to \"([^\"]*)\"$")
     public void sentMailTo(String user2) {
         navigator.on(composeMail, page -> {
             page.fillTo(user2);
@@ -124,6 +120,10 @@ public class MailSteps {
         });
 
     }
+    
+//Please rename step methods to better method names
+    @And("sends mail to user {string} in tolist and user {string} in cclist")
+    public void sendsMailToInTolistAndInCclist(String userId1, String userId2) {
 
     @Given("{string} with {string} have a mail with {string} in drafts")
     public void haveAMailWithInDrafts(String user, String project, String mailAttributes) {
@@ -175,6 +175,9 @@ public class MailSteps {
     @Then("user sends the mail")
     public void userSendsTheMail() {
         navigator.on(composeMail, page -> {
+            //page.fillTo(userId1);
+            page.fillTo(fullname);
+            page.fillCc(fullname1);
             mailNumber = page.send();
         });
     }
@@ -256,9 +259,10 @@ public class MailSteps {
         navigator.on(viewMail, ViewMail::markAsUnread);
     }
 
-    @Then("user edits the email from draft and attaches {string} document and sends saved mail to {string}")
-    public void userEditsTheEmailFromDraftAndAttachesDocumentAnSendsSavedMailTo(String document, String user) {
-        navigator.on(draft, page -> {
+    @Then("verify user {string} for {string} option and user {string} for {string} option")
+    public void verifyUserForOptionAndUserForOption(String userId1, String to, String userId2, String cc) {
+        //There has been a change in the loginAsUser method. Please take the latest pull and check. Make the necessary changes
+        navigator.loginAsUser(inboxPage,userId1,userDataPath,page-> {
             page.navigateAndVerifyPage();
             page.selectDraftMail(draftMailNumber);
         });
@@ -284,14 +288,8 @@ public class MailSteps {
             page.attachDocument(document);
 //            page.verifyValidationMessage();
         });
-        navigator.on(composeMail, ComposeMail::verifyValidationMessage);
-        navigator.on(composeMail, ComposeMail::previewMail);
-        navigator.on(viewMail, ViewMail::verifyNoError);
-    }
 
-    @Then("user edits the email from draft and attaches {string} document from full search and sends to {string}")
-    public void userEditsTheEmailFromDraftAndAttachesDocumentFromFullSearchAndSendsTo(String document, String user) {
-        navigator.on(draft, page -> {
+        navigator.loginAsUser(inboxPage,userId2,userDataPath,page-> {
             page.navigateAndVerifyPage();
             page.selectDraftMail(draftMailNumber);
         });
@@ -333,20 +331,16 @@ public class MailSteps {
     public void createsAMailWithAndSendsItTo(String sender, String mailAttributes, String reciever) {
         navigator.loginAsUser(composeMail, sender, page -> {
             page.navigateAndVerifyPage();
-            page.composeMail(sender, mailAttributes);
-            page.fillTo(reciever);
-            mailNumber = page.send();
-        });
-    }
-
-    @Then("verify {string} has received mail with {string}")
-    public void verifyHasReceivedMailWith(String reciever, String mailAttributes) {
-        navigator.loginAsUser(inboxPage, reciever, page -> {
-            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId1,any);
             page.searchMailNumber(mailNumber);
-            assertThat(page.searchResultCount()).isGreaterThan(0);
-            assertThat(page.getMailNumber()).isEqualTo(mailNumber);
-            page.verifyMailDetails(mailAttributes);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
+        });
+
+        navigator.loginAsUser(inboxPage,userId2,userDataPath,page-> {
+            page.navigateAndVerifyPage();
+            page.verifyToAndCcAndAny(userId2,any);
+            page.searchMailNumber(mailNumber);
+            assertThat(page.getUserName()).contains(page.getRecipientName());
         });
     }
 

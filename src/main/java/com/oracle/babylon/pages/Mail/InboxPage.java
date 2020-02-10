@@ -2,12 +2,8 @@ package com.oracle.babylon.pages.Mail;
 
 import com.codeborne.selenide.WebDriverRunner;
 import com.oracle.babylon.Utils.helper.Navigator;
-import org.junit.Assert;
 import org.openqa.selenium.By;
-
-import java.util.Map;
 import java.util.stream.Collectors;
-
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -17,7 +13,7 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public class InboxPage extends MailPage {
 
-    public InboxPage() {
+    public InboxPage(){
         this.driver = WebDriverRunner.getWebDriver();
     }
 
@@ -25,11 +21,13 @@ public class InboxPage extends MailPage {
     private By mailNumberTextBox = By.id("rawQueryText");
     private By searchBtn = By.xpath("//button[@title='Search']");
     private By loadingIcon = By.cssSelector(".loading_progress");
-    private By mailType = By.xpath("//div[@class='mailHeader-value']");
     private By pageTitle = By.xpath("//h1//span[text()='Search Mail']");
-    private By subject = By.xpath("//div[@class='mailHeader-subject']");
-    private By documentAttachment = By.xpath("//aui-collapsible-section-body[@id='documentAttachmentsBody']//div[@class='auiCollapsibleSection-body']");
-
+    private By myMailOnlyChkbox = By.xpath("//span[contains(text(),'My mail only')]//././../input");
+    private By recipientTypeTo = By.xpath("//span[text()='To']//././..//input");
+    private By recipientTypeCc = By.xpath("//span[text()='Cc']//././..//input");
+    private By recipientTypeAny = By.xpath("//span[text()='Any']//././..//input");
+    private By loggedInUserName = By.xpath("//span[@class='nav-userDetails']");
+    private By recipientName = By.xpath("//table[@id='resultTable']//tbody//tr[1]//td[8]//span");
 
     /**
      * Function to navigate to a sub menu from the Aconex home page
@@ -47,38 +45,49 @@ public class InboxPage extends MailPage {
     public void searchMailNumber(String mail_number) {
         commonMethods.switchToFrame(driver, "frameMain");
         $(mailNumberTextBox).sendKeys(mail_number);
-        $(searchBtn).click();
         commonMethods.waitForElementExplicitly(2000);
+        $(searchBtn).click();
         //Wait for the results to be retrieved
-//        By mailNumberSpan = By.xpath("//span[text()='" + mail_number + "']");
-//        commonMethods.waitForElement(this.driver, mailNumberSpan, 5000);
-//        $(loadingIcon).should(disappear);
+        By mailNumberSpan = By.xpath("//span[text()='" + mail_number + "']");
+        commonMethods.waitForElement(this.driver, mailNumberSpan, 5000);
+        $(loadingIcon).should(disappear);
+
     }
 
-    public void openEmail() {
-        $(By.xpath("//tbody[@id='rowPerMailTableBody']//tr[1]//td[4]/a")).click();
+    public String getUserName()
+    {
+        return driver.findElement(loggedInUserName).getText();
+
     }
 
-    public void markAsRead() {
-        $(By.xpath("//div[@class='pull-left ng-scope ng-isolate-scope']//button[@class='auiMenuButton auiButton dropdown-toggle']")).click();
-        $(By.xpath("//div[@class='pull-left ng-scope ng-isolate-scope open']//ul[@class='dropdown-menu']//a[contains(text(),'Mark as Read')]")).click();
+    public String getRecipientName()
+    {
+        commonMethods.switchToFrame(driver,"frameMain");
+        return $(recipientName).getText();
+
+
     }
 
-    public void verifyMailDetails(String data) {
-        Map<String, String> table = dataStore.getTable(data);
-        //According to the keys passed in the table, we select the fields
-        for (String tableData : table.keySet()) {
-            switch (tableData) {
-                case "Mail Type":
-                    Assert.assertTrue($(mailType).text().contains(table.get(tableData)));
-                    break;
-                case "Subject":
-                    Assert.assertTrue($(subject).text().contains(table.get(tableData)));
-                    break;
-                case "Attachment":
-                    Assert.assertTrue($(documentAttachment).text().contains(table.get(tableData)));
-            }
+    public void verifyToAndCcAndAny(String user, String option)
+    {
+        commonMethods.switchToFrame(driver,"frameMain");
+        $(myMailOnlyChkbox).click();
+        if(option.equals("cc"))
+        {
+            $(recipientTypeCc).click();
+
         }
+        else if(option.equals("to"))
+        {
+            $(recipientTypeTo).click();
+
+        }
+        else if(option.equals("any"))
+        {
+            $(recipientTypeAny).click();
+        }
+
+        driver.switchTo().defaultContent();
     }
 }
 
