@@ -227,7 +227,7 @@ public class ComposeMail extends MailPage {
     public void attachDocumentUsingFullSearch(String document) {
         commonMethods.waitForElement(driver, attachBtn);
         $(attachBtn).click();
-        $(attchDocFromDropDown).click();
+        $(attachDocFromDropDown ).click();
         commonMethods.waitForElementExplicitly(2000);
         documentPage.searchDocumentNo(document);
         $(selectFirstFile).click();
@@ -239,7 +239,7 @@ public class ComposeMail extends MailPage {
     public void attachDocument(String documentDetail) {
         commonMethods.waitForElement(driver, attachBtn);
         $(attachBtn).click();
-        $(attchDocFromDropDown).click();
+        $(attachDocFromDropDown ).click();
         commonMethods.waitForElementExplicitly(2000);
         $(openFullSearch).click();
         documentPage.searchDocumentNo(documentDetail);
