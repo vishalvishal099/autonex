@@ -1,11 +1,13 @@
 package com.oracle.babylon.pages.User;
 
+import com.github.javafaker.Faker;
 import com.oracle.babylon.Utils.helper.Navigator;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -25,6 +27,7 @@ public class NewAccountDetails extends Navigator {
     private By password = By.xpath("//div[@id='password']//input[@class='uiPasswordField-input']");
     private By confirmPassword = By.xpath("//div[@id='passwordConfirm']//input[@class='uiPasswordField-input']");
     private By directoryListing = By.xpath("//input[@id='globalDirectoryOptIn_radio']");
+    private Faker faker = new Faker(new Locale("en-US"));
 
 
     public void verifyPage() {
@@ -53,12 +56,13 @@ public class NewAccountDetails extends Navigator {
             $(job_title_txt_box).sendKeys(userDetailsMap.get("Job_Title"));
             $(language).selectOptionContainingText(userDetailsMap.get("Language"));
             if ($(password).exists()) {
-                $(password).sendKeys("[C@17222c118");
-                $(confirmPassword).sendKeys("[C@17222c118");
+                String password = faker.internet().password() + "8";
+                $(password).sendKeys(password);
+                $(confirmPassword).sendKeys(password);
                 Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
-                String[] keys = {"username", "password", "fullname"};
+                String[] keys = {"username", "password", "full_name"};
                 Map<String, String> valueMap = new Hashtable<>();
-                valueMap.put(keys[1],"[C@17222c118");
+                valueMap.put(keys[1],password);
                 mapOfMap.put(userId, valueMap);
                 dataSetup.convertMapOfMapAndWrite(userId, mapOfMap, userDataPath);
             }

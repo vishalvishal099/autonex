@@ -33,6 +33,7 @@ public class MailPage extends Navigator {
 
     private By attributeAddButton = By.xpath("//button[@id='attributeBidi_PRIMARY_ATTRIBUTE_add']");
     private By correspondenceTypeId = By.id("Correspondence_correspondenceTypeID");
+    private By reasonForIssue = By.xpath("//select[@id='Correspondence_correspondenceReasonID']");
 
     /**
      * Function to search mails by the mail number search key
@@ -128,6 +129,10 @@ public class MailPage extends Navigator {
         String attLocator = attributeLocator1 + attributeNumber + attributeLocator2;
         driver = commonMethods.waitForElement(driver, (By.xpath(attLocator)));
         $(By.xpath(attLocator + "//option[contains(text(),'" + value + "')]")).doubleClick();
+    }
+
+    void selectReasonForIssue(String reason) {
+        $(reasonForIssue).selectOptionContainingText(reason);
     }
 
 }
