@@ -103,7 +103,7 @@ public class MailSteps {
      */
     @Then("^verify \"([^\"]*)\" with \"([^\"]*)\" has received mail$")
     public void verifyHasReceivedMail(String user2, String project) {
-        navigator.loginBro(inboxPage, user2, project, page -> {
+        navigator.loginAsUser(inboxPage, user2, project, page -> {
             page.navigateAndVerifyPage();
             page.searchMailNumber(mailNumber);
             assertThat(page.searchResultCount()).isGreaterThan(0);
@@ -127,7 +127,7 @@ public class MailSteps {
 
     @Given("{string} with {string} have a mail with {string} in drafts")
     public void haveAMailWithInDrafts(String user, String project, String mailAttributes) {
-        navigator.loginBro(composeMail, user, project, page -> {
+        navigator.loginAsUser(composeMail, user, project, page -> {
             page.navigateAndVerifyPage();
             page.composeMail(user, mailAttributes);
             draftMailNumber = page.userDefinedMailNumber();
@@ -210,7 +210,7 @@ public class MailSteps {
 
     @Given("{string} with {string} previews a blank mail")
     public void previewsABlankMail(String user, String project) {
-        navigator.loginBro(composeMail, user, project, page -> {
+        navigator.loginAsUser(composeMail, user, project, page -> {
             page.navigateAndVerifyPage();
             draftMailNumber = page.userDefinedMailNumber();
             page.previewMail();
@@ -227,7 +227,7 @@ public class MailSteps {
 
     @Given("{string} with {string} previews mail with {string}")
     public void previewsMailWith(String user,String project, String mailAttribute) {
-        navigator.loginBro(composeMail, user,project, page -> {
+        navigator.loginAsUser(composeMail, user,project, page -> {
             page.navigateAndVerifyPage();
             page.composeMail(user, mailAttribute);
             draftMailNumber = page.userDefinedMailNumber();
@@ -312,7 +312,7 @@ public class MailSteps {
     public void verifyHasNotReceivedMailAndHas(String falseUser, String trueUser, String project) {
         String[] namesMailNotReceived = falseUser.split(",");
         for (String name : namesMailNotReceived) {
-            navigator.loginBro(inboxPage, name,project, page -> {
+            navigator.loginAsUser(inboxPage, name,project, page -> {
                 page.navigateAndVerifyPage();
                 page.searchMailNumber(mailNumber);
                 assertThat(page.searchResultCount()).isEqualTo(0);
@@ -320,7 +320,7 @@ public class MailSteps {
         }
         String[] namesMailReceived = trueUser.split(",");
         for (String name : namesMailReceived) {
-            navigator.loginBro(inboxPage, name,project, page -> {
+            navigator.loginAsUser(inboxPage, name,project, page -> {
                 page.navigateAndVerifyPage();
                 page.searchMailNumber(mailNumber);
                 assertThat(page.searchResultCount()).isGreaterThan(0);

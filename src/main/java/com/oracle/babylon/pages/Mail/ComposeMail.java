@@ -192,7 +192,7 @@ public class ComposeMail extends MailPage {
      * @param userTo string of users that we want to send the mail to
      */
     public void fillTo(String userTo) {
-
+        addRecipient("To", userTo);
     }
 
 
