@@ -77,8 +77,8 @@ public class ComposeMail extends MailPage {
                 case "To":
                 case "Cc":
                 case "Bcc":
-                    String[] namesListForTo = table.get(tableData).split(",");
-                    for (String name : namesListForTo) {
+                    String[] namesList = table.get(tableData).split(",");
+                    for (String name : namesList) {
                         addRecipient(tableData, name);
                     }
                     break;
