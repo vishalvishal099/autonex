@@ -349,5 +349,9 @@ public class MailSteps {
             page.verifyMailDetails(mailAttributes);
         });
     }
+
+    @Then("verify {string} in preview")
+    public void verifyInPreview(String mailAttribute) {
+    }
 }
 

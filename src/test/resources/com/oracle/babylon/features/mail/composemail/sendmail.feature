@@ -107,14 +107,14 @@ Feature: Send Mail
   Verify to Preview a mail with most fields filled in,
   Verify the attached document type in Preview Mail and Open and Save options
     Given "user1" with "project1" previews mail with "mail_attributes4"
-    Then verify "mail_attributes4" in preview
+#    Then verify "mail_attributes4" in preview
 #
-#    #ACONEXQA-2113 , #ACONEXQA-2114 and #ACONEX-2115
-#  Scenario: Verify no validation message displays in Preview Mail on attaching a doc without file,
-#  Verify validation message displays in New Mail on attaching a doc without file,
-#  Verify the Print button on Preview Mail
-#    Given "user1" have a mail with "mail_attributes1" in drafts
-#    Then user edits the email attaches "DocWithoutFile" document & verify message and no error message on preview
+    #ACONEXQA-2113 , #ACONEXQA-2114 and #ACONEX-2115
+  Scenario: Verify no validation message displays in Preview Mail on attaching a doc without file,
+  Verify validation message displays in New Mail on attaching a doc without file,
+  Verify the Print button on Preview Mail
+    Given "user1" with "project1" have a mail with "mail_attributes1" in drafts
+    Then user edits the email attaches "DocWithoutFile" document & verify message and no error message on preview
 #    Then user verify "print" button on preview page
 #
 #    #ACONEXQA-2118
