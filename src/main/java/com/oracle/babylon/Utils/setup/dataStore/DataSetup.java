@@ -61,39 +61,6 @@ public class DataSetup {
     }
 
     /**
-     * Function to overwrite a specific key's value in JSON
-     *
-     * @param keyList  keys to parse to reach the specific key provided
-     * @param map    the value to be updated in the JSON file
-     * @param filePath path  the JSON file present thin the main/resources package
-     * @throws IOException
-     * @throws ParseException
-     */
-    public void convertMapAndWrite(String[] keyList, Map<String, String> map, String filePath) {
-        //Fetch the json from the file
-        try {
-            Object obj = new JSONParser().parse(new FileReader(filePath));
-            JSONObject completeJson = (JSONObject) obj;
-           /**
-
-            //Create the json in readable pretty print format
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            JsonParser jp = new JsonParser();
-            JsonElement je = jp.parse(jsonString);
-            String prettyJsonString = gson.toJson(je);
-
-            //Write the complete string to the file
-            PrintWriter pw = new PrintWriter(filePath);
-            pw.write(prettyJsonString);
-            pw.flush();
-            pw.close();*/
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
      * Method to change the json file when it is a map of map
      * @param parentKey
      * @param generatedMapOfMap
@@ -120,7 +87,6 @@ public class DataSetup {
                     fakerMap = generatedMapOfMap.get(parentKey);
                     Set<String> childKeys = fakerMap.keySet();
 
-                   // Set<String> childKeys = originalJsonObj.keySet();
                     Iterator<String> childKeysItr = childKeys.iterator();
                     while (childKeysItr.hasNext()){
                         String key = childKeysItr.next();
@@ -142,14 +108,6 @@ public class DataSetup {
                 pw.flush();
                 pw.close();
             }
-
-
-
-
-
-
-
-
         } catch (Exception e){
             e.printStackTrace();
             System.exit(1);
