@@ -4,6 +4,7 @@ import com.oracle.babylon.Utils.setup.dataStore.pojo.*;
 import io.cucumber.datatable.DataTable;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ public class DataStore {
     private static Map<String, Map<String, String>> hashDataTable = new HashMap<>();
     private static Map<String, User> userHashMap = new HashMap<>();
     private static Map<String, Ticket> ticketHashMap = new HashMap<>();
-    private static Map<String, Document> documentHashMap = new HashMap<>();
+    private static Map<String, Document> documentHashMap = new LinkedHashMap<>();
     private static Map<String, Organization> organizationHashMap = new HashMap<>();
     private static Map<String, Project> projectHashMap = new HashMap<>();
     private static Map<String, String> attributeHashMap = new HashMap<>();
@@ -114,6 +115,10 @@ public class DataStore {
     public Document getDocument(String name) {
         return documentHashMap.get(name);
     }
+
+     public Map<String, Document> getDocMap(){
+        return documentHashMap;
+     }
 
     /**
      * Function to create a hash map from a data table

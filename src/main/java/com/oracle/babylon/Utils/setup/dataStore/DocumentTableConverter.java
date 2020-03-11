@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,24 +19,31 @@ import java.util.Map;
  * Author : susgopal
  */
 public class DocumentTableConverter {
-    private  Document document = new Document();
 
-    public void createDocumentData(String name, DataTable dataTable) {
+    public void createDocumentData(DataTable dataTable) {
         //Object Initialization
-
-        Map<String, String> documentHashMap = dataTable.transpose().asMap(String.class, String.class);
-        FakeData fakeData = new FakeData();
-        Date date = new Date();
-        //Fetching data
-        String companyName = fakeData.getCompanyName();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.0Z'");
-        //Assigning values to Document Object
-        document.setDocumentNumber(fakeData.getDocumentNumber());
-        document.setComments("Test comments for " + companyName + " document");
-        document.setHasFile(Boolean.getBoolean(documentHashMap.get("HasFile")));
-        document.setRevision(documentHashMap.get("Revision"));
-        document.setTitle(companyName + " Doc");
-        document.setRevisionDate(dateFormat.format(date));
-        new DataStore().uploadDocument(name, document);
+        for(Map<Object, Object> documentHashMap : dataTable.asMaps(String.class, String.class)) {
+            Document document = new Document();
+            //Map<String, String> documentHashMap = dataTable.transpose().asMap(String.class, String.class);
+            FakeData fakeData = new FakeData();
+            Date date = new Date();
+            //Fetching data
+            String companyName = fakeData.getCompanyName();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.0Z'");
+            //Assigning values to Document Object
+            document.setDocumentNumber(fakeData.getDocumentNumber());
+            document.setComments("Test comments for " + companyName + " document");
+            document.setHasFile(documentHashMap.get("HasFile").toString());
+            String fileFlag = documentHashMap.get("HasFile").toString();
+            boolean fileFlagBoolean = Boolean.parseBoolean(fileFlag);
+            if (fileFlagBoolean == true) {
+                document.setFileToUpload(documentHashMap.get("FileToUpload").toString());
+            }
+            document.setConfidentialityFlag(documentHashMap.get("Confidentiality").toString());
+            document.setRevision(documentHashMap.get("Revision").toString());
+            document.setTitle(companyName + " Doc");
+            document.setRevisionDate(dateFormat.format(date));
+            new DataStore().uploadDocument("document"+documentHashMap.get("serial num"), document);
+        }
     }
 }

@@ -1,9 +1,7 @@
 package com.oracle.babylon.Utils.setup.dataStore;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import io.restassured.mapper.ObjectMapper;
 import io.restassured.path.json.JsonPath;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,7 +26,7 @@ public class DataSetup {
      * @throws IOException
      * @throws ParseException
      */
-    public Map<String, Map<String, String>> loadJsonDataToMap(String filePath){
+    public Map<String, Map<String, String>> loadJsonDataToMap(String filePath) {
         /** 1.Read the file and store it in an Object
          * 2. Convert Object to JSON Object
          * 3. Retrieve the keys in the JSON Object
@@ -53,7 +51,7 @@ public class DataSetup {
                 }
             }
             return mapOfMap;
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
@@ -62,11 +60,12 @@ public class DataSetup {
 
     /**
      * Method to change the json file when it is a map of map
+     *
      * @param parentKey
      * @param generatedMapOfMap
      * @param filePath
      */
-    public void convertMapOfMapAndWrite(String parentKey, Map<String, Map<String, String>> generatedMapOfMap, String filePath){
+    public void convertMapOfMapAndWrite(String parentKey, Map<String, Map<String, String>> generatedMapOfMap, String filePath) {
         try {
             /**1.Read the json from the file
              * 2.Convert the data to jsonObject
@@ -74,21 +73,21 @@ public class DataSetup {
              * 4.Replace the values
              * 5.Write the values to the file
              *
-            */
+             */
             Object obj = new JSONParser().parse(new FileReader(filePath));
             JSONObject fileJson = (JSONObject) obj;
             Set<String> fakerKeys = generatedMapOfMap.keySet();
             Map<String, String> fakerMap = new Hashtable<>();
             Iterator<String> fakerKeysItr = fakerKeys.iterator();
 
-            while(fakerKeysItr.hasNext()){
-                if(fakerKeysItr.next().equals(parentKey)){
-                    JSONObject originalJsonObj = (JSONObject)fileJson.get(parentKey);
+            while (fakerKeysItr.hasNext()) {
+                if (fakerKeysItr.next().equals(parentKey)) {
+                    JSONObject originalJsonObj = (JSONObject) fileJson.get(parentKey);
                     fakerMap = generatedMapOfMap.get(parentKey);
                     Set<String> childKeys = fakerMap.keySet();
 
                     Iterator<String> childKeysItr = childKeys.iterator();
-                    while (childKeysItr.hasNext()){
+                    while (childKeysItr.hasNext()) {
                         String key = childKeysItr.next();
                         originalJsonObj.put(key, fakerMap.get(key));
 
@@ -108,9 +107,65 @@ public class DataSetup {
                 pw.flush();
                 pw.close();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
+
+    public void updateOrWriteTofile(String parentKey, Map<String, Map<String, String>> generatedMapOfMap, String filePath) {
+        try {
+            /**1.Read the json from the file
+             * 2.Convert the data to jsonObject
+             * 3.Fetch the json data to modify them by using map methods
+             * 4.Replace the values
+             * 5.Write the values to the file
+             *
+             */
+            Object obj = new JSONParser().parse(new FileReader(filePath));
+            JSONObject fileJson = (JSONObject) obj;
+
+            Iterator<String> fileExistingDocuments = fileJson.keySet().iterator();
+            Set<String> fakerKeys = generatedMapOfMap.keySet();
+            Map<String, String> fakerMap = new Hashtable<>();
+            Iterator<String> fakerKeysItr = fakerKeys.iterator();
+            boolean isExisting = false;
+            while (fileExistingDocuments.hasNext()) {
+                if (fileExistingDocuments.next().equals(parentKey)) {
+                    JSONObject originalJsonObj = (JSONObject) fileJson.get(parentKey);
+                    fakerMap = generatedMapOfMap.get(parentKey);
+                    Set<String> childKeys = fakerMap.keySet();
+
+                    Iterator<String> childKeysItr = childKeys.iterator();
+                    while (childKeysItr.hasNext()) {
+                        String key = childKeysItr.next();
+                        originalJsonObj.put(key, fakerMap.get(key));
+                    }
+                    fileJson.put(parentKey, originalJsonObj);
+                    isExisting =true;
+                }
+            }
+            if(isExisting ==false){
+                fileJson.put(parentKey, generatedMapOfMap.get(parentKey));
+            }
+            //Create the json in readable pretty print format
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonParser jp = new JsonParser();
+            JsonElement je = jp.parse(fileJson.toJSONString());
+            String prettyJsonString = gson.toJson(je);
+
+            //Write the complete string to the file
+            PrintWriter pw = new PrintWriter(filePath);
+            pw.write(prettyJsonString);
+            pw.flush();
+            pw.close();
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
+

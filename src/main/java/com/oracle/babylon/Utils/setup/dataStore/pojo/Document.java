@@ -5,11 +5,13 @@ package com.oracle.babylon.Utils.setup.dataStore.pojo;
  * Author : susgopal
  */
 public class Document {
+    private String ConfidentialityFlag;
+    private String accessList;
     private String documentNumber;
     private int documentStatusId;
     private String revision;
     private String comments;
-    private Boolean hasFile;
+    private String hasFile;
     private String attribute1;
     private String discipline;
     private int documentTypeId;
@@ -17,7 +19,31 @@ public class Document {
     private String revisionDate;
     private String project;
     private String username;
+    private String fileToUpload;
 
+    public String getUserId() {
+        return accessList;
+    }
+
+    public void setUserId(String userId) {
+        this.accessList = userId;
+    }
+
+    public String getConfidentialityFlag() {
+        return ConfidentialityFlag;
+    }
+
+    public void setConfidentialityFlag(String confidentialityFlag) {
+        this.ConfidentialityFlag = confidentialityFlag;
+    }
+
+    public String getFileToUpload() {
+        return fileToUpload;
+    }
+
+    public void setFileToUpload(String fileToUpload) {
+        this.fileToUpload = fileToUpload;
+    }
 
     public String getDocumentNumber() {
         return documentNumber;
@@ -51,11 +77,11 @@ public class Document {
         this.comments = comments;
     }
 
-    public Boolean getHasFile() {
+    public String getHasFile() {
         return hasFile;
     }
 
-    public void setHasFile(Boolean hasFile) {
+    public void setHasFile(String hasFile) {
         this.hasFile = hasFile;
     }
 

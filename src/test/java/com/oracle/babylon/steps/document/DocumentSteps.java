@@ -5,8 +5,10 @@ import com.oracle.babylon.Utils.helper.CommonMethods;
 import com.oracle.babylon.Utils.helper.Navigator;
 import com.oracle.babylon.Utils.setup.dataStore.DataSetup;
 import com.oracle.babylon.Utils.setup.dataStore.DataStore;
+import com.oracle.babylon.Utils.setup.dataStore.pojo.Document;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
 import com.oracle.babylon.pages.Admin.AdminSearch;
+import com.oracle.babylon.pages.Document.DocumentPage;
 import com.oracle.babylon.pages.Document.DocumentRegisterPage;
 import com.oracle.babylon.pages.Document.MultipleFileUpload;
 import com.oracle.babylon.pages.Document.TransmittalPage;
@@ -19,9 +21,7 @@ import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class to convert the test cases for document into Java methods
@@ -37,37 +37,39 @@ public class DocumentSteps {
     private WebDriver driver = null;
     private ProjectSettingsPage projectSettingsPage = new ProjectSettingsPage();
     private TransmittalPage transmittalPage = new TransmittalPage();
+    private DocumentPage documentPage = new DocumentPage();
     AdminSearch adminSearch = new AdminSearch();
     MultipleFileUpload multipleFileUpload = new MultipleFileUpload();
 
     String documentId = null;
     String userDataPath = configFileReader.getUserDataJsonFilePath();
     String docDataPath = configFileReader.getDocumentDataJsonFilePath();
-
-
-
+    DataStore dataStore = new DataStore();
     /**
      * Code to call the Register Document API. Used in Data creation for the framework
-     *
-     * @param documentTableName
      * @throws IOException
      * @throws InterruptedException
      */
-    @Given("upload document for user {string} for project {string} with data {string} and write to {string}")
-    public void uploadDocumentWithData(String userId, String projectIdentifier, String documentTableName,String documentNumber, DataTable dataTable){
+    @Given("upload document for user {string} for project {string} and write to {string}")
+    public void uploadDocumentWithData(String userId, String projectIdentifier,String documentNumber, DataTable dataTable) {
         Map<String, String> userMap = dataSetup.loadJsonDataToMap(userDataPath).get(userId);
-        String number = projectIdentifier.substring(projectIdentifier.length()-1);
+        String number = projectIdentifier.substring(projectIdentifier.length() - 1);
         String projectId = "project_id" + number;
         projectId = userMap.get(projectId);
-        this.documentId = documentRegisterPage.uploadDocumentAPI(userId, documentTableName, dataTable, projectId);
-        Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
-        Map<String, String> mapToReplace = new Hashtable<>();
-        String key = "doc_num" + number;
-        mapToReplace.put(key, documentId);
-        mapOfMap.put(documentNumber, mapToReplace);
-        dataSetup.convertMapOfMapAndWrite(documentNumber, mapOfMap, configFileReader.getDocumentDataJsonFilePath());
+        List<String> list = documentRegisterPage.uploadDocumentAPI(userId, dataTable, projectId);
+        Set<String> docDatawithName = dataStore.getDocMap().keySet();
+        LinkedList<String> documentNumnberParse= new LinkedList<>(docDatawithName);
+        List<String> docAttributes = documentPage.getDocumentSchema();
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Map<String, String>> mapOfMap = new Hashtable<>();
+                Map<String, String> mapToReplace = new Hashtable<>();
+                String key = "doc_num";
+                mapToReplace.put(key, list.get(i));
+                mapToReplace.put("attribute1",docAttributes.get(i) );
+                mapOfMap.put(documentNumnberParse.get(i), mapToReplace);
+                dataSetup.updateOrWriteTofile(documentNumnberParse.get(i), mapOfMap, configFileReader.getDocumentDataJsonFilePath());
+            }
     }
-
     /**
      * Code to search the document in the Document Register in Aconex
      */
@@ -155,5 +157,22 @@ public class DocumentSteps {
 
 
         });
+    }
+
+    @Given("upload document")
+    public void uploadDocument(DataTable dataStore) {
+        for(Map<Object, Object> data : dataStore.asMaps(String.class, String.class)){
+            System.out.println(data.get("Fullname"));
+            System.out.println(data.get("Username"));
+            System.out.println(data.get("Projects"));
+            System.out.println(data.get("Organization"));
+        }
+       // List<Map<String, String>> listDocumenHashMap = dataStore.transpose().asMaps(String.class, String.class);
+//        for (Map<String,String> data : listDocumenHashMap) {
+//            System.out.println(data.get("Fullname"));
+//            System.out.println(data.get("Username"));
+//            System.out.println(data.get("Projects"));
+//            System.out.println(data.get("Organization"));
+//        }
     }
 }

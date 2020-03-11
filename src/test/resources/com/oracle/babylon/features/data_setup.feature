@@ -62,6 +62,14 @@ Feature: Essential tests which needs to be tested and also involves data setup i
       | Mark Perkins | default        | Creating a basic transmittal |
     Then verify if "Transmittal" is created
 
+  @data_setup
+  Scenario: Uploading document
+    Given upload document for user "user1" for project "project1" and write to "document.json"
+      | serial num | Revision | HasFile | Comments             | FileToUpload     | Confidentiality |
+      | 1          | A        | true    | Uploading a document | pdf1.pdf         | No              |
+      | 2          | A        | true    | Uploading a document | TestTextfile.txt | yes             |
+      | 3          | A        | false   | Uploading a document | TestTextfile.txt | yes             |
+   # When search document "document1" for user "user1" and project "project1"
+   # Then verify if document "document1" is present
 
 
-          

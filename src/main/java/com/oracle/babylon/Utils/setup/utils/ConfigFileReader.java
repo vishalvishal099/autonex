@@ -155,6 +155,12 @@ public class ConfigFileReader {
         if(country_name != null) return country_name;
         else return null;
     }
+
+    public String getTestDataPath(){
+        String testDatapath =properties.getProperty("TEST_DATA");
+        if(testDatapath !=null) return testDatapath;
+        else return null;
+    }
 }
 
 

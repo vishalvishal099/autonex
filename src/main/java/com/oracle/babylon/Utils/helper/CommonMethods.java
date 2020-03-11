@@ -1,22 +1,14 @@
 package com.oracle.babylon.Utils.helper;
 
-import com.codeborne.selenide.WebDriverRunner;
 import com.google.gson.Gson;
 import com.oracle.babylon.Utils.setup.utils.ConfigFileReader;
-import com.oracle.babylon.pages.Admin.AdminHome;
 import com.oracle.babylon.pages.Admin.AdminSearch;
-import com.oracle.babylon.pages.Setup.EditPreferencesPage;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.impl.client.BasicResponseHandler;
 import org.json.JSONObject;
 import org.json.XML;
-import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.*;
@@ -32,6 +24,7 @@ import static com.codeborne.selenide.Selenide.$;
  * Author : susgopal, vsingsi
  */
 public class CommonMethods {
+    ConfigFileReader configFileReader = new ConfigFileReader();
 
     /**
      * Takes the screenshot of the current browser window
@@ -179,6 +172,8 @@ public class CommonMethods {
         return XML.toString(jsonObject);
     }
 
+
+
     /**
      * Function to convert UI table from the search to a Hash Map
      * Single result ui table
@@ -291,15 +286,28 @@ public class CommonMethods {
     /**
      * Function to select the link that we need to change the settings for
      *
-     * @param linkText
      */
     public void clickLinkToChange(By pageHeader, By by) {
         $(pageHeader).isDisplayed();
         $(by).click();
 
     }
-
-
+    public String getEncodedBase64(String file) {
+        String filePath = configFileReader.getTestDataPath() ;
+        File originalFile = new File(filePath+ file);
+        String encodedBase64 = null;
+        try {
+            FileInputStream fileInputStreamReader = new FileInputStream(originalFile);
+            byte[] bytes = new byte[(int) originalFile.length()];
+            fileInputStreamReader.read(bytes);
+             encodedBase64 = new String(Base64.encodeBase64(bytes));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return encodedBase64;
+    }
 }
 
 

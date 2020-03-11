@@ -1,7 +1,15 @@
 {
+  "document3": {
+    "doc_num": "Integrated--1244746321",
+    "attribute1": "Testing"
+  },
+  "document2": {
+    "doc_num": "Self-enabling--1244746321",
+    "attribute1": "Testing"
+  },
   "document1": {
-    "doc_num1": "Optimized--1244746321",
-    "attribute1": "Computers \u0026 Sports",
+    "doc_num": "complexity--1244746321",
+    "attribute1": "Testing",
     "discipline": "",
     "title": "",
     "revision": "",
