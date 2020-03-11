@@ -63,7 +63,7 @@ Feature: Essential tests which needs to be tested and also involves data setup i
     Then verify if "Transmittal" is created
 
   @data_setup
-  Scenario: Uploading document
+  Scenario: Uploading documents
     Given upload document for user "user1" for project "project1" and write to "document.json"
       | serial num | Revision | HasFile | Comments             | FileToUpload     | Confidentiality |
       | 1          | A        | true    | Uploading a document | pdf1.pdf         | No              |

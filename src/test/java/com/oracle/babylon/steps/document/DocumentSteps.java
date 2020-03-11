@@ -153,26 +153,6 @@ public class DocumentSteps {
 
            navigator.getMenuSubmenu("Documents", "Multiple File Upload");
            page.clickMultiFileUploadBtn("C:\\Users\\susgopal\\AutomationCode\\cyrusAconex\\cyrusaconex\\src\\main\\resources");
-
-
-
         });
-    }
-
-    @Given("upload document")
-    public void uploadDocument(DataTable dataStore) {
-        for(Map<Object, Object> data : dataStore.asMaps(String.class, String.class)){
-            System.out.println(data.get("Fullname"));
-            System.out.println(data.get("Username"));
-            System.out.println(data.get("Projects"));
-            System.out.println(data.get("Organization"));
-        }
-       // List<Map<String, String>> listDocumenHashMap = dataStore.transpose().asMaps(String.class, String.class);
-//        for (Map<String,String> data : listDocumenHashMap) {
-//            System.out.println(data.get("Fullname"));
-//            System.out.println(data.get("Username"));
-//            System.out.println(data.get("Projects"));
-//            System.out.println(data.get("Organization"));
-//        }
     }
 }
