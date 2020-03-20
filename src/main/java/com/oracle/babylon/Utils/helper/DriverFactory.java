@@ -63,8 +63,13 @@ public class DriverFactory {
             case "ie":
                 DesiredCapabilities IEcapability = new DesiredCapabilities().internetExplorer();
                 IEcapability.setCapability(CapabilityType.PROXY,setUpProxy());
-                WebDriver IEDriver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), IEcapability);
+                System.out.println("######################### DEBUGER CALLED ###########################");
+                WebDriver IEDriver = new RemoteWebDriver(new URL("http://10.176.201.96:4444/wd/hub"), IEcapability);
+                System.out.println("######################### IE CALLED ###########################");
+
                 configureDriver(IEDriver);
+                System.out.println("######################### IE Returned ###########################");
+
                 return IEDriver;
         }
         throw new RuntimeException(" Remote driver not found available, Please verify your driver !!!");
